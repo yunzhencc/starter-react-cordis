@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { createAppRuntime, type AppPlugin } from './runtime'
+import { createAppRuntime, type AppPlugin } from '@yunzhen/cordis-runtime'
 
-declare module './runtime' {
+declare module '@yunzhen/cordis-runtime' {
   interface AppServices {
     testService: { name: string }
   }
@@ -18,7 +18,7 @@ describe('createAppRuntime', () => {
     await runtime.dispose()
   })
 
-  it('collects settings and services contributed by plugins', async () => {
+  it('collects a service declared through the public package entry', async () => {
     const plugin: AppPlugin = (app) => {
       const removeTheme = app.provide('testService', { name: 'light' })
       const removeItem = app.addSettingsItem({ id: 'appearance', order: 100, Component: () => null })

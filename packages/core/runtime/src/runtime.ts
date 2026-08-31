@@ -1,5 +1,6 @@
 import { Context } from '@deepseek-ai/cordis'
 import type { ComponentType } from 'react'
+import type { AppServices } from './index'
 
 export interface Page {
   id: string
@@ -7,8 +8,6 @@ export interface Page {
   label: string
   Component: ComponentType
 }
-
-export interface AppServices {}
 
 export interface SettingsItem {
   id: string
