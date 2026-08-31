@@ -3,7 +3,7 @@ import { createAppRuntime, type AppPlugin } from './runtime'
 
 declare module './runtime' {
   interface AppServices {
-    theme: { name: string }
+    testService: { name: string }
   }
 }
 
@@ -20,12 +20,12 @@ describe('createAppRuntime', () => {
 
   it('collects settings and services contributed by plugins', async () => {
     const plugin: AppPlugin = (app) => {
-      const removeTheme = app.provide('theme', { name: 'light' })
+      const removeTheme = app.provide('testService', { name: 'light' })
       const removeItem = app.addSettingsItem({ id: 'appearance', order: 100, Component: () => null })
       return () => { removeItem(); removeTheme() }
     }
     const runtime = await createAppRuntime([plugin])
-    expect(runtime.get('theme')).toEqual({ name: 'light' })
+    expect(runtime.get('testService')).toEqual({ name: 'light' })
     expect(runtime.settingsItems.map((item) => item.id)).toEqual(['appearance'])
     await runtime.dispose()
   })

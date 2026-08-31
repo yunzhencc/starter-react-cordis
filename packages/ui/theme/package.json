@@ -3,7 +3,12 @@
   "private": true,
   "type": "module",
   "exports": {
+    ".": "./src/index.ts",
     "./theme": "./src/theme.ts",
     "./styles": "./src/styles.ts"
+  },
+  "dependencies": {
+    "@yunzhen/cordis-runtime": "workspace:*",
+    "react": "^19.2.8"
   }
 }

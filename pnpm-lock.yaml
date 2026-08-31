@@ -129,6 +129,15 @@ importers:
         specifier: ^7.18.3
         version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
 
+  packages/ui/theme:
+    dependencies:
+      '@yunzhen/cordis-runtime':
+        specifier: workspace:*
+        version: link:../../core/runtime
+      react:
+        specifier: ^19.2.8
+        version: 19.2.8
+
 packages:
 
   '@asamuzakjp/css-color@6.0.7':
