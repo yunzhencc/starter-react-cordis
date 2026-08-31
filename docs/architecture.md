@@ -11,6 +11,7 @@
 ```text
 apps/web
   └─ bundle/web-app
+       ├─ ui/theme
        ├─ feature/dashboard
        └─ feature/settings
 
@@ -30,15 +31,16 @@ core/runtime ──> @deepseek-ai/cordis
 | `packages/react/bridge` | 将运行时贡献暴露给 React | 否 |
 | `packages/router/react-router` | 从路由贡献一次性创建 React Router | 否 |
 | `packages/ui/shell` | 侧栏、顶部栏、主内容区和 `<Outlet />` | 否 |
+| `packages/ui/theme` | 主题令牌、浏览器本地外观偏好和 Appearance 设置贡献 | 否（基础设施插件） |
 | `packages/feature/dashboard` | 默认页和导航项 | 是 |
 | `packages/feature/settings` | 设置页和导航项 | 是 |
-| `packages/bundle/web-app` | 静态导入并组合内置业务插件 | 否 |
+| `packages/bundle/web-app` | 静态导入并组合内置插件 | 否 |
 
 ## 启动流程
 
 1. `apps/web` 创建应用运行时。
-2. `bundle/web-app` 挂载 `dashboard` 与 `settings`。
-3. 功能插件注册路由和导航贡献。
+2. `bundle/web-app` 按固定顺序挂载 `ui/theme`、`dashboard` 与 `settings`。
+3. `ui/theme` 注册主题服务和 Appearance 设置贡献；业务功能插件注册路由和导航贡献。
 4. `router/react-router` 汇总路由，创建一次 `createBrowserRouter()`。
 5. `ui/shell` 渲染导航与 `<Outlet />`。
 
@@ -46,7 +48,7 @@ core/runtime ──> @deepseek-ai/cordis
 
 ## 插件边界
 
-业务功能使用插件形式，是为了独立声明它提供的路由、导航和将来的命令，而不是为了让每个包都成为插件。
+业务功能使用插件形式，是为了独立声明它提供的路由、导航和将来的命令，而不是为了让每个包都成为插件。`ui/theme` 是基础设施插件：它在浏览器本地保存外观偏好，提供主题令牌和通用 Settings 贡献；Dashboard 与 Settings 仍是业务功能插件。
 
 基础运行时、React 适配、React Router 适配和应用壳保持普通模块。这与 DeepSeek Harness 的分层一致：基础启动和运行时是基础设施，按功能组织的能力包才通过 Cordis 组合。
 
@@ -58,6 +60,7 @@ packages/core/runtime/
 packages/react/bridge/
 packages/router/react-router/
 packages/ui/shell/
+packages/ui/theme/
 packages/feature/dashboard/
 packages/feature/settings/
 packages/bundle/web-app/

@@ -1,0 +1,32 @@
+.appShell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.navigation {
+  display: grid;
+  align-content: start;
+  gap: 0.25rem;
+  width: 12rem;
+  padding: 1rem;
+  background: var(--app-surface);
+  border-right: 1px solid var(--app-border);
+}
+
+.link,
+.activeLink {
+  padding: 0.5rem 0.75rem;
+  color: var(--app-text);
+  text-decoration: none;
+  border-radius: 0.375rem;
+}
+
+.activeLink {
+  color: var(--app-accent);
+  background: var(--app-accent-surface);
+}
+
+.main {
+  padding: 2rem;
+  font-size: var(--app-content-font-size);
+}

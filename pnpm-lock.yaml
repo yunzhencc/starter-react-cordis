@@ -65,6 +65,9 @@ importers:
       '@yunzhen/cordis-runtime':
         specifier: workspace:*
         version: link:../../core/runtime
+      '@yunzhen/cordis-ui-theme':
+        specifier: workspace:*
+        version: link:../../ui/theme
 
   packages/core/runtime:
     dependencies:
@@ -86,12 +89,19 @@ importers:
 
   packages/feature/settings:
     dependencies:
+      '@yunzhen/cordis-react-bridge':
+        specifier: workspace:*
+        version: link:../../react/bridge
       '@yunzhen/cordis-runtime':
         specifier: workspace:*
         version: link:../../core/runtime
       react:
         specifier: ^19.2.8
         version: 19.2.8
+    devDependencies:
+      react-dom:
+        specifier: ^19.2.8
+        version: 19.2.8(react@19.2.8)
 
   packages/react/bridge:
     dependencies:

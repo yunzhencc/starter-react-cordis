@@ -1,19 +1,20 @@
 import { useRuntime } from '@yunzhen/cordis-react-bridge'
 import { NavLink, Outlet } from 'react-router-dom'
+import styles from './index.module.css'
 
 export function AppShell() {
   const runtime = useRuntime()
 
   return (
-    <div className="app-shell">
-      <nav aria-label="Main navigation">
+    <div className={styles.appShell}>
+      <nav className={styles.navigation} aria-label="Main navigation">
         {runtime.pages.map((page) => (
-          <NavLink key={page.id} to={page.path} end={page.path === '/'}>
+          <NavLink className={({ isActive }) => isActive ? styles.activeLink : styles.link} key={page.id} to={page.path} end={page.path === '/'}>
             {page.label}
           </NavLink>
         ))}
       </nav>
-      <main>
+      <main className={styles.main}>
         <Outlet />
       </main>
     </div>

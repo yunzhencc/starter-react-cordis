@@ -5,7 +5,6 @@ import { createAppRuntime } from '@yunzhen/cordis-runtime'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom'
-import './styles.css'
 
 async function bootstrap() {
   const runtime = await createAppRuntime(webAppPlugins)
