@@ -3,6 +3,7 @@ import { createAppRuntime, type AppPlugin } from '@yunzhen/cordis-runtime'
 
 declare module '@yunzhen/cordis-runtime' {
   interface AppServices {
+    primitiveService: string
     testService: { name: string }
   }
 }
@@ -27,6 +28,49 @@ describe('createAppRuntime', () => {
     const runtime = await createAppRuntime([plugin])
     expect(runtime.get('testService')).toEqual({ name: 'light' })
     expect(runtime.settingsItems.map((item) => item.id)).toEqual(['appearance'])
+    await runtime.dispose()
+  })
+
+  it('does not let an older registration remove the same service object registered later', async () => {
+    const service = { name: 'shared' }
+    let removeFirst!: () => void
+    let removeSecond!: () => void
+    const runtime = await createAppRuntime([
+      (app) => {
+        removeFirst = app.provide('testService', service)
+        return removeFirst
+      },
+      (app) => {
+        removeSecond = app.provide('testService', service)
+        return removeSecond
+      },
+    ])
+
+    removeFirst()
+    expect(runtime.get('testService')).toBe(service)
+    removeSecond()
+    expect(runtime.get('testService')).toBeUndefined()
+    await runtime.dispose()
+  })
+
+  it('does not let an older registration remove the same primitive registered later', async () => {
+    let removeFirst!: () => void
+    let removeSecond!: () => void
+    const runtime = await createAppRuntime([
+      (app) => {
+        removeFirst = app.provide('primitiveService', 'shared')
+        return removeFirst
+      },
+      (app) => {
+        removeSecond = app.provide('primitiveService', 'shared')
+        return removeSecond
+      },
+    ])
+
+    removeFirst()
+    expect(runtime.get('primitiveService')).toBe('shared')
+    removeSecond()
+    expect(runtime.get('primitiveService')).toBeUndefined()
     await runtime.dispose()
   })
 })

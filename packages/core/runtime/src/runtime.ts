@@ -34,7 +34,7 @@ export async function createAppRuntime(plugins: readonly AppPlugin[]): Promise<A
   const cordis = new Context()
   const pages: Page[] = []
   const settingsItems: SettingsItem[] = []
-  const services = new Map<keyof AppServices, unknown>()
+  const services = new Map<keyof AppServices, { value: unknown }>()
   const app: AppContext = {
     addPage(page) {
       pages.push(page)
@@ -53,10 +53,11 @@ export async function createAppRuntime(plugins: readonly AppPlugin[]): Promise<A
       }
     },
     provide(key, value) {
-      services.set(key, value)
+      const entry = { value }
+      services.set(key, entry)
 
       return () => {
-        if (services.get(key) === value) services.delete(key)
+        if (services.get(key) === entry) services.delete(key)
       }
     },
   }
@@ -72,7 +73,7 @@ export async function createAppRuntime(plugins: readonly AppPlugin[]): Promise<A
       return [...settingsItems]
     },
     get(key) {
-      return services.get(key) as AppServices[typeof key] | undefined
+      return services.get(key)?.value as AppServices[typeof key] | undefined
     },
     async dispose() {
       await Promise.all(fibers.map((fiber) => fiber.dispose()))

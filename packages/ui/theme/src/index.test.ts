@@ -1,9 +1,12 @@
 // @vitest-environment jsdom
 
+import { readFileSync } from 'node:fs'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createAppRuntime } from '@yunzhen/cordis-runtime'
 import { ThemeRuntime } from './theme'
 import { uiThemePlugin } from './index'
+
+const tokens = readFileSync('packages/ui/theme/src/tokens.css', 'utf8')
 
 describe('uiThemePlugin', () => {
   beforeEach(() => {
@@ -24,10 +27,25 @@ describe('uiThemePlugin', () => {
 
     expect(runtime.get('theme')).toBeInstanceOf(ThemeRuntime)
     expect(runtime.settingsItems.map(({ id, order }) => [id, order])).toEqual([['appearance', 100]])
-    expect(document.head.querySelector('style[data-cordis-ui-theme]')).not.toBeNull()
+    const style = document.head.querySelector<HTMLStyleElement>('style[data-cordis-ui-theme]')
+    expect(style).not.toBeNull()
+
+    const theme = runtime.get('theme')
 
     await runtime.dispose()
 
+    expect(theme).toBeInstanceOf(ThemeRuntime)
+    expect(runtime.get('theme')).toBeUndefined()
+    expect(runtime.settingsItems).toEqual([])
     expect(document.head.querySelector('style[data-cordis-ui-theme]')).toBeNull()
+  })
+
+  it('applies the system font stack from the theme tokens', () => {
+    const style = document.createElement('style')
+    style.textContent = tokens
+    document.head.append(style)
+
+    expect(getComputedStyle(document.documentElement).fontFamily).toBe('system-ui, sans-serif')
+    style.remove()
   })
 })

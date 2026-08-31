@@ -1,4 +1,5 @@
 :root {
+  font-family: system-ui, sans-serif;
   color: var(--app-text);
   background: var(--app-background);
 }

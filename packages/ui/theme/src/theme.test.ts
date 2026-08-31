@@ -23,26 +23,39 @@ class MediaQuery {
     this.matches = matches
     for (const listener of this.listeners) listener({ matches } as MediaQueryListEvent)
   }
+
+  get listenerCount() {
+    return this.listeners.size
+  }
 }
 
-const mediaQuery = new MediaQuery()
-
 describe('ThemeRuntime', () => {
+  let mediaQuery: MediaQuery
+  let runtimes: ThemeRuntime[]
+
   beforeEach(() => {
     localStorage.clear()
     document.documentElement.removeAttribute('data-theme')
     document.documentElement.style.cssText = ''
-    mediaQuery.matches = true
+    mediaQuery = new MediaQuery()
+    runtimes = []
     vi.stubGlobal('matchMedia', () => mediaQuery)
   })
 
   afterEach(() => {
+    for (const runtime of runtimes) runtime.dispose()
     vi.unstubAllGlobals()
     vi.restoreAllMocks()
   })
 
+  const createTheme = () => {
+    const runtime = new ThemeRuntime()
+    runtimes.push(runtime)
+    return runtime
+  }
+
   it('uses system dark mode when there is no saved preference', () => {
-    const theme = new ThemeRuntime()
+    const theme = createTheme()
 
     expect(theme.snapshot).toMatchObject({ preference: 'system', resolvedTheme: 'dark', fontSize: 16 })
     expect(document.documentElement.dataset.theme).toBe('dark')
@@ -52,11 +65,11 @@ describe('ThemeRuntime', () => {
     localStorage.setItem(PREFERENCE_STORAGE_KEY, 'light')
     localStorage.setItem(FONT_SIZE_STORAGE_KEY, '200')
 
-    expect(new ThemeRuntime().snapshot).toMatchObject({ preference: 'light', resolvedTheme: 'light', fontSize: 16 })
+    expect(createTheme().snapshot).toMatchObject({ preference: 'light', resolvedTheme: 'light', fontSize: 16 })
   })
 
   it('reacts to media changes only while preference is system', () => {
-    const theme = new ThemeRuntime()
+    const theme = createTheme()
     mediaQuery.emit(true)
     expect(theme.snapshot.resolvedTheme).toBe('dark')
     theme.setTheme('light')
@@ -65,7 +78,7 @@ describe('ThemeRuntime', () => {
   })
 
   it('clamps font size, persists it, and updates the CSS custom property', () => {
-    const theme = new ThemeRuntime()
+    const theme = createTheme()
     theme.setFontSize(100)
 
     expect(theme.snapshot.fontSize).toBe(20)
@@ -74,7 +87,7 @@ describe('ThemeRuntime', () => {
   })
 
   it('falls back to the default font size for non-finite input', () => {
-    const theme = new ThemeRuntime()
+    const theme = createTheme()
     theme.setFontSize(Number.NaN)
 
     expect(theme.snapshot.fontSize).toBe(16)
@@ -90,12 +103,14 @@ describe('ThemeRuntime', () => {
       throw new Error('blocked')
     })
 
-    expect(() => new ThemeRuntime()).not.toThrow()
+    expect(() => createTheme()).not.toThrow()
   })
 
   it('ignores media changes after disposal', () => {
-    const theme = new ThemeRuntime()
+    const theme = createTheme()
+    expect(mediaQuery.listenerCount).toBe(1)
     theme.dispose()
+    expect(mediaQuery.listenerCount).toBe(0)
     mediaQuery.emit(false)
 
     expect(theme.snapshot.resolvedTheme).toBe('dark')
