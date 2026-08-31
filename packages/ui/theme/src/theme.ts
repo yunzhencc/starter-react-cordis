@@ -60,7 +60,7 @@ export class ThemeRuntime {
   }
 
   setFontSize(fontSize: number) {
-    const nextFontSize = Math.min(MAX_FONT_SIZE, Math.max(MIN_FONT_SIZE, fontSize))
+    const nextFontSize = Math.min(MAX_FONT_SIZE, Math.max(MIN_FONT_SIZE, Number.isFinite(fontSize) ? fontSize : DEFAULT_FONT_SIZE))
     this.snapshot = { ...this.snapshot, fontSize: nextFontSize }
     writeStorage(FONT_SIZE_STORAGE_KEY, String(nextFontSize))
     this.apply()

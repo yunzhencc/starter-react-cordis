@@ -73,6 +73,15 @@ describe('ThemeRuntime', () => {
     expect(document.documentElement.style.getPropertyValue('--app-content-font-size')).toBe('20px')
   })
 
+  it('falls back to the default font size for non-finite input', () => {
+    const theme = new ThemeRuntime()
+    theme.setFontSize(Number.NaN)
+
+    expect(theme.snapshot.fontSize).toBe(16)
+    expect(localStorage.getItem(FONT_SIZE_STORAGE_KEY)).toBe('16')
+    expect(document.documentElement.style.getPropertyValue('--app-content-font-size')).toBe('16px')
+  })
+
   it('keeps the page usable when localStorage is unavailable', () => {
     vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
       throw new Error('blocked')
