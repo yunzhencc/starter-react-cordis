@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
+    "noEmit": true,
+    "paths": {
+      "@yunzhen/cordis-runtime": ["./packages/core/runtime/src/index.ts"],
+      "@yunzhen/cordis-react-bridge": ["./packages/react/bridge/src/index.tsx"],
+      "@yunzhen/cordis-react-router": ["./packages/router/react-router/src/index.tsx"],
+      "@yunzhen/cordis-ui-shell": ["./packages/ui/shell/src/index.tsx"],
+      "@yunzhen/cordis-feature-dashboard": ["./packages/feature/dashboard/src/index.tsx"],
+      "@yunzhen/cordis-feature-settings": ["./packages/feature/settings/src/index.tsx"],
+      "@yunzhen/cordis-bundle-web-app": ["./packages/bundle/web-app/src/index.ts"]
+    }
+  },
+  "include": ["apps/**/*.ts", "apps/**/*.tsx", "packages/**/*.ts", "packages/**/*.tsx"]
+}

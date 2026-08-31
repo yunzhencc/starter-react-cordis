@@ -1,0 +1,12 @@
+{
+  "name": "@yunzhen/cordis-react-router",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.tsx",
+  "dependencies": {
+    "@yunzhen/cordis-runtime": "workspace:*",
+    "@yunzhen/cordis-ui-shell": "workspace:*",
+    "react": "^19.2.8",
+    "react-router-dom": "^7.18.3"
+  }
+}

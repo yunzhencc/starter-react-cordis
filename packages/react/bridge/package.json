@@ -1,0 +1,10 @@
+{
+  "name": "@yunzhen/cordis-react-bridge",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.tsx",
+  "dependencies": {
+    "@yunzhen/cordis-runtime": "workspace:*",
+    "react": "^19.2.8"
+  }
+}

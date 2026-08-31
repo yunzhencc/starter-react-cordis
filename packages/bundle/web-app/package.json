@@ -1,0 +1,11 @@
+{
+  "name": "@yunzhen/cordis-bundle-web-app",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "dependencies": {
+    "@yunzhen/cordis-feature-dashboard": "workspace:*",
+    "@yunzhen/cordis-feature-settings": "workspace:*",
+    "@yunzhen/cordis-runtime": "workspace:*"
+  }
+}
