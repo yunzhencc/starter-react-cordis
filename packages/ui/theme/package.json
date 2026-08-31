@@ -1,0 +1,9 @@
+{
+  "name": "@yunzhen/cordis-ui-theme",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./theme": "./src/theme.ts",
+    "./styles": "./src/styles.ts"
+  }
+}

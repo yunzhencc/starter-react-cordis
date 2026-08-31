@@ -6,6 +6,25 @@
     <title>starter-react-cordis</title>
   </head>
   <body>
+    <script>
+      (() => {
+        const preferenceKey = '@yunzhen/cordis-ui-theme:preference'
+        const fontSizeKey = '@yunzhen/cordis-ui-theme:font-size'
+        let preference = 'system'
+        let fontSize = 16
+        try {
+          const savedPreference = localStorage.getItem(preferenceKey)
+          if (savedPreference === 'light' || savedPreference === 'dark' || savedPreference === 'system') preference = savedPreference
+          const savedFontSize = Number(localStorage.getItem(fontSizeKey))
+          if (Number.isFinite(savedFontSize)) fontSize = Math.min(20, Math.max(12, savedFontSize))
+        } catch {}
+        const dark = preference === 'dark' || (preference === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)
+        const theme = dark ? 'dark' : 'light'
+        document.documentElement.dataset.theme = theme
+        document.documentElement.style.colorScheme = theme
+        document.documentElement.style.setProperty('--app-content-font-size', `${fontSize}px`)
+      })()
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
