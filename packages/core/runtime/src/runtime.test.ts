@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { createAppRuntime, type AppPlugin } from './runtime'
 
+declare module './runtime' {
+  interface AppServices {
+    theme: { name: string }
+  }
+}
+
 describe('createAppRuntime', () => {
   it('keeps pages contributed by plugins in registration order', async () => {
     const first: AppPlugin = (app) => app.addPage({ id: 'home', path: '/', label: 'Home', Component: () => null })
@@ -9,6 +15,18 @@ describe('createAppRuntime', () => {
     const runtime = await createAppRuntime([first, second])
 
     expect(runtime.pages.map((page) => page.id)).toEqual(['home', 'settings'])
+    await runtime.dispose()
+  })
+
+  it('collects settings and services contributed by plugins', async () => {
+    const plugin: AppPlugin = (app) => {
+      const removeTheme = app.provide('theme', { name: 'light' })
+      const removeItem = app.addSettingsItem({ id: 'appearance', order: 100, Component: () => null })
+      return () => { removeItem(); removeTheme() }
+    }
+    const runtime = await createAppRuntime([plugin])
+    expect(runtime.get('theme')).toEqual({ name: 'light' })
+    expect(runtime.settingsItems.map((item) => item.id)).toEqual(['appearance'])
     await runtime.dispose()
   })
 })
