@@ -9,6 +9,12 @@ export interface PanelBounds {
   readonly minSize: number;
 }
 
+export const MAIN_MIN_WIDTH = 352;
+
+export function getWorkspaceWidth(shellWidth: number, sidebarOpen: boolean, sidebarWidth: number) {
+  return Math.max(0, shellWidth - (sidebarOpen ? sidebarWidth : 0));
+}
+
 export function getSidebarBounds(shellWidth: number): PanelBounds {
   const minSize = 240;
   const maxSize = Math.max(minSize, Math.min(520, shellWidth - minSize));
@@ -17,7 +23,7 @@ export function getSidebarBounds(shellWidth: number): PanelBounds {
 
 export function getWorkbenchBounds(workspaceWidth: number, shellHeight: number): PanelBounds {
   const minSize = 320;
-  const maxSize = Math.max(minSize, workspaceWidth - 352);
+  const maxSize = Math.max(minSize, workspaceWidth - MAIN_MIN_WIDTH);
   const defaultSize = Math.max(minSize, Math.min(shellHeight * 1.6, workspaceWidth - 500, 640));
   return { defaultSize: clamp(defaultSize, minSize, maxSize), maxSize, minSize };
 }

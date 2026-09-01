@@ -6,7 +6,7 @@ import { Slot } from '@yunzhen/cordis-ui-renderer';
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { Group, Panel, Separator } from 'react-resizable-panels';
 import styles from './index.module.css';
-import { getSidebarBounds, getWorkbenchBounds, LayoutController } from './layout-controller';
+import { getSidebarBounds, getWorkbenchBounds, getWorkspaceWidth, LayoutController, MAIN_MIN_WIDTH } from './layout-controller';
 
 export { LayoutController } from './layout-controller';
 export type { LayoutSnapshot } from './layout-controller';
@@ -41,9 +41,9 @@ function AppLayout({ controller, slots }: { controller: LayoutController; slots:
   const hasWorkbenchOccupant = slots.entries('workbench').length > 0;
   const hasWorkbench = snapshot.workbenchOpen && hasWorkbenchOccupant;
   const sidebarBounds = getSidebarBounds(viewport.width);
-  const workspaceWidth = Math.max(0, viewport.width - (snapshot.sidebarOpen ? sidebarBounds.defaultSize : 0));
+  const [sidebarSize, setSidebarSize] = useStoredSize('sidebar-width', sidebarBounds);
+  const workspaceWidth = getWorkspaceWidth(viewport.width, snapshot.sidebarOpen, sidebarSize);
   const workbenchBounds = getWorkbenchBounds(workspaceWidth, viewport.height);
-  const sidebarSize = useStoredSize('sidebar-width', sidebarBounds);
   const workbenchSize = useStoredRatio('app-shell:right-panel-width:v3', workspaceWidth, workbenchBounds);
   const sidebarSizeRef = useRef(sidebarSize);
   const workbenchSizeRef = useRef(workbenchSize);
@@ -70,6 +70,7 @@ function AppLayout({ controller, slots }: { controller: LayoutController; slots:
 
   const updateSidebarSize = ({ inPixels }: PanelSize) => {
     sidebarSizeRef.current = inPixels;
+    setSidebarSize(inPixels);
   };
   const updateWorkbenchSize = ({ inPixels }: PanelSize) => {
     workbenchSizeRef.current = inPixels;
@@ -95,13 +96,13 @@ function AppLayout({ controller, slots }: { controller: LayoutController; slots:
             <Separator className={styles.separator} id="sidebar-resize" />
           </>
         )}
-        <Panel groupResizeBehavior="preserve-relative-size" id="main" minSize="0px">
+        <Panel groupResizeBehavior="preserve-relative-size" id="main" minSize={`${MAIN_MIN_WIDTH}px`}>
           <main className={styles.main}><Slot name="main" /></main>
         </Panel>
         {hasWorkbench && (
           <>
             <Separator className={styles.separator} id="workbench-resize" />
-            <Panel collapsedSize="0px" collapsible defaultSize={`${workbenchSize}px`} groupResizeBehavior="preserve-pixel-size" id="workbench" maxSize={`${workbenchBounds.maxSize}px`} minSize="160px" onResize={updateWorkbenchSize}>
+            <Panel collapsedSize="0px" collapsible defaultSize={`${workbenchSize}px`} groupResizeBehavior="preserve-pixel-size" id="workbench" maxSize={`${workbenchBounds.maxSize}px`} minSize={`${workbenchBounds.minSize}px`} onResize={updateWorkbenchSize}>
               <aside className={styles.workbench} data-workbench-column><Slot name="workbench" /></aside>
             </Panel>
           </>
@@ -125,8 +126,8 @@ function useViewport() {
 }
 
 function useStoredSize(key: string, bounds: PanelBounds) {
-  const [size] = useState(() => clamp(readStorage(key) ?? bounds.defaultSize, bounds));
-  return clamp(size, bounds);
+  const [size, setSize] = useState(() => clamp(readStorage(key) ?? bounds.defaultSize, bounds));
+  return [clamp(size, bounds), setSize] as const;
 }
 
 function useStoredRatio(key: string, width: number, bounds: PanelBounds) {
