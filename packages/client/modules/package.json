@@ -1,0 +1,6 @@
+{
+  "name": "@yunzhen/cordis-client-modules",
+  "type": "module",
+  "private": true,
+  "exports": "./src/index.ts"
+}
