@@ -1,6 +1,6 @@
-import { Context } from '@deepseek-ai/cordis'
 import type { ComponentType } from 'react'
 import type { AppServices } from './index'
+import { Context } from '@deepseek-ai/cordis'
 
 export interface RouteNavigation {
   label: string
@@ -24,9 +24,9 @@ export interface SettingsItem {
 }
 
 export interface AppContext {
-  addRoute(route: RouteNode): () => void
-  addSettingsItem(item: SettingsItem): () => void
-  provide<K extends keyof AppServices>(key: K, value: AppServices[K]): () => void
+  addRoute: (route: RouteNode) => () => void
+  addSettingsItem: (item: SettingsItem) => () => void
+  provide: <K extends keyof AppServices>(key: K, value: AppServices[K]) => () => void
 }
 
 export type AppPlugin = (app: AppContext) => void | (() => void)
@@ -34,8 +34,8 @@ export type AppPlugin = (app: AppContext) => void | (() => void)
 export interface AppRuntime {
   readonly routes: readonly RouteNode[]
   readonly settingsItems: readonly SettingsItem[]
-  get<K extends keyof AppServices>(key: K): AppServices[K] | undefined
-  dispose(): Promise<void>
+  get: <K extends keyof AppServices>(key: K) => AppServices[K] | undefined
+  dispose: () => Promise<void>
 }
 
 export async function createAppRuntime(plugins: readonly AppPlugin[]): Promise<AppRuntime> {
@@ -49,7 +49,8 @@ export async function createAppRuntime(plugins: readonly AppPlugin[]): Promise<A
 
       return () => {
         const index = routes.indexOf(route)
-        if (index !== -1) routes.splice(index, 1)
+        if (index !== -1)
+          routes.splice(index, 1)
       }
     },
     addSettingsItem(item) {
@@ -57,7 +58,8 @@ export async function createAppRuntime(plugins: readonly AppPlugin[]): Promise<A
 
       return () => {
         const index = settingsItems.indexOf(item)
-        if (index !== -1) settingsItems.splice(index, 1)
+        if (index !== -1)
+          settingsItems.splice(index, 1)
       }
     },
     provide(key, value) {
@@ -65,11 +67,12 @@ export async function createAppRuntime(plugins: readonly AppPlugin[]): Promise<A
       services.set(key, entry)
 
       return () => {
-        if (services.get(key) === entry) services.delete(key)
+        if (services.get(key) === entry)
+          services.delete(key)
       }
     },
   }
-  const fibers = plugins.map((plugin) => cordis.plugin(() => plugin(app)))
+  const fibers = plugins.map(plugin => cordis.plugin(() => plugin(app)))
 
   await Promise.all(fibers)
   validateRoutes(routes)
@@ -85,7 +88,7 @@ export async function createAppRuntime(plugins: readonly AppPlugin[]): Promise<A
       return services.get(key)?.value as AppServices[typeof key] | undefined
     },
     async dispose() {
-      await Promise.all(fibers.map((fiber) => fiber.dispose()))
+      await Promise.all(fibers.map(fiber => fiber.dispose()))
     },
   }
 }
@@ -98,25 +101,32 @@ function validateRoutes(routes: readonly RouteNode[]) {
     let hasIndex = false
 
     for (const route of siblings) {
-      if (ids.has(route.id)) throw new Error(`duplicate id: ${route.id}`)
+      if (ids.has(route.id))
+        throw new Error(`duplicate id: ${route.id}`)
       ids.add(route.id)
 
       if (route.index) {
-        if (route.path !== undefined) throw new Error(`index route cannot have a path: ${route.id}`)
-        if (route.children) throw new Error(`index route cannot have children: ${route.id}`)
-        if (hasIndex) throw new Error('only one index route is allowed per sibling group')
+        if (route.path !== undefined)
+          throw new Error(`index route cannot have a path: ${route.id}`)
+        if (route.children)
+          throw new Error(`index route cannot have children: ${route.id}`)
+        if (hasIndex)
+          throw new Error('only one index route is allowed per sibling group')
         hasIndex = true
       }
       else {
-        if (route.navigation && !route.path) throw new Error(`navigation route requires an index or path: ${route.id}`)
+        if (route.navigation && !route.path)
+          throw new Error(`navigation route requires an index or path: ${route.id}`)
         if (!route.path || route.path.startsWith('/') || route.path === '.' || route.path === '..') {
           throw new Error(`route path must be a non-empty relative path: ${route.id}`)
         }
-        if (paths.has(route.path)) throw new Error(`duplicate sibling path: ${route.path}`)
+        if (paths.has(route.path))
+          throw new Error(`duplicate sibling path: ${route.path}`)
         paths.add(route.path)
       }
 
-      if (route.children) validateSiblings(route.children)
+      if (route.children)
+        validateSiblings(route.children)
     }
   }
 

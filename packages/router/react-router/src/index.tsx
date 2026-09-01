@@ -1,6 +1,7 @@
 import type { AppRuntime, RouteNode } from '@yunzhen/cordis-runtime'
+import type { RouteObject } from 'react-router-dom'
 import { AppShell } from '@yunzhen/cordis-ui-shell'
-import { createBrowserRouter, type RouteObject } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
 import { NotFoundPage } from './not-found-page'
 import { RouteErrorPage } from './route-error-page'
 
@@ -10,7 +11,8 @@ function toReactRouterRoute(route: RouteNode): RouteObject {
     ...(route.ErrorComponent ? { ErrorBoundary: route.ErrorComponent } : {}),
   }
 
-  if (route.index) return { ...base, index: true }
+  if (route.index)
+    return { ...base, index: true }
 
   return {
     ...base,

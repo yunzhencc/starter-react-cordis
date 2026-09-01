@@ -25,7 +25,8 @@ describe('theme bootstrap', () => {
     ['below range', '11'],
     ['above range', '21'],
   ])('uses 16px for a %s persisted font size', (_label, storedValue) => {
-    if (storedValue !== null) localStorage.setItem(fontSizeKey, storedValue)
+    if (storedValue !== null)
+      localStorage.setItem(fontSizeKey, storedValue)
 
     window.eval(bootstrap ?? '')
 

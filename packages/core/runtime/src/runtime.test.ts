@@ -1,5 +1,6 @@
+import type { AppPlugin, RouteNode } from '@yunzhen/cordis-runtime'
+import { createAppRuntime } from '@yunzhen/cordis-runtime'
 import { describe, expect, it } from 'vitest'
-import { createAppRuntime, type AppPlugin, type RouteNode } from '@yunzhen/cordis-runtime'
 
 declare module '@yunzhen/cordis-runtime' {
   interface AppServices {
@@ -10,13 +11,13 @@ declare module '@yunzhen/cordis-runtime' {
 
 describe('createAppRuntime', () => {
   it('keeps nested routes contributed by plugins in registration order', async () => {
-    const first: AppPlugin = (app) => app.addRoute({
+    const first: AppPlugin = app => app.addRoute({
       id: 'dashboard',
       index: true,
       Component: () => null,
       navigation: { label: 'Dashboard', order: 0 },
     })
-    const second: AppPlugin = (app) => app.addRoute({
+    const second: AppPlugin = app => app.addRoute({
       id: 'settings',
       path: 'settings',
       Component: () => null,
@@ -40,11 +41,11 @@ describe('createAppRuntime', () => {
       (app) => {
         removeFirst = app.addRoute({ id: 'dashboard', index: true, Component: () => null })
       },
-      (app) => app.addRoute({ id: 'settings', path: 'settings', Component: () => null }),
+      app => app.addRoute({ id: 'settings', path: 'settings', Component: () => null }),
     ])
 
     removeFirst()
-    expect(runtime.routes.map((route) => route.id)).toEqual(['settings'])
+    expect(runtime.routes.map(route => route.id)).toEqual(['settings'])
     await runtime.dispose()
   })
 
@@ -90,18 +91,21 @@ describe('createAppRuntime', () => {
       navigation: { label: 'Settings', order: 100 },
     }, 'navigation'],
   ])('rejects %s', async (_, route, message) => {
-    await expect(createAppRuntime([(app) => app.addRoute(route)])).rejects.toThrow(message)
+    await expect(createAppRuntime([app => app.addRoute(route)])).rejects.toThrow(message)
   })
 
   it('collects a service declared through the public package entry', async () => {
     const plugin: AppPlugin = (app) => {
       const removeTheme = app.provide('testService', { name: 'light' })
       const removeItem = app.addSettingsItem({ id: 'appearance', order: 100, Component: () => null })
-      return () => { removeItem(); removeTheme() }
+      return () => {
+        removeItem()
+        removeTheme()
+      }
     }
     const runtime = await createAppRuntime([plugin])
     expect(runtime.get('testService')).toEqual({ name: 'light' })
-    expect(runtime.settingsItems.map((item) => item.id)).toEqual(['appearance'])
+    expect(runtime.settingsItems.map(item => item.id)).toEqual(['appearance'])
     await runtime.dispose()
   })
 

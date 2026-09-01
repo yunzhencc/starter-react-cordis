@@ -29,7 +29,7 @@ class MediaQuery {
   }
 }
 
-describe('ThemeRuntime', () => {
+describe('themeRuntime', () => {
   let mediaQuery: MediaQuery
   let runtimes: ThemeRuntime[]
 

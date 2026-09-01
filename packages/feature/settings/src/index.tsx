@@ -1,5 +1,5 @@
-import { useRuntime } from '@yunzhen/cordis-react-bridge'
 import type { AppPlugin } from '@yunzhen/cordis-runtime'
+import { useRuntime } from '@yunzhen/cordis-react-bridge'
 
 export function SettingsPage() {
   const runtime = useRuntime()

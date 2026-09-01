@@ -1,10 +1,10 @@
 // @vitest-environment jsdom
 
 import { readFileSync } from 'node:fs'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createAppRuntime } from '@yunzhen/cordis-runtime'
-import { ThemeRuntime } from './theme'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { uiThemePlugin } from './index'
+import { ThemeRuntime } from './theme'
 
 const tokens = readFileSync('packages/ui/theme/src/tokens.css', 'utf8')
 

@@ -13,14 +13,6 @@ export interface ThemeSnapshot {
   fontSize: number
 }
 
-export interface ThemeRuntime {
-  snapshot: ThemeSnapshot
-  subscribe(listener: () => void): () => void
-  setTheme(preference: ThemePreference): void
-  setFontSize(fontSize: number): void
-  dispose(): void
-}
-
 export class ThemeRuntime {
   private readonly listeners = new Set<() => void>()
   private readonly mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
@@ -67,14 +59,16 @@ export class ThemeRuntime {
   }
 
   dispose() {
-    if (this.disposed) return
+    if (this.disposed)
+      return
     this.disposed = true
     this.stopMediaListener()
     this.listeners.clear()
   }
 
   private readonly onMediaChange = (event: MediaQueryListEvent) => {
-    if (this.disposed || this.snapshot.preference !== 'system') return
+    if (this.disposed || this.snapshot.preference !== 'system')
+      return
     this.snapshot = { ...this.snapshot, resolvedTheme: event.matches ? 'dark' : 'light' }
     this.apply()
   }
@@ -91,7 +85,8 @@ export class ThemeRuntime {
   }
 
   private stopMediaListener() {
-    if (!this.listeningToMedia) return
+    if (!this.listeningToMedia)
+      return
     this.mediaQuery.removeEventListener('change', this.onMediaChange)
     this.listeningToMedia = false
   }
@@ -121,7 +116,8 @@ function resolveTheme(preference: ThemePreference, dark: boolean): ResolvedTheme
 function readStorage(key: string) {
   try {
     return localStorage.getItem(key)
-  } catch {
+  }
+  catch {
     return null
   }
 }
@@ -129,5 +125,6 @@ function readStorage(key: string) {
 function writeStorage(key: string, value: string) {
   try {
     localStorage.setItem(key, value)
-  } catch {}
+  }
+  catch {}
 }

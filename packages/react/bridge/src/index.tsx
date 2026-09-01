@@ -1,5 +1,6 @@
-import { createContext, useContext, type ReactNode } from 'react'
 import type { AppRuntime } from '@yunzhen/cordis-runtime'
+import type { ReactNode } from 'react'
+import { createContext, use } from 'react'
 
 const RuntimeContext = createContext<AppRuntime | null>(null)
 
@@ -8,7 +9,8 @@ export function RuntimeProvider({ children, runtime }: { children: ReactNode, ru
 }
 
 export function useRuntime() {
-  const runtime = useContext(RuntimeContext)
-  if (!runtime) throw new Error('App runtime is unavailable')
+  const runtime = use(RuntimeContext)
+  if (!runtime)
+    throw new Error('App runtime is unavailable')
   return runtime
 }

@@ -1,14 +1,14 @@
 // @vitest-environment jsdom
 
+import { RuntimeProvider } from '@yunzhen/cordis-react-bridge'
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
-import { RuntimeProvider } from '@yunzhen/cordis-react-bridge'
-import styles from './index.module.css'
 import { AppShell } from './index'
+import styles from './index.module.css'
 
-describe('AppShell', () => {
+describe('appShell', () => {
   it('marks only the current non-root navigation item as active', async () => {
     const EmptyPage = () => null
     const runtime = {

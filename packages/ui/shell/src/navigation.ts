@@ -22,7 +22,8 @@ export function getNavigationItems(routes: readonly RouteNode[]): readonly Navig
         })
       }
 
-      if (route.children) visit(route.children, routePath)
+      if (route.children)
+        visit(route.children, routePath)
     }
   }
 

@@ -1,7 +1,7 @@
-// @vitest-environment jsdom
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { webAppPlugins } from '@yunzhen/cordis-bundle-web-app'
 import { createAppRuntime } from '@yunzhen/cordis-runtime'
+// @vitest-environment jsdom
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 describe('webAppPlugins', () => {
   beforeEach(() => {
@@ -25,7 +25,7 @@ describe('webAppPlugins', () => {
       ['settings', 'settings', undefined, 100],
     ])
     expect(runtime.get('theme')).toBeDefined()
-    expect(runtime.settingsItems.map((item) => item.id)).toEqual(['appearance'])
+    expect(runtime.settingsItems.map(item => item.id)).toEqual(['appearance'])
     await runtime.dispose()
   })
 })

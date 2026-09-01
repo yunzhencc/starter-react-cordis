@@ -9,7 +9,7 @@ export function AppShell() {
   return (
     <div className={styles.appShell}>
       <nav className={styles.navigation} aria-label="Main navigation">
-        {getNavigationItems(runtime.routes).map((item) => (
+        {getNavigationItems(runtime.routes).map(item => (
           <NavLink className={({ isActive }) => isActive ? styles.activeLink : styles.link} key={item.id} to={item.path} end={item.path === '/'}>
             {item.label}
           </NavLink>

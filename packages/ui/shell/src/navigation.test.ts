@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
 import type { RouteNode } from '@yunzhen/cordis-runtime'
+import { describe, expect, it } from 'vitest'
 import { getNavigationItems } from './navigation'
 
 const EmptyPage = () => null

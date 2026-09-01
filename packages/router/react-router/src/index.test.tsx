@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
 
-import { describe, expect, it } from 'vitest'
-import { createAppRuntime, type AppPlugin } from '@yunzhen/cordis-runtime'
+import type { AppPlugin } from '@yunzhen/cordis-runtime'
+import { createAppRuntime } from '@yunzhen/cordis-runtime'
 import { AppShell } from '@yunzhen/cordis-ui-shell'
+import { describe, expect, it } from 'vitest'
 import { createAppRouter } from './index'
 import { NotFoundPage } from './not-found-page'
 import { RouteErrorPage } from './route-error-page'
@@ -13,7 +14,7 @@ describe('createAppRouter', () => {
     const WorkspaceIndex = () => null
     const WorkspaceItem = () => null
     const WorkspaceError = () => null
-    const plugin: AppPlugin = (app) => app.addRoute({
+    const plugin: AppPlugin = app => app.addRoute({
       id: 'workspace',
       path: 'workspace',
       Component: Workspace,
