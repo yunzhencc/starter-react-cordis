@@ -27,10 +27,20 @@ export function apply(ctx: Context) {
 
 function AppLayout({ controller, slots }: { controller: LayoutController; slots: SlotRegistry }) {
   const snapshot = useSyncExternalStore(controller.subscribe, controller.snapshot, controller.snapshot);
+  useSyncExternalStore(
+    listener => slots.subscribe('workbench', listener),
+    () => slots.version('workbench'),
+    () => slots.version('workbench'),
+  );
   const hasWorkbench = snapshot.workbenchOpen && slots.entries('workbench').length > 0;
+  const gridTemplateColumns = [
+    snapshot.sidebarOpen && '16rem',
+    'minmax(0, 1fr)',
+    hasWorkbench && '16rem',
+  ].filter(Boolean).join(' ');
 
   return (
-    <div className={styles.layout} data-app-layout data-sidebar-open={String(snapshot.sidebarOpen)}>
+    <div className={styles.layout} data-app-layout data-sidebar-open={String(snapshot.sidebarOpen)} style={{ gridTemplateColumns }}>
       {snapshot.sidebarOpen && <aside className={styles.sidebar} data-sidebar-column><Slot name="sidebar" /></aside>}
       <main className={styles.main}><Slot name="main" /></main>
       {hasWorkbench && <aside className={styles.workbench} data-workbench-column><Slot name="workbench" /></aside>}

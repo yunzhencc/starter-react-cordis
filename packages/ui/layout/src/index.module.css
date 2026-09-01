@@ -1,6 +1,5 @@
 .layout {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
   min-height: 100vh;
 }
 

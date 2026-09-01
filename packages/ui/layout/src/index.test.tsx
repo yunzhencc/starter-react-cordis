@@ -46,6 +46,7 @@ describe('app layout', () => {
 
     expect(container.querySelector('[data-app-layout]')?.getAttribute('data-sidebar-open')).toBe('false');
     expect(container.querySelector('[data-sidebar-column]')).toBeNull();
+    expect((container.querySelector('[data-app-layout]') as HTMLElement).style.gridTemplateColumns).toBe('minmax(0, 1fr)');
 
     await act(async () => unmount());
     await dispose();
@@ -67,6 +68,25 @@ describe('app layout', () => {
     ctx.layout.closeWorkbench();
     await act(async () => {});
     expect(container.querySelector('[data-workbench-column]')).toBeNull();
+
+    await act(async () => unmount());
+    await dispose();
+  });
+
+  it('shows an occupant registered after the workbench opens', async () => {
+    const { ctx, container, dispose } = await bootLayout();
+    let unmount!: () => void;
+
+    await act(async () => {
+      unmount = ctx.uiRenderer.mount(container);
+      ctx.layout.openWorkbench();
+    });
+
+    expect(container.querySelector('[data-workbench-column]')).toBeNull();
+    await act(async () => {
+      ctx.slots.register({ name: 'workbench' }, Workbench);
+    });
+    expect(container.querySelector('[data-workbench-column]')).not.toBeNull();
 
     await act(async () => unmount());
     await dispose();
