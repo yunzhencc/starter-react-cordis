@@ -1,5 +1,5 @@
 import type { Context } from '@deepseek-ai/cordis';
-import type { SlotRegistry } from '@yunzhen/cordis-ui-renderer';
+import type { SlotRenderer } from '@yunzhen/cordis-ui-renderer';
 import { Slot } from '@yunzhen/cordis-ui-renderer';
 import { useSyncExternalStore } from 'react';
 import styles from './index.module.css';
@@ -12,10 +12,11 @@ export const inject = ['routes', 'slots'];
 
 export function apply(ctx: Context) {
   const controller = new LayoutController();
+  const slots = ctx.get('uiRenderer')!.slots;
   ctx.effect(() => ctx.reflect.provide('layout', controller), 'layout.provide()');
   ctx.routes.register({
     id: 'app-layout',
-    Component: () => <AppLayout controller={controller} slots={ctx.slots} />,
+    Component: () => <AppLayout controller={controller} slots={slots} />,
     children: {
       'sidebar': { kind: 'single', scope: 'root' },
       'main': { kind: 'single', scope: 'root' },
@@ -25,7 +26,7 @@ export function apply(ctx: Context) {
   });
 }
 
-function AppLayout({ controller, slots }: { controller: LayoutController; slots: SlotRegistry }) {
+function AppLayout({ controller, slots }: { controller: LayoutController; slots: SlotRenderer }) {
   const snapshot = useSyncExternalStore(controller.subscribe, controller.snapshot, controller.snapshot);
   useSyncExternalStore(
     listener => slots.subscribe('workbench', listener),

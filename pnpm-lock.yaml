@@ -98,6 +98,12 @@ importers:
       '@deepseek-ai/cordis':
         specifier: ^4.0.2
         version: 4.0.2
+      '@yunzhen/cordis-ui-layout':
+        specifier: workspace:*
+        version: link:../../ui/layout
+      '@yunzhen/cordis-ui-renderer':
+        specifier: workspace:*
+        version: link:../../ui/renderer
       '@yunzhen/cordis-ui-router':
         specifier: workspace:*
         version: link:../../ui/router

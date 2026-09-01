@@ -10,6 +10,24 @@ export interface SlotOwnerHandle {
   dispose: () => void;
 }
 
+/** @internal */
+export interface SlotRenderer {
+  createOwner: (id: string, children: SlotMap) => SlotOwnerHandle;
+  entries: (name: string) => readonly SlotEntry[];
+  subscribe: (name: string, listener: () => void) => () => void;
+  version: (name: string) => number;
+}
+
+/** @internal */
+export function createSlotRenderer(slots: SlotRegistry): SlotRenderer {
+  return {
+    createOwner: (id, children) => slots.createOwner(id, children),
+    entries: name => slots.entries(name),
+    subscribe: (name, listener) => slots.subscribe(name, listener),
+    version: name => slots.version(name),
+  };
+}
+
 const SlotOwnerContext = createContext<SlotOwnerHandle | null>(null);
 
 export function SlotOwner({ children, owner }: { children?: ReactNode; owner: SlotOwnerHandle }) {
