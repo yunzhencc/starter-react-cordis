@@ -42,6 +42,7 @@ function AppLayout({ controller, slots }: { controller: LayoutController; slots:
   const hasWorkbench = snapshot.workbenchOpen && hasWorkbenchOccupant;
   const sidebarBounds = getSidebarBounds(viewport.width);
   const [sidebarSize, setSidebarSize] = useStoredSize('sidebar-width', sidebarBounds);
+  const sidebarDefaultSize = useRef(sidebarSize).current;
   const workspaceWidth = getWorkspaceWidth(viewport.width, snapshot.sidebarOpen, sidebarSize);
   const workbenchBounds = getWorkbenchBounds(workspaceWidth, viewport.height);
   const workbenchSize = useStoredRatio('app-shell:right-panel-width:v3', workspaceWidth, workbenchBounds);
@@ -70,7 +71,6 @@ function AppLayout({ controller, slots }: { controller: LayoutController; slots:
 
   const updateSidebarSize = ({ inPixels }: PanelSize) => {
     sidebarSizeRef.current = inPixels;
-    setSidebarSize(inPixels);
   };
   const updateWorkbenchSize = ({ inPixels }: PanelSize) => {
     workbenchSizeRef.current = inPixels;
@@ -80,9 +80,12 @@ function AppLayout({ controller, slots }: { controller: LayoutController; slots:
   const persistLayout = (_layout: unknown, meta: { isUserInteraction: boolean }) => {
     if (!meta.isUserInteraction)
       return;
+    const nextSidebarSize = sidebarSizeRef.current;
+    setSidebarSize(nextSidebarSize);
     writeStorage('sidebar-width', sidebarSizeRef.current);
-    if (workspaceWidth > 0)
-      writeStorage('app-shell:right-panel-width:v3', workbenchSizeRef.current / workspaceWidth);
+    const nextWorkspaceWidth = getWorkspaceWidth(viewport.width, snapshot.sidebarOpen, nextSidebarSize);
+    if (nextWorkspaceWidth > 0)
+      writeStorage('app-shell:right-panel-width:v3', workbenchSizeRef.current / nextWorkspaceWidth);
   };
 
   return (
@@ -90,7 +93,7 @@ function AppLayout({ controller, slots }: { controller: LayoutController; slots:
       <Group className={styles.group} id="app-layout-panels" orientation="horizontal" resizeTargetMinimumSize={{ coarse: 16, fine: 16 }} onLayoutChanged={persistLayout}>
         {snapshot.sidebarOpen && (
           <>
-            <Panel defaultSize={`${sidebarSize}px`} groupResizeBehavior="preserve-pixel-size" id="sidebar" maxSize={`${sidebarBounds.maxSize}px`} minSize={`${sidebarBounds.minSize}px`} onResize={updateSidebarSize}>
+            <Panel defaultSize={`${sidebarDefaultSize}px`} groupResizeBehavior="preserve-pixel-size" id="sidebar" maxSize={`${sidebarBounds.maxSize}px`} minSize={`${sidebarBounds.minSize}px`} onResize={updateSidebarSize}>
               <aside className={styles.sidebar} data-sidebar-column><Slot name="sidebar" /></aside>
             </Panel>
             <Separator className={styles.separator} id="sidebar-resize" />
