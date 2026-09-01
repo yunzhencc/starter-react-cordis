@@ -4,13 +4,22 @@
 }
 
 .navigation {
-  display: grid;
-  align-content: start;
-  gap: 0.25rem;
+  display: flex;
+  flex-direction: column;
   width: 12rem;
   padding: 1rem;
   background: var(--app-surface);
   border-right: 1px solid var(--app-border);
+}
+
+.navigationLinks {
+  display: grid;
+  align-content: start;
+  gap: 0.25rem;
+}
+
+.navigationFooter {
+  margin-top: auto;
 }
 
 .link,
@@ -27,6 +36,14 @@
 }
 
 .main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
   padding: 2rem;
   font-size: var(--app-content-font-size);
+}
+
+.contentHeader {
+  display: grid;
+  gap: 0.5rem;
 }
