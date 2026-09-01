@@ -59,27 +59,12 @@ importers:
 
   apps/web:
     dependencies:
+      '@deepseek-ai/cordis':
+        specifier: ^4.0.2
+        version: 4.0.2
       '@yunzhen/cordis-bundle-web-app':
         specifier: workspace:*
         version: link:../../packages/bundle/web-app
-      '@yunzhen/cordis-react-bridge':
-        specifier: workspace:*
-        version: link:../../packages/react/bridge
-      '@yunzhen/cordis-react-router':
-        specifier: workspace:*
-        version: link:../../packages/router/react-router
-      '@yunzhen/cordis-runtime':
-        specifier: workspace:*
-        version: link:../../packages/core/runtime
-      react:
-        specifier: ^19.2.8
-        version: 19.2.8
-      react-dom:
-        specifier: ^19.2.8
-        version: 19.2.8(react@19.2.8)
-      react-router-dom:
-        specifier: ^7.18.3
-        version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
 
   packages/bundle/web-app:
     dependencies:
@@ -89,72 +74,61 @@ importers:
       '@yunzhen/cordis-feature-settings':
         specifier: workspace:*
         version: link:../../feature/settings
-      '@yunzhen/cordis-runtime':
+      '@yunzhen/cordis-ui-layout':
         specifier: workspace:*
-        version: link:../../core/runtime
+        version: link:../../ui/layout
+      '@yunzhen/cordis-ui-renderer':
+        specifier: workspace:*
+        version: link:../../ui/renderer
+      '@yunzhen/cordis-ui-router':
+        specifier: workspace:*
+        version: link:../../ui/router
       '@yunzhen/cordis-ui-theme':
         specifier: workspace:*
         version: link:../../ui/theme
+    devDependencies:
+      '@deepseek-ai/cordis':
+        specifier: ^4.0.2
+        version: 4.0.2
 
   packages/client/modules: {}
 
-  packages/core/runtime:
+  packages/feature/dashboard:
     dependencies:
       '@deepseek-ai/cordis':
         specifier: ^4.0.2
         version: 4.0.2
-      react:
-        specifier: ^19.2.8
-        version: 19.2.8
-
-  packages/feature/dashboard:
-    dependencies:
-      '@yunzhen/cordis-runtime':
+      '@yunzhen/cordis-ui-router':
         specifier: workspace:*
-        version: link:../../core/runtime
+        version: link:../../ui/router
       react:
         specifier: ^19.2.8
         version: 19.2.8
 
   packages/feature/settings:
     dependencies:
-      '@yunzhen/cordis-react-bridge':
+      '@deepseek-ai/cordis':
+        specifier: ^4.0.2
+        version: 4.0.2
+      '@yunzhen/cordis-ui-renderer':
         specifier: workspace:*
-        version: link:../../react/bridge
-      '@yunzhen/cordis-runtime':
+        version: link:../../ui/renderer
+      '@yunzhen/cordis-ui-router':
         specifier: workspace:*
-        version: link:../../core/runtime
+        version: link:../../ui/router
       react:
         specifier: ^19.2.8
         version: 19.2.8
     devDependencies:
+      '@yunzhen/cordis-ui-layout':
+        specifier: workspace:*
+        version: link:../../ui/layout
+      '@yunzhen/cordis-ui-theme':
+        specifier: workspace:*
+        version: link:../../ui/theme
       react-dom:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
-
-  packages/react/bridge:
-    dependencies:
-      '@yunzhen/cordis-runtime':
-        specifier: workspace:*
-        version: link:../../core/runtime
-      react:
-        specifier: ^19.2.8
-        version: 19.2.8
-
-  packages/router/react-router:
-    dependencies:
-      '@yunzhen/cordis-runtime':
-        specifier: workspace:*
-        version: link:../../core/runtime
-      '@yunzhen/cordis-ui-shell':
-        specifier: workspace:*
-        version: link:../../ui/shell
-      react:
-        specifier: ^19.2.8
-        version: 19.2.8
-      react-router-dom:
-        specifier: ^7.18.3
-        version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
 
   packages/ui/layout:
     dependencies:
@@ -207,29 +181,16 @@ importers:
         specifier: ^7.18.3
         version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
 
-  packages/ui/shell:
-    dependencies:
-      '@yunzhen/cordis-react-bridge':
-        specifier: workspace:*
-        version: link:../../react/bridge
-      react:
-        specifier: ^19.2.8
-        version: 19.2.8
-      react-router-dom:
-        specifier: ^7.18.3
-        version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-    devDependencies:
-      react-dom:
-        specifier: ^19.2.8
-        version: 19.2.8(react@19.2.8)
-
   packages/ui/slots: {}
 
   packages/ui/theme:
     dependencies:
-      '@yunzhen/cordis-runtime':
+      '@deepseek-ai/cordis':
+        specifier: ^4.0.2
+        version: 4.0.2
+      '@yunzhen/cordis-ui-renderer':
         specifier: workspace:*
-        version: link:../../core/runtime
+        version: link:../renderer
       react:
         specifier: ^19.2.8
         version: 19.2.8

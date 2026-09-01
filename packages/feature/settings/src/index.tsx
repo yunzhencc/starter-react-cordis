@@ -1,23 +1,27 @@
-import type { AppPlugin } from '@yunzhen/cordis-runtime'
-import { useRuntime } from '@yunzhen/cordis-react-bridge'
+import type { Context } from '@deepseek-ai/cordis';
+import type {} from '@yunzhen/cordis-ui-router';
+import { Slot } from '@yunzhen/cordis-ui-renderer';
 
 export function SettingsPage() {
-  const runtime = useRuntime()
-  const settingsItems = [...runtime.settingsItems].sort((left, right) => left.order - right.order)
-
   return (
     <>
       <h1>Settings</h1>
-      {settingsItems.map(({ id, Component }) => <Component key={id} />)}
+      <Slot name="settings.section" />
     </>
-  )
+  );
 }
 
-export const settingsPlugin: AppPlugin = (app) => {
-  return app.addRoute({
+export const inject = ['routes'];
+
+export function apply(ctx: Context) {
+  ctx.routes.inject('app-layout', () => ctx.routes.register({
     id: 'settings',
+    parentId: 'app-layout',
     path: 'settings',
     Component: SettingsPage,
     navigation: { label: 'Settings', order: 100 },
-  })
+    children: {
+      'settings.section': { kind: 'list', scope: 'root' },
+    },
+  }));
 }

@@ -1,5 +1,8 @@
-import { dashboardPlugin } from '@yunzhen/cordis-feature-dashboard'
-import { settingsPlugin } from '@yunzhen/cordis-feature-settings'
-import { uiThemePlugin } from '@yunzhen/cordis-ui-theme'
+import * as dashboard from '@yunzhen/cordis-feature-dashboard';
+import * as settings from '@yunzhen/cordis-feature-settings';
+import * as layout from '@yunzhen/cordis-ui-layout';
+import * as renderer from '@yunzhen/cordis-ui-renderer';
+import * as router from '@yunzhen/cordis-ui-router';
+import * as theme from '@yunzhen/cordis-ui-theme';
 
-export const webAppPlugins = [uiThemePlugin, dashboardPlugin, settingsPlugin] as const
+export const webAppPlugins = [renderer, router, layout, theme, dashboard, settings] as const;

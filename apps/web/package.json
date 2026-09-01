@@ -7,12 +7,7 @@
     "dev": "vite"
   },
   "dependencies": {
-    "@yunzhen/cordis-bundle-web-app": "workspace:*",
-    "@yunzhen/cordis-react-bridge": "workspace:*",
-    "@yunzhen/cordis-react-router": "workspace:*",
-    "@yunzhen/cordis-runtime": "workspace:*",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "react-router-dom": "^7.18.3"
+    "@deepseek-ai/cordis": "^4.0.2",
+    "@yunzhen/cordis-bundle-web-app": "workspace:*"
   }
 }

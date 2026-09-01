@@ -6,7 +6,12 @@
   "dependencies": {
     "@yunzhen/cordis-feature-dashboard": "workspace:*",
     "@yunzhen/cordis-feature-settings": "workspace:*",
-    "@yunzhen/cordis-runtime": "workspace:*",
+    "@yunzhen/cordis-ui-layout": "workspace:*",
+    "@yunzhen/cordis-ui-renderer": "workspace:*",
+    "@yunzhen/cordis-ui-router": "workspace:*",
     "@yunzhen/cordis-ui-theme": "workspace:*"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.2"
   }
 }

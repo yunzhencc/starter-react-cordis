@@ -4,11 +4,22 @@
   "private": true,
   "exports": "./src/index.tsx",
   "dependencies": {
-    "@yunzhen/cordis-react-bridge": "workspace:*",
-    "@yunzhen/cordis-runtime": "workspace:*",
+    "@deepseek-ai/cordis": "^4.0.2",
+    "@yunzhen/cordis-ui-renderer": "workspace:*",
+    "@yunzhen/cordis-ui-router": "workspace:*",
     "react": "^19.2.8"
   },
   "devDependencies": {
+    "@yunzhen/cordis-ui-layout": "workspace:*",
+    "@yunzhen/cordis-ui-theme": "workspace:*",
     "react-dom": "^19.2.8"
+  },
+  "yunzhen": {
+    "client": {
+      "platform": "web",
+      "inject": [],
+      "external": [],
+      "immediately": false
+    }
   }
 }

@@ -8,10 +8,19 @@
     "./styles": "./src/styles.ts"
   },
   "dependencies": {
-    "@yunzhen/cordis-runtime": "workspace:*",
+    "@deepseek-ai/cordis": "^4.0.2",
+    "@yunzhen/cordis-ui-renderer": "workspace:*",
     "react": "^19.2.8"
   },
   "devDependencies": {
     "react-dom": "^19.2.8"
+  },
+  "yunzhen": {
+    "client": {
+      "platform": "web",
+      "inject": [],
+      "external": [],
+      "immediately": false
+    }
   }
 }

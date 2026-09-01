@@ -1,38 +1,67 @@
-import { RuntimeProvider } from '@yunzhen/cordis-react-bridge'
-import { createAppRuntime } from '@yunzhen/cordis-runtime'
 // @vitest-environment jsdom
-import { act } from 'react'
-import { createRoot } from 'react-dom/client'
-import { afterEach, describe, expect, it } from 'vitest'
-import { SettingsPage } from './index'
 
-let container: HTMLDivElement | undefined
+import type { Context as CordisContext } from '@deepseek-ai/cordis';
+import { Context } from '@deepseek-ai/cordis';
+import * as layout from '@yunzhen/cordis-ui-layout';
+import * as renderer from '@yunzhen/cordis-ui-renderer';
+import * as router from '@yunzhen/cordis-ui-router';
+import * as theme from '@yunzhen/cordis-ui-theme';
+import { act } from 'react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import * as settings from './index';
 
-afterEach(() => {
-  container?.remove()
-  container = undefined
-})
+Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 
-describe('settingsPage', () => {
-  it('renders runtime settings items by order', async () => {
-    const runtime = await createAppRuntime([
-      app => app.addSettingsItem({ id: 'second', order: 20, Component: () => <>second</> }),
-      app => app.addSettingsItem({ id: 'first', order: 10, Component: () => <>first</> }),
-    ])
-    container = document.createElement('div')
-    const root = createRoot(container)
+async function bootBuiltInModules(path: string) {
+  window.history.replaceState({}, '', path);
+  const ctx = new Context();
+  const fibers: ReturnType<CordisContext['plugin']>[] = [];
+
+  for (const module of [renderer, router, layout, theme, settings]) {
+    const fiber = ctx.plugin(module);
+    fibers.push(fiber);
+    await fiber.await();
+  }
+
+  return {
+    ctx,
+    container: document.createElement('div'),
+    async dispose() {
+      for (const fiber of fibers.reverse()) await fiber.dispose();
+    },
+  };
+}
+
+describe('settings module', () => {
+  beforeEach(() => {
+    vi.stubGlobal('matchMedia', () => ({
+      matches: false,
+      addEventListener() {},
+      removeEventListener() {},
+    }));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    document.head.querySelector('style[data-cordis-ui-theme]')?.remove();
+  });
+
+  it('registers settings below app-layout and renders its Appearance section', async () => {
+    const { ctx, container, dispose } = await bootBuiltInModules('/settings');
+    expect(ctx.routes.snapshot().find(route => route.id === 'settings')).toMatchObject({
+      parentId: 'app-layout',
+      path: 'settings',
+    });
+    let unmount!: () => void;
 
     await act(async () => {
-      root.render(
-        <RuntimeProvider runtime={runtime}>
-          <SettingsPage />
-        </RuntimeProvider>,
-      )
-    })
+      unmount = ctx.uiRenderer.mount(container);
+    });
 
-    expect(container.textContent).toBe('Settingsfirstsecond')
+    expect(container.querySelector('h1')?.textContent).toBe('Settings');
+    expect(container.textContent).toContain('Appearance');
 
-    await act(async () => root.unmount())
-    await runtime.dispose()
-  })
-})
+    await act(async () => unmount());
+    await dispose();
+  });
+});

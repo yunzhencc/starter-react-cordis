@@ -1,14 +1,9 @@
-import type { SettingsItem } from '@yunzhen/cordis-runtime'
-import type { ThemeRuntime } from './theme'
-import { useSyncExternalStore } from 'react'
-import styles from './appearance-settings-item.module.css'
+import type { ThemeRuntime } from './theme';
+import { useSyncExternalStore } from 'react';
+import styles from './appearance-settings-item.module.css';
 
-export function createAppearanceSettingsItem(theme: ThemeRuntime): SettingsItem {
-  return { id: 'appearance', order: 100, Component: () => <AppearanceSettings theme={theme} /> }
-}
-
-function AppearanceSettings({ theme }: { theme: ThemeRuntime }) {
-  const snapshot = useSyncExternalStore(theme.subscribe, () => theme.snapshot)
+export function AppearanceSettings({ theme }: { theme: ThemeRuntime }) {
+  const snapshot = useSyncExternalStore(theme.subscribe, () => theme.snapshot);
 
   return (
     <fieldset className={styles.panel}>
@@ -36,5 +31,5 @@ function AppearanceSettings({ theme }: { theme: ThemeRuntime }) {
         />
       </label>
     </fieldset>
-  )
+  );
 }
