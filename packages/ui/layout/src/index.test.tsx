@@ -4,11 +4,25 @@ import { Context } from '@deepseek-ai/cordis';
 import { apply as applyRenderer } from '@yunzhen/cordis-ui-renderer';
 import { apply as applyRouter } from '@yunzhen/cordis-ui-router';
 import { act } from 'react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { apply } from './index';
 import { LayoutController } from './layout-controller';
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
+
+class TestResizeObserver {
+  disconnect() {}
+  observe() {}
+  unobserve() {}
+}
+
+beforeEach(() => {
+  vi.stubGlobal('ResizeObserver', TestResizeObserver);
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 const Workbench = () => <section>Workbench</section>;
 const EmptyPage = () => null;
@@ -66,7 +80,7 @@ describe('app layout', () => {
 
     expect(container.querySelector('[data-app-layout]')?.getAttribute('data-sidebar-open')).toBe('false');
     expect(container.querySelector('[data-sidebar-column]')).toBeNull();
-    expect((container.querySelector('[data-app-layout]') as HTMLElement).style.gridTemplateColumns).toBe('minmax(0, 1fr)');
+    expect(container.querySelectorAll('[data-panel]')).toHaveLength(1);
 
     await act(async () => unmount());
     await dispose();
@@ -107,6 +121,27 @@ describe('app layout', () => {
       ctx.slots.register({ name: 'workbench' }, Workbench);
     });
     expect(container.querySelector('[data-workbench-column]')).not.toBeNull();
+
+    await act(async () => unmount());
+    await dispose();
+  });
+
+  it('renders draggable Codex-style separators for visible rails', async () => {
+    const { ctx, container, dispose } = await bootLayout();
+    let unmount!: () => void;
+
+    await act(async () => {
+      unmount = ctx.uiRenderer.mount(container);
+    });
+    await act(async () => {
+      ctx.slots.register({ name: 'workbench' }, Workbench);
+      ctx.layout.openWorkbench();
+    });
+
+    expect(container.querySelector('[data-group]')).not.toBeNull();
+    expect(container.querySelector('#sidebar')).not.toBeNull();
+    expect(container.querySelector('#workbench')).not.toBeNull();
+    expect(container.querySelectorAll('[data-separator]')).toHaveLength(2);
 
     await act(async () => unmount());
     await dispose();

@@ -8,7 +8,8 @@
     "@yunzhen/cordis-ui-renderer": "workspace:*",
     "@yunzhen/cordis-ui-router": "workspace:*",
     "@yunzhen/cordis-ui-slots": "workspace:*",
-    "react": "^19.2.8"
+    "react": "^19.2.8",
+    "react-resizable-panels": "^4.12.3"
   },
   "yunzhen": {
     "client": {
