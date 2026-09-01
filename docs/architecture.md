@@ -27,11 +27,11 @@ core/runtime ──> @deepseek-ai/cordis
 | 包 | 职责 | 是否为业务插件 |
 | --- | --- | --- |
 | `apps/web` | Vite 入口；启动运行时并渲染 React 根节点 | 否 |
-| `packages/core/runtime` | 创建 Cordis 上下文；收集功能路由树和设置贡献 | 否 |
+| `packages/core/runtime` | 创建 Cordis 上下文；收集功能路由树、设置和静态插槽贡献 | 否 |
 | `packages/react/bridge` | 将运行时贡献暴露给 React | 否 |
 | `packages/router/react-router` | 将路由树一次性转换为 React Router | 否 |
-| `packages/ui/shell` | 侧栏、顶部栏、主内容区和 `<Outlet />`；从路由树派生导航 | 否 |
-| `packages/ui/theme` | 主题令牌、浏览器本地外观偏好和 Appearance 设置贡献 | 否（基础设施插件） |
+| `packages/ui/shell` | 侧栏、顶部栏、主内容区和 `<Outlet />`；渲染 `shell.content.header`、`shell.navigation.footer` 并从路由树派生导航 | 否 |
+| `packages/ui/theme` | 主题令牌、浏览器本地外观偏好、Appearance 设置贡献和顶部主题切换按钮 | 否（基础设施插件） |
 | `packages/feature/dashboard` | 默认页和导航项 | 是 |
 | `packages/feature/settings` | 设置页和导航项 | 是 |
 | `packages/bundle/web-app` | 静态导入并组合内置插件 | 否 |
@@ -40,11 +40,13 @@ core/runtime ──> @deepseek-ai/cordis
 
 1. `apps/web` 创建应用运行时。
 2. `bundle/web-app` 按固定顺序挂载 `ui/theme`、`dashboard` 与 `settings`。
-3. `ui/theme` 注册主题服务和 Appearance 设置贡献；业务功能插件各自注册一棵路由树及其导航 metadata。
+3. `ui/theme` 注册主题服务、Appearance 设置贡献和 `shell.content.header` 主题切换按钮；业务功能插件各自注册一棵路由树及其导航 metadata。
 4. `router/react-router` 递归转换 `runtime.routes`，创建一次 `createBrowserRouter()`。
 5. `ui/shell` 从路由树派生导航，并渲染导航与 `<Outlet />`。
 
 路由树在启动后保持静态。节点 `path` 是相对父路由的片段，根 Dashboard 使用 index 路由，Settings 使用 `settings`。以后若要支持运行时安装或卸载插件，需要重新设计路由更新、版本兼容和安全边界；首版不预留这套机制。
+
+核心运行时拥有路由、设置和静态插槽贡献；Shell 只渲染 `shell.content.header` 与 `shell.navigation.footer`。首版不支持嵌套或动态插槽组合。
 
 ## 插件边界
 

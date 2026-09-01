@@ -10,5 +10,8 @@
   "dependencies": {
     "@yunzhen/cordis-runtime": "workspace:*",
     "react": "^19.2.8"
+  },
+  "devDependencies": {
+    "react-dom": "^19.2.8"
   }
 }
