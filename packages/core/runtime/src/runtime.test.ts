@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createAppRuntime, type AppPlugin } from '@yunzhen/cordis-runtime'
+import { createAppRuntime, type AppPlugin, type RouteNode } from '@yunzhen/cordis-runtime'
 
 declare module '@yunzhen/cordis-runtime' {
   interface AppServices {
@@ -9,14 +9,84 @@ declare module '@yunzhen/cordis-runtime' {
 }
 
 describe('createAppRuntime', () => {
-  it('keeps pages contributed by plugins in registration order', async () => {
-    const first: AppPlugin = (app) => app.addPage({ id: 'home', path: '/', label: 'Home', Component: () => null })
-    const second: AppPlugin = (app) => app.addPage({ id: 'settings', path: '/settings', label: 'Settings', Component: () => null })
+  it('keeps nested routes contributed by plugins in registration order', async () => {
+    const first: AppPlugin = (app) => app.addRoute({
+      id: 'dashboard',
+      index: true,
+      Component: () => null,
+      navigation: { label: 'Dashboard', order: 0 },
+    })
+    const second: AppPlugin = (app) => app.addRoute({
+      id: 'settings',
+      path: 'settings',
+      Component: () => null,
+      navigation: { label: 'Settings', order: 100 },
+      children: [{ id: 'appearance', path: 'appearance', Component: () => null }],
+    })
 
     const runtime = await createAppRuntime([first, second])
 
-    expect(runtime.pages.map((page) => page.id)).toEqual(['home', 'settings'])
+    const routes = runtime.routes
+    expect(routes).toEqual([
+      expect.objectContaining({ id: 'dashboard', index: true }),
+      expect.objectContaining({ id: 'settings', path: 'settings', children: [expect.objectContaining({ id: 'appearance' })] }),
+    ])
+    routes.pop()
+    expect(runtime.routes.map((route) => route.id)).toEqual(['dashboard', 'settings'])
     await runtime.dispose()
+  })
+
+  it('removes only the route registered by its disposer', async () => {
+    let removeFirst!: () => void
+    const runtime = await createAppRuntime([
+      (app) => {
+        removeFirst = app.addRoute({ id: 'dashboard', index: true, Component: () => null })
+      },
+      (app) => app.addRoute({ id: 'settings', path: 'settings', Component: () => null }),
+    ])
+
+    removeFirst()
+    expect(runtime.routes.map((route) => route.id)).toEqual(['settings'])
+    await runtime.dispose()
+  })
+
+  it.each<[string, RouteNode, string]>([
+    ['duplicate ids across levels', {
+      id: 'dashboard',
+      index: true,
+      Component: () => null,
+      children: [{ id: 'dashboard', path: 'nested', Component: () => null }],
+    }, 'duplicate id'],
+    ['index routes with paths', { id: 'dashboard', index: true, path: 'dashboard', Component: () => null }, 'index route'],
+    ['two index siblings', {
+      id: 'settings',
+      path: 'settings',
+      Component: () => null,
+      children: [
+        { id: 'first', index: true, Component: () => null },
+        { id: 'second', index: true, Component: () => null },
+      ],
+    }, 'index route'],
+    ['duplicate sibling paths', {
+      id: 'settings',
+      path: 'settings',
+      Component: () => null,
+      children: [
+        { id: 'first', path: 'appearance', Component: () => null },
+        { id: 'second', path: 'appearance', Component: () => null },
+      ],
+    }, 'duplicate sibling path'],
+    ['absolute paths', { id: 'settings', path: '/settings', Component: () => null }, 'relative'],
+    ['empty paths', { id: 'settings', path: '', Component: () => null }, 'relative'],
+    ['current-directory paths', { id: 'settings', path: '.', Component: () => null }, 'relative'],
+    ['parent-directory paths', { id: 'settings', path: '..', Component: () => null }, 'relative'],
+    ['navigation without a route target', {
+      id: 'settings',
+      Component: () => null,
+      navigation: { label: 'Settings', order: 100 },
+    }, 'navigation'],
+  ])('rejects %s', async (_, route, message) => {
+    await expect(createAppRuntime([(app) => app.addRoute(route)])).rejects.toThrow(message)
   })
 
   it('collects a service declared through the public package entry', async () => {
