@@ -141,10 +141,10 @@ export class SlotCore {
   }
 
   private removeDeclaration(slot: SlotRecord) {
-    for (const entry of [...slot.entries]) this.remove(entry, slot);
     slot.spec = undefined;
     slot.declaredBy = undefined;
     slot.epoch++;
+    for (const entry of [...slot.entries]) this.remove(entry, slot);
     this.notify(slot);
   }
 

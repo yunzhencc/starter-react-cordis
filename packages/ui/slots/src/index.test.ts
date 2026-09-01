@@ -50,4 +50,21 @@ describe('slotCore', () => {
     expect(changes).toEqual([1, 2]);
     expect(core.declarationEpoch('host')).toBe(2);
   });
+
+  it('closes a declaration before descendant listeners can register into it', () => {
+    const core = new SlotCore();
+    const disposeFrame = core.register({ name: 'root', children: { host: { kind: 'single', scope: 'root' } } }, Null);
+    core.register({ name: 'host', children: { row: { kind: 'list', scope: 'root' } } }, Null);
+    core.subscribeDeclaration('row', () => {
+      if (!core.spec('row')) {
+        expect(() => core.register({ name: 'host', children: { leaked: { kind: 'list', scope: 'root' } } }, Null)).toThrow('not declared');
+      }
+    });
+
+    disposeFrame();
+
+    expect(core.spec('host')).toBeUndefined();
+    expect(core.spec('row')).toBeUndefined();
+    expect(core.spec('leaked')).toBeUndefined();
+  });
 });
