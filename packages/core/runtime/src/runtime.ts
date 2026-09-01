@@ -103,6 +103,7 @@ function validateRoutes(routes: readonly RouteNode[]) {
 
       if (route.index) {
         if (route.path !== undefined) throw new Error(`index route cannot have a path: ${route.id}`)
+        if (route.children) throw new Error(`index route cannot have children: ${route.id}`)
         if (hasIndex) throw new Error('only one index route is allowed per sibling group')
         hasIndex = true
       }

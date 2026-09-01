@@ -53,11 +53,17 @@ describe('createAppRuntime', () => {
   it.each<[string, RouteNode, string]>([
     ['duplicate ids across levels', {
       id: 'dashboard',
-      index: true,
+      path: 'dashboard',
       Component: () => null,
       children: [{ id: 'dashboard', path: 'nested', Component: () => null }],
     }, 'duplicate id'],
     ['index routes with paths', { id: 'dashboard', index: true, path: 'dashboard', Component: () => null }, 'index route'],
+    ['index routes with children', {
+      id: 'dashboard',
+      index: true,
+      Component: () => null,
+      children: [{ id: 'nested', path: 'nested', Component: () => null }],
+    }, 'index route cannot have children'],
     ['two index siblings', {
       id: 'settings',
       path: 'settings',
