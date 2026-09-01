@@ -5,10 +5,10 @@ export function DashboardPage() {
 }
 
 export const dashboardPlugin: AppPlugin = (app) => {
-  return app.addPage({
+  return app.addRoute({
     id: 'dashboard',
-    path: '/',
-    label: 'Dashboard',
+    index: true,
     Component: DashboardPage,
+    navigation: { label: 'Dashboard', order: 0 },
   })
 }

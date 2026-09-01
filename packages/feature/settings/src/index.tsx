@@ -14,10 +14,10 @@ export function SettingsPage() {
 }
 
 export const settingsPlugin: AppPlugin = (app) => {
-  return app.addPage({
+  return app.addRoute({
     id: 'settings',
-    path: '/settings',
-    label: 'Settings',
+    path: 'settings',
     Component: SettingsPage,
+    navigation: { label: 'Settings', order: 100 },
   })
 }

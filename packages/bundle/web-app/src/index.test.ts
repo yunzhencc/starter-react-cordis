@@ -17,12 +17,12 @@ describe('webAppPlugins', () => {
     document.head.querySelector('style[data-cordis-ui-theme]')?.remove()
   })
 
-  it('loads the built-in dashboard and settings pages', async () => {
+  it('loads the built-in dashboard and settings routes', async () => {
     const runtime = await createAppRuntime(webAppPlugins)
 
-    expect(runtime.pages.map(({ id, path }) => [id, path])).toEqual([
-      ['dashboard', '/'],
-      ['settings', '/settings'],
+    expect(runtime.routes.map(({ id, path, index, navigation }) => [id, path, index, navigation?.order])).toEqual([
+      ['dashboard', undefined, true, 0],
+      ['settings', 'settings', undefined, 100],
     ])
     expect(runtime.get('theme')).toBeDefined()
     expect(runtime.settingsItems.map((item) => item.id)).toEqual(['appearance'])
