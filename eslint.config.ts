@@ -1,8 +1,13 @@
-import antfu from '@antfu/eslint-config'
+import antfu from '@antfu/eslint-config';
 
 export default antfu(
   {
     ignores: ['.superpowers/**', 'docs/**'],
+    stylistic: {
+      semi: true,
+      indent: 2,
+      quotes: 'single',
+    },
     react: true,
   },
   {
@@ -23,4 +28,4 @@ export default antfu(
       'pnpm/yaml-enforce-settings': 'off',
     },
   },
-)
+);
