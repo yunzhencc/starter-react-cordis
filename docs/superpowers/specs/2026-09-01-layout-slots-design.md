@@ -1,5 +1,7 @@
 # 布局 Slots 设计
 
+> 已被 [2026-09-01-deepseek-aligned-plugin-runtime-design.md](2026-09-01-deepseek-aligned-plugin-runtime-design.md) 取代。本文保留为此前 `core/runtime` / `ui/shell` 方案的历史设计记录；当前实现使用 `ui-slots`、`ctx.slots` 和 root-only Slot ownership。
+
 ## 目标
 
 让仓库内功能包能把轻量 React UI 放入应用壳的受控位置，而不修改 `ui/shell`，也不耦合 React Router。首版只服务现有 Shell，不实现任意布局、嵌套 Slots、运行时安装或第三方插件。

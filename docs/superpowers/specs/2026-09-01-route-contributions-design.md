@@ -1,5 +1,7 @@
 # 路由贡献模型设计
 
+> 已被 [2026-09-01-deepseek-aligned-plugin-runtime-design.md](2026-09-01-deepseek-aligned-plugin-runtime-design.md) 取代。本文保留为此前 `core/runtime` 路由树方案的历史设计记录；当前实现使用 `ctx.routes`、`parentId`、页面 Slot 和无路径 `app-layout` Route。
+
 ## 目标
 
 将首版扁平 `Page` 贡献替换为可嵌套的 `RouteNode` 树，使功能包能拥有自己的布局路由、子路由、错误边界和导航元信息，同时保持 `core/runtime` 不依赖 React Router 的 `RouteObject`。

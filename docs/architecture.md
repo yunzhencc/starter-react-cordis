@@ -1,70 +1,55 @@
 # starter-react-cordis 首版架构
 
-## 目标
+## 状态与范围
 
-提供一个面向复杂 React 应用的 monorepo 模板：以 Cordis 管理功能组合，以 React 负责渲染，以 React Router 负责 URL 路由。
+当前生效的架构规格是 [DeepSeek 对齐的插件运行时设计](superpowers/specs/2026-09-01-deepseek-aligned-plugin-runtime-design.md)。首版只启动随仓库构建发布的静态模块；不提供第三方安装、远程模块、Node/CDN Provider、懒 CJS、HMR 或运行时插件装卸。
 
-首版只加载仓库内、随构建产物发布的可信功能包；不支持第三方插件、远程模块或运行时安装。
-
-## 分层
+## 静态启动链
 
 ```text
 apps/web
-  └─ bundle/web-app
-       ├─ ui/theme
-       ├─ feature/dashboard
-       └─ feature/settings
-
-apps/web ──> react/bridge, router/react-router, ui/shell
-所有包 ──> core/runtime
-core/runtime ──> @deepseek-ai/cordis
+  └─ 创建 Cordis Context
+      └─ bundle/web-app 的固定模块顺序
+          renderer → router → layout → theme → dashboard → settings
+              └─ ctx.uiRenderer.mount(container)
 ```
 
-`core/runtime` 是 Cordis 的唯一直接封装点，定义应用插件和贡献项的最小契约。功能包依赖该契约，不直接耦合 Cordis 的具体 API。
+`apps/web` 直接创建 Context 并逐个安装 `webAppPlugins`。模块的 `inject` 声明所需 Service；依赖父 Route 或 Slot 的贡献使用 `ctx.routes.inject()` / `ctx.slots.inject()` 等待声明，而不是依赖同级模块的加载时序。
 
 ## 包职责
 
-| 包 | 职责 | 是否为业务插件 |
-| --- | --- | --- |
-| `apps/web` | Vite 入口；启动运行时并渲染 React 根节点 | 否 |
-| `packages/core/runtime` | 创建 Cordis 上下文；收集功能路由树、设置和静态插槽贡献 | 否 |
-| `packages/react/bridge` | 将运行时贡献暴露给 React | 否 |
-| `packages/router/react-router` | 将路由树一次性转换为 React Router | 否 |
-| `packages/ui/shell` | 侧栏、顶部栏、主内容区和 `<Outlet />`；渲染 `shell.content.header`、`shell.navigation.footer` 并从路由树派生导航 | 否 |
-| `packages/ui/theme` | 主题令牌、浏览器本地外观偏好、Appearance 设置贡献和顶部主题切换按钮 | 否（基础设施插件） |
-| `packages/feature/dashboard` | 默认页和导航项 | 是 |
-| `packages/feature/settings` | 设置页和导航项 | 是 |
-| `packages/bundle/web-app` | 静态导入并组合内置插件 | 否 |
+| 包 | 职责 |
+| --- | --- |
+| `@yunzhen/cordis-client-modules` | 仅导出未来动态模块的 `WebBootGraph` 与 `PluginCatalogProvider` 协议类型；首版没有 Provider 或运行时代码。 |
+| `@yunzhen/cordis-ui-slots` | 纯 `SlotMap` / `SlotCore`，支持 `root`、`single`、`list` 与唯一 `root` scope。 |
+| `@yunzhen/cordis-ui-renderer` | `ctx.slots` 的 SlotRegistry Service，以及 `ctx.uiRenderer` 的唯一 React 根挂载。 |
+| `@yunzhen/cordis-ui-router` | `ctx.routes` 的 RouteRegistry、React Router 适配和 Route 的 Slot owner。 |
+| `@yunzhen/cordis-ui-layout` | `ctx.layout` 面板动作和无路径 `app-layout` 三栏 Route。 |
+| `feature/dashboard`、`feature/settings`、`ui/theme` | 通过 Cordis `inject` + `apply` 注册 Route 或 Slot 贡献。 |
+| `bundle/web-app` | 静态导入并固定组合上述内置模块。 |
 
-## 启动流程
+旧的 `core/runtime`、`react/bridge`、`router/react-router` 与 `ui/shell` 分层已不属于当前实现。
 
-1. `apps/web` 创建应用运行时。
-2. `bundle/web-app` 按固定顺序挂载 `ui/theme`、`dashboard` 与 `settings`。
-3. `ui/theme` 注册主题服务、Appearance 设置贡献和 `shell.content.header` 主题切换按钮；业务功能插件各自注册一棵路由树及其导航 metadata。
-4. `router/react-router` 递归转换 `runtime.routes`，创建一次 `createBrowserRouter()`。
-5. `ui/shell` 从路由树派生导航，并渲染导航与 `<Outlet />`。
+## Slot、Route 与布局
 
-路由树在启动后保持静态。节点 `path` 是相对父路由的片段，根 Dashboard 使用 index 路由，Settings 使用 `settings`。以后若要支持运行时安装或卸载插件，需要重新设计路由更新、版本兼容和安全边界；首版不预留这套机制。
+Slots 只有 `root` scope。父项的 `children` 是子 Slot 唯一声明授权；父项移除会递归清理后代声明和贡献，过期 disposer 为无操作。根 renderer 只渲染 `root` Slot，Route 通过 Router 内部的 Slot owner 声明并渲染自己的子 Slots。
 
-核心运行时拥有路由、设置和静态插槽贡献；Shell 只渲染 `shell.content.header` 与 `shell.navigation.footer`。首版不支持嵌套或动态插槽组合。
+Router 是唯一向 `root` Slot 注册的路由宿主。`ctx.routes` 以 `id`、`parentId`、可选 `path` / `index`、`Component` 与页面 `children` Slots 描述路由；`path` 缺省表示不消费 URL 的 Layout Route。跨模块以 `parentId` 建立父子关系，不能修改彼此的 `children` 数组。
 
-## 插件边界
-
-业务功能使用插件形式，是为了独立声明它拥有的路由树、导航和将来的命令，而不是为了让每个包都成为插件。`ui/theme` 是基础设施插件：它在浏览器本地保存外观偏好，提供主题令牌和通用 Settings 贡献；Dashboard 与 Settings 仍是业务功能插件。
-
-基础运行时、React 适配、React Router 适配和应用壳保持普通模块。这与 DeepSeek Harness 的分层一致：基础启动和运行时是基础设施，按功能组织的能力包才通过 Cordis 组合。
-
-## 目录
+`ui-layout` 注册无路径 `app-layout`，并声明：
 
 ```text
-apps/web/
-packages/core/runtime/
-packages/react/bridge/
-packages/router/react-router/
-packages/ui/shell/
-packages/ui/theme/
-packages/feature/dashboard/
-packages/feature/settings/
-packages/bundle/web-app/
-docs/architecture.md
+app-layout
+├─ sidebar (single)
+│  ├─ sidebar.navigation (list)
+│  └─ sidebar.footer (list)
+├─ main (single；Router 的 Outlet 占据)
+├─ workbench (single)
+└─ shell.overlay (list)
 ```
+
+Dashboard 和 Settings 都是 `app-layout` 的子 Route；主题插件向 Settings 的 `settings.section` list Slot 提供 Appearance 区块。`ctx.layout` 仅管理侧栏与工作台开关；不持久化尺寸、不支持拖拽或响应式自动折叠。
+
+## 未来动态模块协议
+
+`WebBootGraph` 和 `PluginCatalogProvider` 只固定将来 Provider 的数据契约。未来可由 Node、HTTP 或 CDN 提供同一 graph；实际 Loader、Fiber 生命周期与 HMR 仍需单独实现，不能把当前的静态 boot 误认为动态模块运行时。
