@@ -1,4 +1,4 @@
-import type { AppPlugin, RouteNode } from '@yunzhen/cordis-runtime'
+import type { AppPlugin, RouteNode, SlotItem } from '@yunzhen/cordis-runtime'
 import { createAppRuntime } from '@yunzhen/cordis-runtime'
 import { describe, expect, it } from 'vitest'
 
@@ -10,6 +10,44 @@ declare module '@yunzhen/cordis-runtime' {
 }
 
 describe('createAppRuntime', () => {
+  it('collects sorted slot contributions as snapshots', async () => {
+    const Header = () => null
+    const Footer = () => null
+    const headerLate: SlotItem = { id: 'header-late', slot: 'shell.content.header', order: 20, Component: Header }
+    const headerEarly: SlotItem = { id: 'header-early', slot: 'shell.content.header', order: 10, Component: Header }
+    const footer: SlotItem = { id: 'header-early', slot: 'shell.navigation.footer', order: 10, Component: Footer }
+    let removeHeader!: () => void
+    const runtime = await createAppRuntime([
+      (app) => {
+        app.addSlotItem(headerLate)
+        removeHeader = app.addSlotItem(headerEarly)
+        app.addSlotItem(footer)
+      },
+    ])
+
+    expect(runtime.getSlotItems('shell.content.header')).toEqual([headerEarly, headerLate])
+    expect(runtime.getSlotItems('shell.navigation.footer')).toEqual([footer])
+    expect(runtime.getSlotItems('shell.content.header')).not.toBe(runtime.getSlotItems('shell.content.header'))
+    removeHeader()
+    expect(runtime.getSlotItems('shell.content.header')).toEqual([headerLate])
+    await runtime.dispose()
+  })
+
+  it.each<[string, SlotItem[], string]>([
+    ['duplicate slot item ids', [
+      { id: 'same', slot: 'shell.content.header', order: 0, Component: () => null },
+      { id: 'same', slot: 'shell.content.header', order: 1, Component: () => null },
+    ], 'duplicate slot item id'],
+    ['duplicate slot item orders', [
+      { id: 'first', slot: 'shell.navigation.footer', order: 0, Component: () => null },
+      { id: 'second', slot: 'shell.navigation.footer', order: 0, Component: () => null },
+    ], 'duplicate slot item order'],
+    ['NaN slot item order', [{ id: 'nan', slot: 'shell.content.header', order: Number.NaN, Component: () => null }], 'slot item order must be finite'],
+    ['infinite slot item order', [{ id: 'infinity', slot: 'shell.content.header', order: Number.POSITIVE_INFINITY, Component: () => null }], 'slot item order must be finite'],
+  ])('rejects %s', async (_, items, message) => {
+    await expect(createAppRuntime([app => items.forEach(item => app.addSlotItem(item))])).rejects.toThrow(message)
+  })
+
   it('keeps nested routes contributed by plugins in registration order', async () => {
     const first: AppPlugin = app => app.addRoute({
       id: 'dashboard',

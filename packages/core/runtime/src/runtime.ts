@@ -6,7 +6,6 @@ export interface RouteNavigation {
   label: string
   order: number
 }
-
 export interface RouteNode {
   id: string
   Component: ComponentType
@@ -23,9 +22,19 @@ export interface SettingsItem {
   Component: ComponentType
 }
 
+export type AppSlot = 'shell.navigation.footer' | 'shell.content.header'
+
+export interface SlotItem {
+  id: string
+  slot: AppSlot
+  order: number
+  Component: ComponentType
+}
+
 export interface AppContext {
   addRoute: (route: RouteNode) => () => void
   addSettingsItem: (item: SettingsItem) => () => void
+  addSlotItem: (item: SlotItem) => () => void
   provide: <K extends keyof AppServices>(key: K, value: AppServices[K]) => () => void
 }
 
@@ -34,6 +43,7 @@ export type AppPlugin = (app: AppContext) => void | (() => void)
 export interface AppRuntime {
   readonly routes: readonly RouteNode[]
   readonly settingsItems: readonly SettingsItem[]
+  getSlotItems: (slot: AppSlot) => readonly SlotItem[]
   get: <K extends keyof AppServices>(key: K) => AppServices[K] | undefined
   dispose: () => Promise<void>
 }
@@ -42,6 +52,7 @@ export async function createAppRuntime(plugins: readonly AppPlugin[]): Promise<A
   const cordis = new Context()
   const routes: RouteNode[] = []
   const settingsItems: SettingsItem[] = []
+  const slotItems: SlotItem[] = []
   const services = new Map<keyof AppServices, { value: unknown }>()
   const app: AppContext = {
     addRoute(route) {
@@ -62,6 +73,15 @@ export async function createAppRuntime(plugins: readonly AppPlugin[]): Promise<A
           settingsItems.splice(index, 1)
       }
     },
+    addSlotItem(item) {
+      slotItems.push(item)
+
+      return () => {
+        const index = slotItems.indexOf(item)
+        if (index !== -1)
+          slotItems.splice(index, 1)
+      }
+    },
     provide(key, value) {
       const entry = { value }
       services.set(key, entry)
@@ -76,6 +96,7 @@ export async function createAppRuntime(plugins: readonly AppPlugin[]): Promise<A
 
   await Promise.all(fibers)
   validateRoutes(routes)
+  validateSlotItems(slotItems)
 
   return {
     get routes() {
@@ -83,6 +104,9 @@ export async function createAppRuntime(plugins: readonly AppPlugin[]): Promise<A
     },
     get settingsItems() {
       return [...settingsItems]
+    },
+    getSlotItems(slot) {
+      return slotItems.filter(item => item.slot === slot).sort((a, b) => a.order - b.order)
     },
     get(key) {
       return services.get(key)?.value as AppServices[typeof key] | undefined
@@ -132,3 +156,26 @@ function validateRoutes(routes: readonly RouteNode[]) {
 
   validateSiblings(routes)
 }
+
+function validateSlotItems(items: readonly SlotItem[]) {
+  const ids = new Map<AppSlot, Set<string>>()
+  const orders = new Map<AppSlot, Set<number>>()
+
+  for (const item of items) {
+    if (!Number.isFinite(item.order))
+      throw new Error(`slot item order must be finite: ${item.id}`)
+
+    const slotIds = ids.get(item.slot) ?? new Set<string>()
+    if (slotIds.has(item.id))
+      throw new Error(`duplicate slot item id: ${item.id}`)
+    slotIds.add(item.id)
+    ids.set(item.slot, slotIds)
+
+    const slotOrders = orders.get(item.slot) ?? new Set<number>()
+    if (slotOrders.has(item.order))
+      throw new Error(`duplicate slot item order: ${item.order}`)
+    slotOrders.add(item.order)
+    orders.set(item.slot, slotOrders)
+  }
+}
+
