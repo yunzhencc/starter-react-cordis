@@ -3,7 +3,7 @@
 import type { Context as CordisContext } from '@deepseek-ai/cordis';
 import { Context } from '@deepseek-ai/cordis';
 import { apply as applyRenderer, Slot } from '@yunzhen/cordis-ui-renderer';
-import { act } from 'react';
+import { act, StrictMode } from 'react';
 import { describe, expect, it } from 'vitest';
 import { apply as applyRouter } from './index';
 
@@ -145,6 +145,64 @@ describe('router host', () => {
     expect(container.textContent).toContain('Custom');
     expect(container.textContent).toContain('Account');
     await act(async () => unmount());
+    await dispose();
+  });
+
+  it('commits route slot owners safely in StrictMode and replaces them by route definition', async () => {
+    window.history.replaceState({}, '', '/settings');
+    const { ctx, container, dispose } = await boot();
+    const Layout = () => (
+      <StrictMode>
+        <Slot name="main" />
+      </StrictMode>
+    );
+    const First = () => <Slot name="settings.first" />;
+    const Second = () => <Slot name="settings.second" />;
+    ctx.slots.inject('settings.first', () => ctx.slots.register(
+      { name: 'settings.first' },
+      () => <>First</>,
+    ));
+    ctx.slots.inject('settings.second', () => ctx.slots.register(
+      { name: 'settings.second' },
+      () => <>Second</>,
+    ));
+    const removeLayout = ctx.routes.register({
+      id: 'app-layout',
+      Component: Layout,
+      children: { main: { kind: 'single', scope: 'root' } },
+    });
+    const removeFirst = ctx.routes.register({
+      id: 'settings',
+      parentId: 'app-layout',
+      path: 'settings',
+      Component: First,
+      children: { 'settings.first': { kind: 'single', scope: 'root' } },
+    });
+    let unmount!: () => void;
+
+    await act(async () => {
+      unmount = ctx.uiRenderer.mount(container);
+    });
+    expect(container.textContent).toBe('First');
+
+    let removeSecond!: () => void;
+    await act(async () => {
+      removeFirst();
+      removeSecond = ctx.routes.register({
+        id: 'settings',
+        parentId: 'app-layout',
+        path: 'settings',
+        Component: Second,
+        children: { 'settings.second': { kind: 'single', scope: 'root' } },
+      });
+    });
+
+    expect(container.textContent).toBe('Second');
+    expect(ctx.slots.spec('settings.first')).toBeUndefined();
+    await act(async () => unmount());
+    expect(ctx.slots.spec('settings.second')).toBeUndefined();
+    removeSecond();
+    removeLayout();
     await dispose();
   });
 });

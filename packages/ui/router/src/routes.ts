@@ -13,6 +13,14 @@ export interface RouteDefinition {
   children?: Record<string, SlotSpec>;
 }
 
+export type RouteSnapshot = Readonly<
+  Omit<RouteDefinition, 'children' | 'navigation'>
+  & {
+    navigation?: Readonly<NonNullable<RouteDefinition['navigation']>>;
+    children?: Readonly<Record<string, Readonly<SlotSpec>>>;
+  }
+>;
+
 interface RouteRecord {
   epoch: number;
   listeners: Set<() => void>;
@@ -25,10 +33,10 @@ declare module '@deepseek-ai/cordis' {
 }
 
 export class RouteRegistry extends Service {
-  private readonly routes = new Map<string, RouteDefinition>();
+  private readonly routes = new Map<string, RouteSnapshot>();
   private readonly records = new Map<string, RouteRecord>();
   private readonly listeners = new Set<() => void>();
-  private currentSnapshot: readonly RouteDefinition[] = [];
+  private currentSnapshot: readonly RouteSnapshot[] = Object.freeze([]);
   private transactionDepth = 0;
   private changed = false;
 
@@ -125,7 +133,7 @@ export class RouteRegistry extends Service {
     };
   }
 
-  private validate(route: RouteDefinition) {
+  private validate(route: RouteSnapshot) {
     if (this.routes.has(route.id))
       throw new Error(`duplicate route id: "${route.id}"`);
     if (route.index && route.path !== undefined)
@@ -146,7 +154,7 @@ export class RouteRegistry extends Service {
     }
   }
 
-  private remove(route: RouteDefinition) {
+  private remove(route: RouteSnapshot) {
     if (this.routes.get(route.id) !== route)
       return;
     this.routes.delete(route.id);
@@ -182,19 +190,20 @@ export class RouteRegistry extends Service {
       this.transactionDepth -= 1;
       if (!this.transactionDepth && this.changed) {
         this.changed = false;
-        this.currentSnapshot = [...this.routes.values()];
+        this.currentSnapshot = Object.freeze([...this.routes.values()]);
         for (const listener of [...this.listeners]) listener();
       }
     }
   }
 }
 
-function copyRoute(route: RouteDefinition): RouteDefinition {
-  return {
+function copyRoute(route: RouteDefinition): RouteSnapshot {
+  const children = route.children && Object.freeze(Object.fromEntries(
+    Object.entries(route.children).map(([name, spec]) => [name, Object.freeze({ ...spec })]),
+  ));
+  return Object.freeze({
     ...route,
-    ...(route.navigation ? { navigation: { ...route.navigation } } : {}),
-    ...(route.children
-      ? { children: Object.fromEntries(Object.entries(route.children).map(([name, spec]) => [name, { ...spec }])) }
-      : {}),
-  };
+    ...(route.navigation ? { navigation: Object.freeze({ ...route.navigation }) } : {}),
+    ...(children ? { children } : {}),
+  });
 }
