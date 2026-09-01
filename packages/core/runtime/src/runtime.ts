@@ -94,9 +94,20 @@ export async function createAppRuntime(plugins: readonly AppPlugin[]): Promise<A
   }
   const fibers = plugins.map(plugin => cordis.plugin(() => plugin(app)))
 
-  await Promise.all(fibers)
-  validateRoutes(routes)
-  validateSlotItems(slotItems)
+  try {
+    await Promise.all(fibers)
+    validateRoutes(routes)
+    validateSlotItems(slotItems)
+  }
+  catch (error) {
+    for (let index = fibers.length - 1; index >= 0; index--) {
+      try {
+        await fibers[index].dispose()
+      }
+      catch {}
+    }
+    throw error
+  }
 
   return {
     get routes() {
@@ -178,4 +189,3 @@ function validateSlotItems(items: readonly SlotItem[]) {
     orders.set(item.slot, slotOrders)
   }
 }
-

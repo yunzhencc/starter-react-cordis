@@ -48,6 +48,23 @@ describe('createAppRuntime', () => {
     await expect(createAppRuntime([app => items.forEach(item => app.addSlotItem(item))])).rejects.toThrow(message)
   })
 
+  it('disposes launched plugins in reverse order before rejecting invalid slots', async () => {
+    const disposed: string[] = []
+    const startup = createAppRuntime([
+      (app) => {
+        app.addSlotItem({ id: 'duplicate', slot: 'shell.content.header', order: 0, Component: () => null })
+        return () => disposed.push('first')
+      },
+      (app) => {
+        app.addSlotItem({ id: 'duplicate', slot: 'shell.content.header', order: 1, Component: () => null })
+        return () => disposed.push('second')
+      },
+    ])
+
+    await expect(startup).rejects.toThrow('duplicate slot item id')
+    expect(disposed).toEqual(['second', 'first'])
+  })
+
   it('keeps nested routes contributed by plugins in registration order', async () => {
     const first: AppPlugin = app => app.addRoute({
       id: 'dashboard',
