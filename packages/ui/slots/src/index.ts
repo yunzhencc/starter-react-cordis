@@ -24,13 +24,17 @@ export interface SlotRegistration {
   children?: SlotMap;
 }
 
-interface StoredEntry extends SlotEntry {
+interface DeclarationOwner {
+  children?: SlotMap;
   live: boolean;
+}
+
+interface StoredEntry extends SlotEntry, DeclarationOwner {
   sequence: number;
 }
 
 interface SlotRecord {
-  declaredBy?: StoredEntry;
+  declaredBy?: DeclarationOwner;
   entries: StoredEntry[];
   epoch: number;
   listeners: Set<() => void>;
@@ -65,15 +69,29 @@ export class SlotCore {
     };
     slot.entries.push(entry);
 
-    for (const [name, spec] of Object.entries(children ?? {})) {
-      const child = this.record(name);
-      child.spec = spec;
-      child.declaredBy = entry;
-      child.epoch++;
-      this.notify(child);
-    }
+    this.declareChildren(entry, children ?? {});
 
     return () => this.remove(entry, slot);
+  }
+
+  /** @internal */
+  declare(children: SlotMap): () => void {
+    const ownedChildren = copyMap(children) ?? {};
+    this.validateChildren(ownedChildren);
+    const owner: DeclarationOwner = { children: ownedChildren, live: true };
+
+    this.declareChildren(owner, ownedChildren);
+
+    return () => {
+      if (!owner.live)
+        return;
+      owner.live = false;
+      for (const name of Object.keys(ownedChildren)) {
+        const child = this.records.get(name);
+        if (child?.declaredBy === owner)
+          this.removeDeclaration(child);
+      }
+    };
   }
 
   spec(name: string): SlotSpec | undefined {
@@ -103,14 +121,7 @@ export class SlotCore {
   }
 
   private validate(slot: SlotRecord, options: SlotRegistration, children: SlotMap | undefined) {
-    for (const [name, spec] of Object.entries(children ?? {})) {
-      if (this.records.get(name)?.spec)
-        throw new Error(`duplicate declaration: "${name}"`);
-      if (spec.kind !== 'single' && spec.kind !== 'list')
-        throw new Error(`slot "${name}" has an invalid kind`);
-      if (spec.scope !== 'root')
-        throw new Error(`slot "${name}" has an invalid scope`);
-    }
+    this.validateChildren(children ?? {});
 
     if (slot.spec?.kind === 'single' && slot.entries.length)
       throw new Error(`single slot "${options.name}" already has an entry`);
@@ -124,6 +135,27 @@ export class SlotCore {
     }
     else if (options.order !== undefined) {
       throw new Error(`single slot "${options.name}" does not accept an order`);
+    }
+  }
+
+  private validateChildren(children: SlotMap) {
+    for (const [name, spec] of Object.entries(children)) {
+      if (this.records.get(name)?.spec)
+        throw new Error(`duplicate declaration: "${name}"`);
+      if (spec.kind !== 'single' && spec.kind !== 'list')
+        throw new Error(`slot "${name}" has an invalid kind`);
+      if (spec.scope !== 'root')
+        throw new Error(`slot "${name}" has an invalid scope`);
+    }
+  }
+
+  private declareChildren(owner: DeclarationOwner, children: SlotMap) {
+    for (const [name, spec] of Object.entries(children)) {
+      const child = this.record(name);
+      child.spec = spec;
+      child.declaredBy = owner;
+      child.epoch++;
+      this.notify(child);
     }
   }
 
