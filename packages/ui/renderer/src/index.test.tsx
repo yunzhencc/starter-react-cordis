@@ -52,6 +52,39 @@ describe('ui renderer', () => {
     await dispose();
   });
 
+  it('stops an injection quietly when caller teardown replaces its declaration', async () => {
+    const { ctx, dispose } = await bootRenderer();
+    const removeDeclaration = ctx.slots.register({
+      name: 'root',
+      children: { host: { kind: 'single', scope: 'root' } },
+    }, Null);
+    let removeReplacement = () => {};
+    let runs = 0;
+    const caller = ctx.plugin({
+      inject: ['slots'],
+      apply(pluginCtx) {
+        pluginCtx.slots.inject('host', () => {
+          runs += 1;
+          return () => {
+            removeDeclaration();
+            removeReplacement = ctx.slots.register({
+              name: 'root',
+              children: { host: { kind: 'single', scope: 'root' } },
+            }, Null);
+          };
+        });
+      },
+    });
+    await caller.await();
+
+    await caller.dispose();
+    await new Promise<void>(resolve => queueMicrotask(resolve));
+
+    expect(runs).toBe(1);
+    removeReplacement();
+    await dispose();
+  });
+
   it('mounts only the root Slot and renders declared descendants', async () => {
     const { ctx, dispose } = await bootRenderer();
     const Frame = () => <main><Slot name="host" /></main>;

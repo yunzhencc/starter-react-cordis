@@ -6,6 +6,7 @@ import { apply as applyRouter } from '@yunzhen/cordis-ui-router';
 import { act } from 'react';
 import { describe, expect, it } from 'vitest';
 import { apply } from './index';
+import { LayoutController } from './layout-controller';
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 
@@ -35,6 +36,25 @@ async function bootLayout() {
 }
 
 describe('app layout', () => {
+  it('publishes frozen snapshots that external writes cannot mutate', () => {
+    const controller = new LayoutController();
+    const initial = controller.snapshot();
+
+    expect(Object.isFrozen(initial)).toBe(true);
+    expect(() => {
+      (initial as { sidebarOpen: boolean }).sidebarOpen = false;
+    }).toThrow(TypeError);
+    expect(controller.snapshot().sidebarOpen).toBe(true);
+
+    controller.toggleSidebar();
+    const updated = controller.snapshot();
+    expect(Object.isFrozen(updated)).toBe(true);
+    expect(() => {
+      (updated as { workbenchOpen: boolean }).workbenchOpen = true;
+    }).toThrow(TypeError);
+    expect(controller.snapshot()).toEqual({ sidebarOpen: false, workbenchOpen: false });
+  });
+
   it('fully hides the sidebar and lets main fill the frame', async () => {
     const { ctx, container, dispose } = await bootLayout();
     ctx.layout.toggleSidebar();

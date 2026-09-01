@@ -101,6 +101,20 @@ async function bootRouterWithSettingsSlot() {
 }
 
 describe('router host', () => {
+  it('rejects children below an index route instead of dropping them', async () => {
+    const { ctx, dispose } = await boot();
+    ctx.routes.register({ id: 'index-parent', index: true, Component: () => null });
+
+    expect(() => ctx.routes.register({
+      id: 'child',
+      parentId: 'index-parent',
+      path: 'child',
+      Component: () => null,
+    })).toThrow('index route cannot have children');
+
+    await dispose();
+  });
+
   it('renders a pathless layout and its settings child through the main slot', async () => {
     window.history.replaceState({}, '', '/settings');
     const { ctx, container, dispose } = await bootRouterWithLayout();

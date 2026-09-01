@@ -16,6 +16,10 @@ const invalidDefinitions: RouteDefinition[][] = [
     { id: 'first', parentId: 'parent', index: true, Component: Null },
     { id: 'second', parentId: 'parent', index: true, Component: Null },
   ],
+  [
+    { id: 'index-parent', index: true, Component: Null },
+    { id: 'child', parentId: 'index-parent', path: 'child', Component: Null },
+  ],
   [{ id: 'cycle', parentId: 'cycle', Component: Null }],
 ];
 
@@ -96,6 +100,33 @@ describe('route registry', () => {
     ctx.routes.register({ id: 'parent', Component: Null });
 
     expect(runs).toBe(1);
+    await dispose();
+  });
+
+  it('stops an injection quietly when caller teardown replaces its parent', async () => {
+    const { ctx, dispose } = await bootRoutes();
+    const removeParent = ctx.routes.register({ id: 'parent', Component: Null });
+    let removeReplacement = () => {};
+    let runs = 0;
+    const caller = ctx.plugin({
+      inject: ['routes'],
+      apply(pluginCtx) {
+        pluginCtx.routes.inject('parent', () => {
+          runs += 1;
+          return () => {
+            removeParent();
+            removeReplacement = ctx.routes.register({ id: 'parent', Component: Null });
+          };
+        });
+      },
+    });
+    await caller.await();
+
+    await caller.dispose();
+    await new Promise<void>(resolve => queueMicrotask(resolve));
+
+    expect(runs).toBe(1);
+    removeReplacement();
     await dispose();
   });
 

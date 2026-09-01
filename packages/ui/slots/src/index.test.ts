@@ -51,6 +51,32 @@ describe('slotCore', () => {
     expect(core.declarationEpoch('host')).toBe(2);
   });
 
+  it('publishes sibling declarations atomically to re-entrant listeners', () => {
+    const core = new SlotCore();
+    let siblingDeclared = false;
+    let duplicateRejected = false;
+
+    core.subscribeDeclaration('first', () => {
+      siblingDeclared = core.spec('second') !== undefined;
+      try {
+        core.register({ name: 'first', children: { second: { kind: 'single', scope: 'root' } } }, Null);
+      }
+      catch (error) {
+        duplicateRejected = error instanceof Error && error.message.includes('duplicate declaration');
+      }
+    });
+
+    core.register({
+      name: 'root',
+      children: {
+        first: { kind: 'single', scope: 'root' },
+        second: { kind: 'single', scope: 'root' },
+      },
+    }, Null);
+
+    expect({ duplicateRejected, siblingDeclared }).toEqual({ duplicateRejected: true, siblingDeclared: true });
+  });
+
   it('closes a declaration before descendant listeners can register into it', () => {
     const core = new SlotCore();
     const disposeFrame = core.register({ name: 'root', children: { host: { kind: 'single', scope: 'root' } } }, Null);

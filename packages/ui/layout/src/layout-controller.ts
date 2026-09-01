@@ -1,6 +1,6 @@
 export interface LayoutSnapshot {
-  sidebarOpen: boolean;
-  workbenchOpen: boolean;
+  readonly sidebarOpen: boolean;
+  readonly workbenchOpen: boolean;
 }
 
 declare module '@deepseek-ai/cordis' {
@@ -10,7 +10,7 @@ declare module '@deepseek-ai/cordis' {
 }
 
 export class LayoutController {
-  private current: LayoutSnapshot = { sidebarOpen: true, workbenchOpen: false };
+  private current: LayoutSnapshot = Object.freeze({ sidebarOpen: true, workbenchOpen: false });
   private readonly listeners = new Set<() => void>();
 
   snapshot = () => this.current;
@@ -32,7 +32,7 @@ export class LayoutController {
     const next = { ...this.current, ...change };
     if (next.sidebarOpen === this.current.sidebarOpen && next.workbenchOpen === this.current.workbenchOpen)
       return;
-    this.current = next;
+    this.current = Object.freeze(next);
     for (const listener of [...this.listeners]) listener();
   }
 }

@@ -54,14 +54,19 @@ export class SlotRegistry extends Service {
       let stopped = false;
       let unsubscribe = () => {};
 
+      const deactivate = () => {
+        const dispose = active;
+        active = undefined;
+        activeEpoch = undefined;
+        dispose?.();
+      };
+
       const stop = () => {
         if (stopped)
           return;
         stopped = true;
         unsubscribe();
-        active?.();
-        active = undefined;
-        activeEpoch = undefined;
+        deactivate();
       };
 
       const reconcile = () => {
@@ -70,9 +75,9 @@ export class SlotRegistry extends Service {
         const epoch = this.core.declarationEpoch(name);
         if (active && activeEpoch === epoch)
           return;
-        active?.();
-        active = undefined;
-        activeEpoch = undefined;
+        deactivate();
+        if (stopped || this.core.declarationEpoch(name) !== epoch)
+          return;
         if (!this.core.spec(name))
           return;
         const disposeEffect = ctx.effect(() => callback() ?? (() => {}), `slots.inject(${JSON.stringify(name)}): declaration`);
@@ -88,6 +93,8 @@ export class SlotRegistry extends Service {
         }
         catch (error) {
           stop();
+          if (error && typeof error === 'object' && 'code' in error && error.code === 'INACTIVE_EFFECT')
+            return;
           const failure = error instanceof Error ? error : new Error(String(error));
           queueMicrotask(() => {
             throw failure;

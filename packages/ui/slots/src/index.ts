@@ -150,13 +150,15 @@ export class SlotCore {
   }
 
   private declareChildren(owner: DeclarationOwner, children: SlotMap) {
+    const declared: SlotRecord[] = [];
     for (const [name, spec] of Object.entries(children)) {
       const child = this.record(name);
       child.spec = spec;
       child.declaredBy = owner;
       child.epoch++;
-      this.notify(child);
+      declared.push(child);
     }
+    for (const child of declared) this.notify(child);
   }
 
   private remove(entry: StoredEntry, slot: SlotRecord) {

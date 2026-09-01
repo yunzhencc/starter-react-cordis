@@ -75,14 +75,19 @@ export class RouteRegistry extends Service {
       let stopped = false;
       let unsubscribe = () => {};
 
+      const deactivate = () => {
+        const dispose = active;
+        active = undefined;
+        activeEpoch = undefined;
+        dispose?.();
+      };
+
       const stop = () => {
         if (stopped)
           return;
         stopped = true;
         unsubscribe();
-        active?.();
-        active = undefined;
-        activeEpoch = undefined;
+        deactivate();
       };
 
       const reconcile = () => {
@@ -91,9 +96,9 @@ export class RouteRegistry extends Service {
         const epoch = this.record(parentId).epoch;
         if (active && activeEpoch === epoch)
           return;
-        active?.();
-        active = undefined;
-        activeEpoch = undefined;
+        deactivate();
+        if (stopped || this.record(parentId).epoch !== epoch)
+          return;
         if (!this.routes.has(parentId))
           return;
         const disposeEffect = ctx.effect(() => callback() ?? (() => {}), `routes.inject(${JSON.stringify(parentId)}): parent`);
@@ -109,6 +114,8 @@ export class RouteRegistry extends Service {
         }
         catch (error) {
           stop();
+          if (error && typeof error === 'object' && 'code' in error && error.code === 'INACTIVE_EFFECT')
+            return;
           const failure = error instanceof Error ? error : new Error(String(error));
           queueMicrotask(() => {
             throw failure;
@@ -150,6 +157,8 @@ export class RouteRegistry extends Service {
       const parent = this.routes.get(parentId);
       if (!parent)
         throw new Error(`unknown parent route: "${parentId}"`);
+      if (parent.index)
+        throw new Error(`index route cannot have children: "${parent.id}"`);
       parentId = parent.parentId;
     }
   }
