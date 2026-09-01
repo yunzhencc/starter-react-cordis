@@ -9,17 +9,34 @@ import { ThemeRuntime } from './theme';
 
 const tokens = readFileSync('packages/ui/theme/src/tokens.css', 'utf8');
 
+class MediaQuery {
+  matches = false;
+  private readonly listeners = new Set<(event: MediaQueryListEvent) => void>();
+
+  addEventListener(_type: 'change', listener: (event: MediaQueryListEvent) => void) {
+    this.listeners.add(listener);
+  }
+
+  removeEventListener(_type: 'change', listener: (event: MediaQueryListEvent) => void) {
+    this.listeners.delete(listener);
+  }
+
+  get listenerCount() {
+    return this.listeners.size;
+  }
+}
+
 describe('uiThemePlugin', () => {
+  let mediaQuery: MediaQuery;
+
   beforeEach(() => {
-    vi.stubGlobal('matchMedia', () => ({
-      matches: false,
-      addEventListener() {},
-      removeEventListener() {},
-    }));
+    mediaQuery = new MediaQuery();
+    vi.stubGlobal('matchMedia', () => mediaQuery);
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.restoreAllMocks();
     document.head.querySelector('style[data-cordis-ui-theme]')?.remove();
   });
 
@@ -44,6 +61,22 @@ describe('uiThemePlugin', () => {
     expect(ctx.slots.entries('settings.section')).toEqual([]);
     expect(document.head.querySelector('style[data-cordis-ui-theme]')).toBeNull();
     owner.dispose();
+    await rendererFiber.dispose();
+  });
+
+  it('removes its media listener when later startup fails', async () => {
+    const ctx = new Context();
+    const rendererFiber = ctx.plugin(renderer);
+    await rendererFiber.await();
+    vi.spyOn(document.head, 'append').mockImplementationOnce(() => {
+      throw new Error('style install failed');
+    });
+
+    const themeFiber = ctx.plugin(themeModule);
+    await expect(themeFiber.await()).rejects.toThrow('style install failed');
+
+    expect(mediaQuery.listenerCount).toBe(0);
+    await themeFiber.dispose();
     await rendererFiber.dispose();
   });
 

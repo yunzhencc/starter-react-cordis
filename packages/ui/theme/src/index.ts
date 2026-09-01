@@ -15,9 +15,9 @@ export const inject = ['slots'];
 
 export function apply(ctx: Context) {
   const theme = new ThemeRuntime();
+  ctx.effect(() => () => theme.dispose(), 'theme.dispose()');
   ctx.reflect.provide('theme', theme);
   ctx.effect(installThemeStyles, 'theme.styles()');
-  ctx.effect(() => () => theme.dispose(), 'theme.dispose()');
   ctx.slots.inject('settings.section', () => ctx.slots.register(
     { name: 'settings.section', id: 'appearance', order: 100 },
     () => createElement(AppearanceSettings, { theme }),
