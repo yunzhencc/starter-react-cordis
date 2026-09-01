@@ -86,7 +86,7 @@ describe('app layout', () => {
     await dispose();
   });
 
-  it('keeps workbench hidden without an occupant and closes it on request', async () => {
+  it('keeps a collapsed workbench mounted so it can reopen', async () => {
     const { ctx, container, dispose } = await bootLayout();
     let unmount!: () => void;
 
@@ -99,9 +99,10 @@ describe('app layout', () => {
     ctx.layout.openWorkbench();
     await act(async () => {});
     expect(container.querySelector('[data-workbench-column]')).not.toBeNull();
-    ctx.layout.closeWorkbench();
-    await act(async () => {});
-    expect(container.querySelector('[data-workbench-column]')).toBeNull();
+    await act(async () => ctx.layout.closeWorkbench());
+    expect(container.querySelector('[data-workbench-column]')).not.toBeNull();
+    await act(async () => ctx.layout.openWorkbench());
+    expect(container.querySelector('[data-workbench-column]')).not.toBeNull();
 
     await act(async () => unmount());
     await dispose();

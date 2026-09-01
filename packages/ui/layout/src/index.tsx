@@ -1,6 +1,6 @@
 import type { Context } from '@deepseek-ai/cordis';
 import type { SlotRenderer } from '@yunzhen/cordis-ui-renderer';
-import type { PanelSize } from 'react-resizable-panels';
+import type { PanelImperativeHandle, PanelSize } from 'react-resizable-panels';
 import type { PanelBounds } from './layout-controller';
 import { Slot } from '@yunzhen/cordis-ui-renderer';
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
@@ -39,7 +39,7 @@ function AppLayout({ controller, slots }: { controller: LayoutController; slots:
     () => slots.version('workbench'),
   );
   const hasWorkbenchOccupant = slots.entries('workbench').length > 0;
-  const hasWorkbench = snapshot.workbenchOpen && hasWorkbenchOccupant;
+  const hasWorkbench = hasWorkbenchOccupant;
   const sidebarBounds = getSidebarBounds(viewport.width);
   const [sidebarSize, setSidebarSize] = useStoredSize('sidebar-width', sidebarBounds);
   const sidebarDefaultSize = useRef(sidebarSize).current;
@@ -48,6 +48,7 @@ function AppLayout({ controller, slots }: { controller: LayoutController; slots:
   const workbenchSize = useStoredRatio('app-shell:right-panel-width:v3', workspaceWidth, workbenchBounds);
   const sidebarSizeRef = useRef(sidebarSize);
   const workbenchSizeRef = useRef(workbenchSize);
+  const workbenchPanelRef = useRef<PanelImperativeHandle>(null);
 
   useEffect(() => {
     if (viewport.width <= 720 && snapshot.sidebarOpen) {
@@ -59,7 +60,7 @@ function AppLayout({ controller, slots }: { controller: LayoutController; slots:
       controller.openSidebar();
     }
 
-    if (viewport.width <= 960 && hasWorkbench) {
+    if (viewport.width <= 960 && snapshot.workbenchOpen && hasWorkbench) {
       autoHidden.current.workbench = true;
       controller.closeWorkbench();
     }
@@ -67,7 +68,19 @@ function AppLayout({ controller, slots }: { controller: LayoutController; slots:
       autoHidden.current.workbench = false;
       controller.openWorkbench();
     }
-  }, [controller, hasWorkbench, hasWorkbenchOccupant, snapshot.sidebarOpen, viewport.width]);
+  }, [controller, hasWorkbench, hasWorkbenchOccupant, snapshot.sidebarOpen, snapshot.workbenchOpen, viewport.width]);
+
+  useEffect(() => {
+    if (!hasWorkbench)
+      return;
+    const timeout = window.setTimeout(() => {
+      if (snapshot.workbenchOpen)
+        workbenchPanelRef.current?.expand();
+      else
+        workbenchPanelRef.current?.collapse();
+    });
+    return () => window.clearTimeout(timeout);
+  }, [hasWorkbench, snapshot.workbenchOpen]);
 
   const updateSidebarSize = ({ inPixels }: PanelSize) => {
     sidebarSizeRef.current = inPixels;
@@ -105,7 +118,7 @@ function AppLayout({ controller, slots }: { controller: LayoutController; slots:
         {hasWorkbench && (
           <>
             <Separator className={styles.separator} id="workbench-resize" />
-            <Panel collapsedSize="0px" collapsible defaultSize={`${workbenchSize}px`} groupResizeBehavior="preserve-pixel-size" id="workbench" maxSize={`${workbenchBounds.maxSize}px`} minSize={`${workbenchBounds.minSize}px`} onResize={updateWorkbenchSize}>
+            <Panel collapsedSize="0px" collapsible defaultSize={`${workbenchSize}px`} groupResizeBehavior="preserve-pixel-size" id="workbench" maxSize={`${workbenchBounds.maxSize}px`} minSize={`${workbenchBounds.minSize}px`} panelRef={workbenchPanelRef} onResize={updateWorkbenchSize}>
               <aside className={styles.workbench} data-workbench-column><Slot name="workbench" /></aside>
             </Panel>
           </>
