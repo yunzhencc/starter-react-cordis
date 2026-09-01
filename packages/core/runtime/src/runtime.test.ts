@@ -26,7 +26,7 @@ describe('createAppRuntime', () => {
 
     const runtime = await createAppRuntime([first, second])
 
-    const routes = runtime.routes
+    const routes = [...runtime.routes]
     expect(routes).toEqual([
       expect.objectContaining({ id: 'dashboard', index: true }),
       expect.objectContaining({ id: 'settings', path: 'settings', children: [expect.objectContaining({ id: 'appearance' })] }),
