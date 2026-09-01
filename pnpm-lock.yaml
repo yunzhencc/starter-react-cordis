@@ -171,6 +171,24 @@ importers:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
 
+  packages/ui/router:
+    dependencies:
+      '@deepseek-ai/cordis':
+        specifier: ^4.0.2
+        version: 4.0.2
+      '@yunzhen/cordis-ui-renderer':
+        specifier: workspace:*
+        version: link:../renderer
+      '@yunzhen/cordis-ui-slots':
+        specifier: workspace:*
+        version: link:../slots
+      react:
+        specifier: ^19.2.8
+        version: 19.2.8
+      react-router-dom:
+        specifier: ^7.18.3
+        version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+
   packages/ui/shell:
     dependencies:
       '@yunzhen/cordis-react-bridge':

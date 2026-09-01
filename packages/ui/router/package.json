@@ -1,0 +1,21 @@
+{
+  "name": "@yunzhen/cordis-ui-router",
+  "type": "module",
+  "private": true,
+  "exports": "./src/index.tsx",
+  "dependencies": {
+    "@deepseek-ai/cordis": "^4.0.2",
+    "@yunzhen/cordis-ui-renderer": "workspace:*",
+    "@yunzhen/cordis-ui-slots": "workspace:*",
+    "react": "^19.2.8",
+    "react-router-dom": "^7.18.3"
+  },
+  "yunzhen": {
+    "client": {
+      "platform": "web",
+      "inject": [],
+      "external": [],
+      "immediately": false
+    }
+  }
+}
