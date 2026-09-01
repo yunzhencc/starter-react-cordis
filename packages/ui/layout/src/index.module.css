@@ -1,0 +1,26 @@
+.layout {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  min-height: 100vh;
+}
+
+.sidebar,
+.workbench {
+  width: 16rem;
+  padding: 1rem;
+  background: var(--app-surface);
+}
+
+.sidebar {
+  border-right: 1px solid var(--app-border);
+}
+
+.workbench {
+  border-left: 1px solid var(--app-border);
+}
+
+.main {
+  min-width: 0;
+  padding: 2rem;
+  font-size: var(--app-content-font-size);
+}

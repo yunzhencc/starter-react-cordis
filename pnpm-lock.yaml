@@ -156,6 +156,24 @@ importers:
         specifier: ^7.18.3
         version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
 
+  packages/ui/layout:
+    dependencies:
+      '@deepseek-ai/cordis':
+        specifier: ^4.0.2
+        version: 4.0.2
+      '@yunzhen/cordis-ui-renderer':
+        specifier: workspace:*
+        version: link:../renderer
+      '@yunzhen/cordis-ui-router':
+        specifier: workspace:*
+        version: link:../router
+      '@yunzhen/cordis-ui-slots':
+        specifier: workspace:*
+        version: link:../slots
+      react:
+        specifier: ^19.2.8
+        version: 19.2.8
+
   packages/ui/renderer:
     dependencies:
       '@deepseek-ai/cordis':

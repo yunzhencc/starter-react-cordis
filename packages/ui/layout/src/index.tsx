@@ -1,0 +1,40 @@
+import type { Context } from '@deepseek-ai/cordis';
+import type { SlotRegistry } from '@yunzhen/cordis-ui-renderer';
+import { Slot } from '@yunzhen/cordis-ui-renderer';
+import { useSyncExternalStore } from 'react';
+import styles from './index.module.css';
+import { LayoutController } from './layout-controller';
+
+export { LayoutController } from './layout-controller';
+export type { LayoutSnapshot } from './layout-controller';
+
+export const inject = ['routes', 'slots'];
+
+export function apply(ctx: Context) {
+  const controller = new LayoutController();
+  ctx.effect(() => ctx.reflect.provide('layout', controller), 'layout.provide()');
+  ctx.routes.register({
+    id: 'app-layout',
+    Component: () => <AppLayout controller={controller} slots={ctx.slots} />,
+    children: {
+      'sidebar': { kind: 'single', scope: 'root' },
+      'main': { kind: 'single', scope: 'root' },
+      'workbench': { kind: 'single', scope: 'root' },
+      'shell.overlay': { kind: 'list', scope: 'root' },
+    },
+  });
+}
+
+function AppLayout({ controller, slots }: { controller: LayoutController; slots: SlotRegistry }) {
+  const snapshot = useSyncExternalStore(controller.subscribe, controller.snapshot, controller.snapshot);
+  const hasWorkbench = snapshot.workbenchOpen && slots.entries('workbench').length > 0;
+
+  return (
+    <div className={styles.layout} data-app-layout data-sidebar-open={String(snapshot.sidebarOpen)}>
+      {snapshot.sidebarOpen && <aside className={styles.sidebar} data-sidebar-column><Slot name="sidebar" /></aside>}
+      <main className={styles.main}><Slot name="main" /></main>
+      {hasWorkbench && <aside className={styles.workbench} data-workbench-column><Slot name="workbench" /></aside>}
+      <Slot name="shell.overlay" />
+    </div>
+  );
+}
