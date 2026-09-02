@@ -7,6 +7,10 @@ const mainDirectory = dirname(fileURLToPath(import.meta.url));
 
 function createWindow() {
   const window = new BrowserWindow({
+    ...(process.platform === 'darwin' && {
+      titleBarStyle: 'hiddenInset',
+      trafficLightPosition: { x: 16, y: 16 },
+    }),
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,

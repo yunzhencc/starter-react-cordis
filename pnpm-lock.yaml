@@ -426,6 +426,9 @@ importers:
       '@yunzhen/cordis-ui-router':
         specifier: workspace:*
         version: link:../../../../packages/ui/router
+      lucide-react:
+        specifier: ^1.38.0
+        version: 1.38.0(react@19.2.8)
       react:
         specifier: ^19.2.8
         version: 19.2.8

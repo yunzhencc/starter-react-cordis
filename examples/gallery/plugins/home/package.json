@@ -10,12 +10,15 @@
     "@deepseek-ai/cordis": "^4.0.2",
     "@yunzhen/cordis-ui-layout": "workspace:*",
     "@yunzhen/cordis-ui-router": "workspace:*",
+    "lucide-react": "^1.38.0",
     "react": "^19.2.8"
   },
   "yunzhen": {
     "client": {
       "platform": "web",
-      "inject": ["@yunzhen/cordis-ui-layout"],
+      "inject": [
+        "@yunzhen/cordis-ui-layout"
+      ],
       "immediately": false
     }
   }
