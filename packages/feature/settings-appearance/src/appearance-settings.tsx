@@ -1,6 +1,6 @@
-import type { ThemeRuntime } from './theme';
+import type { ThemeRuntime } from '@yunzhen/cordis-ui-theme';
 import { useSyncExternalStore } from 'react';
-import styles from './appearance-settings-item.module.css';
+import styles from './appearance-settings.module.css';
 
 export function AppearanceSettings({ theme }: { theme: ThemeRuntime }) {
   const snapshot = useSyncExternalStore(theme.subscribe, () => theme.snapshot);

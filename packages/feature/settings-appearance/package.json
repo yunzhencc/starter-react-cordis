@@ -1,0 +1,28 @@
+{
+  "name": "@yunzhen/cordis-feature-settings-appearance",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.tsx",
+    "./client": "./src/index.tsx"
+  },
+  "dependencies": {
+    "@deepseek-ai/cordis": "^4.0.2",
+    "@yunzhen/cordis-ui-settings-layout": "workspace:*",
+    "@yunzhen/cordis-ui-theme": "workspace:*",
+    "lucide-react": "^0.576.0",
+    "react": "^19.2.8"
+  },
+  "devDependencies": {
+    "@yunzhen/cordis-ui-renderer": "workspace:*",
+    "@yunzhen/cordis-ui-router": "workspace:*",
+    "react-dom": "^19.2.8"
+  },
+  "yunzhen": {
+    "client": {
+      "platform": "web",
+      "inject": ["@yunzhen/cordis-ui-settings-layout", "@yunzhen/cordis-ui-theme"],
+      "immediately": false
+    }
+  }
+}

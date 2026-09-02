@@ -139,6 +139,34 @@ importers:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
 
+  packages/feature/settings-appearance:
+    dependencies:
+      '@deepseek-ai/cordis':
+        specifier: ^4.0.2
+        version: 4.0.2
+      '@yunzhen/cordis-ui-settings-layout':
+        specifier: workspace:*
+        version: link:../../ui/settings-layout
+      '@yunzhen/cordis-ui-theme':
+        specifier: workspace:*
+        version: link:../../ui/theme
+      lucide-react:
+        specifier: ^0.576.0
+        version: 0.576.0(react@19.2.8)
+      react:
+        specifier: ^19.2.8
+        version: 19.2.8
+    devDependencies:
+      '@yunzhen/cordis-ui-renderer':
+        specifier: workspace:*
+        version: link:../../ui/renderer
+      '@yunzhen/cordis-ui-router':
+        specifier: workspace:*
+        version: link:../../ui/router
+      react-dom:
+        specifier: ^19.2.8
+        version: 19.2.8(react@19.2.8)
+
   packages/host/plugin-catalog:
     dependencies:
       '@yunzhen/cordis-client-modules':
@@ -1827,6 +1855,11 @@ packages:
   lru-cache@11.5.2:
     resolution: {integrity: sha512-4pfM1Ff0x50o0tQwb5ucw/RzNyD0/YJME6IVcStalZuMWxdt3sR3huStTtxz4PUmvZfRguvDejasvQ2kifR11g==}
     engines: {node: 20 || >=22}
+
+  lucide-react@0.576.0:
+    resolution: {integrity: sha512-koNxU14BXrxUfZQ9cUaP0ES1uyPZKYDjk31FQZB6dQ/x+tXk979sVAn9ppZ/pVeJJyOxVM8j1E+8QEuSc02Vug==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   lucide-react@1.38.0:
     resolution: {integrity: sha512-xZCyBd/wiVUDactoCc+42TjL0aB7EBOXsuX+tjz+W/sGzw2KhHpL1NOH3FIaVUcpimvUBpIYfz34Ofj9S5JEzQ==}
@@ -4182,6 +4215,10 @@ snapshots:
   longest-streak@3.1.0: {}
 
   lru-cache@11.5.2: {}
+
+  lucide-react@0.576.0(react@19.2.8):
+    dependencies:
+      react: 19.2.8
 
   lucide-react@1.38.0(react@19.2.8):
     dependencies:
