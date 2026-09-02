@@ -8,9 +8,9 @@
   },
   "scripts": {
     "build": "pnpm --filter @examples/agent build",
-    "build:eagle": "pnpm --filter @examples/eagle build",
+    "build:gallery": "pnpm --filter @examples/gallery build",
     "dev": "pnpm --filter @examples/agent dev",
-    "dev:eagle": "pnpm --filter @examples/eagle dev",
+    "dev:gallery": "pnpm --filter @examples/gallery dev",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "test": "vitest run",

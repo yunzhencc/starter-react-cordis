@@ -1,12 +1,12 @@
-# Eagle Electron initialization design
+# Gallery Electron initialization design
 
 ## Scope
 
-Create a standalone `examples/eagle` Electron application shell. It demonstrates the existing Cordis web runtime in Electron and deliberately contains no gallery feature, filesystem API, IPC handler, database, thumbnail cache, or distribution configuration.
+Create a standalone `examples/gallery` Electron application shell. It demonstrates the existing Cordis web runtime in Electron and deliberately contains no gallery feature, filesystem API, IPC handler, database, thumbnail cache, or distribution configuration.
 
 ## Structure
 
-`examples/eagle` owns these three Electron boundaries:
+`examples/gallery` owns these three Electron boundaries:
 
 - `src/main.ts`: creates the application window and loads the development server or built renderer.
 - `src/preload.ts`: an empty, isolated preload entry. It exposes no API.
@@ -18,7 +18,7 @@ The example uses `electron-vite` for its main, preload, and renderer builds. The
 
 ## Dependency and runtime boundaries
 
-`examples/eagle` depends on Electron, electron-vite, and the five existing Cordis workspace packages plus the existing boot-graph packages. It does not add a gallery, persistence, image-processing, virtualization, or installer dependency.
+`examples/gallery` depends on Electron, electron-vite, and the five existing Cordis workspace packages plus the existing boot-graph packages. It does not add a gallery, persistence, image-processing, virtualization, or installer dependency.
 
 The BrowserWindow keeps Node integration disabled and context isolation enabled. Filesystem capabilities and renderer-to-main IPC are intentionally absent from this initialization.
 

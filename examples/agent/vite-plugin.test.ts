@@ -22,9 +22,9 @@ it('emits the same graph as cordis.boot.json', () => {
 });
 
 it('resolves a supplied virtual module id', () => {
-  const plugin = cordisWebBoot({ virtualModuleId: 'virtual:cordis-eagle-boot' });
+  const plugin = cordisWebBoot({ virtualModuleId: 'virtual:cordis-gallery-boot' });
 
-  expect(plugin.resolveId?.('virtual:cordis-eagle-boot')).toBe('\0virtual:cordis-eagle-boot');
+  expect(plugin.resolveId?.('virtual:cordis-gallery-boot')).toBe('\0virtual:cordis-gallery-boot');
 });
 
 it('boots the locale runtime before the UI and its language settings extension', () => {

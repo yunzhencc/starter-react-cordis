@@ -12,7 +12,7 @@ import * as home from './index';
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 
-it('renders Hello, Eagle! at the app index route', async () => {
+it('renders Hello, Gallery! at the app index route', async () => {
   vi.stubGlobal('matchMedia', () => ({
     matches: false,
     addEventListener() {},
@@ -32,7 +32,7 @@ it('renders Hello, Eagle! at the app index route', async () => {
     unmount = ctx.uiRenderer.mount(container);
   });
 
-  expect(container.querySelector('h1')?.textContent).toBe('Hello, Eagle!');
+  expect(container.querySelector('h1')?.textContent).toBe('Hello, Gallery!');
 
   await act(async () => unmount());
   for (const fiber of fibers.reverse()) await fiber.dispose();

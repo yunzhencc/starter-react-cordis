@@ -372,9 +372,9 @@ importers:
         specifier: ^19.2.8
         version: 19.2.8
 
-  examples/eagle:
+  examples/gallery:
     dependencies:
-      '@examples/eagle-home':
+      '@examples/gallery-home':
         specifier: workspace:*
         version: link:plugins/home
       '@yunzhen/cordis-client-modules':
@@ -415,7 +415,7 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0(vite@8.2.2(@types/node@26.4.0)(jiti@2.6.1)(yaml@2.9.0))
 
-  examples/eagle/plugins/home:
+  examples/gallery/plugins/home:
     dependencies:
       '@deepseek-ai/cordis':
         specifier: ^4.0.2

@@ -1,5 +1,5 @@
 {
-  "name": "@examples/eagle-home",
+  "name": "@examples/gallery-home",
   "type": "module",
   "private": true,
   "exports": {

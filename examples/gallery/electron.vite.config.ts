@@ -10,7 +10,7 @@ export default defineConfig({
     plugins: [
       cordisWebBoot({
         configPath: resolve(import.meta.dirname, 'cordis.yml'),
-        virtualModuleId: 'virtual:cordis-eagle-boot',
+        virtualModuleId: 'virtual:cordis-gallery-boot',
       }),
       react(),
     ],
