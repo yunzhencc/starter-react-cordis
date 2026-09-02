@@ -7,8 +7,8 @@
     "pnpm": ">=11.0.0"
   },
   "scripts": {
-    "build": "pnpm --filter @yunzhen/cordis-example-agent build",
-    "dev": "pnpm --filter @yunzhen/cordis-example-agent dev",
+    "build": "pnpm --filter @examples/agent build",
+    "dev": "pnpm --filter @examples/agent dev",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "test": "vitest run",

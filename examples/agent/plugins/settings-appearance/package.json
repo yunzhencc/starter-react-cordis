@@ -1,5 +1,5 @@
 {
-  "name": "@yunzhen/cordis-example-agent-settings-appearance",
+  "name": "@examples/agent-settings-appearance",
   "type": "module",
   "private": true,
   "exports": {

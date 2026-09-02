@@ -62,21 +62,21 @@ importers:
 
   examples/agent:
     dependencies:
+      '@examples/agent-dashboard':
+        specifier: workspace:*
+        version: link:plugins/dashboard
+      '@examples/agent-settings-appearance':
+        specifier: workspace:*
+        version: link:plugins/settings-appearance
+      '@examples/agent-settings-general':
+        specifier: workspace:*
+        version: link:plugins/settings-general
+      '@examples/agent-settings-language':
+        specifier: workspace:*
+        version: link:plugins/settings-language
       '@yunzhen/cordis-client-modules':
         specifier: workspace:*
         version: link:../../packages/client/modules
-      '@yunzhen/cordis-example-agent-dashboard':
-        specifier: workspace:*
-        version: link:plugins/dashboard
-      '@yunzhen/cordis-example-agent-settings-appearance':
-        specifier: workspace:*
-        version: link:plugins/settings-appearance
-      '@yunzhen/cordis-example-agent-settings-general':
-        specifier: workspace:*
-        version: link:plugins/settings-general
-      '@yunzhen/cordis-example-agent-settings-language':
-        specifier: workspace:*
-        version: link:plugins/settings-language
       '@yunzhen/cordis-host-plugin-catalog':
         specifier: workspace:*
         version: link:../../packages/host/plugin-catalog
@@ -183,7 +183,7 @@ importers:
       '@deepseek-ai/cordis':
         specifier: ^4.0.2
         version: 4.0.2
-      '@yunzhen/cordis-example-agent-settings-general':
+      '@examples/agent-settings-general':
         specifier: workspace:*
         version: link:../settings-general
       '@yunzhen/cordis-ui-i18n':

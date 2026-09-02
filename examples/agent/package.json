@@ -1,5 +1,5 @@
 {
-  "name": "@yunzhen/cordis-example-agent",
+  "name": "@examples/agent",
   "type": "module",
   "private": true,
   "scripts": {
@@ -7,11 +7,11 @@
     "dev": "vite"
   },
   "dependencies": {
+    "@examples/agent-dashboard": "workspace:*",
+    "@examples/agent-settings-appearance": "workspace:*",
+    "@examples/agent-settings-general": "workspace:*",
+    "@examples/agent-settings-language": "workspace:*",
     "@yunzhen/cordis-client-modules": "workspace:*",
-    "@yunzhen/cordis-example-agent-dashboard": "workspace:*",
-    "@yunzhen/cordis-example-agent-settings-appearance": "workspace:*",
-    "@yunzhen/cordis-example-agent-settings-general": "workspace:*",
-    "@yunzhen/cordis-example-agent-settings-language": "workspace:*",
     "@yunzhen/cordis-host-plugin-catalog": "workspace:*",
     "@yunzhen/cordis-ui-i18n": "workspace:*",
     "@yunzhen/cordis-ui-layout": "workspace:*",
