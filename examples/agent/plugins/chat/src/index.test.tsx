@@ -15,9 +15,9 @@ Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 
 async function bootChat() {
   window.history.replaceState({}, '', '/chat');
-  const stream = vi.fn(async function* ({ abortSignal }: ModelStreamRequest) {
+  const stream = vi.fn(async function* ({ abortSignal, modelId }: ModelStreamRequest) {
     expect(abortSignal?.aborted).toBe(false);
-    yield 'first';
+    yield `${modelId}: first`;
     await new Promise(resolve => abortSignal?.addEventListener('abort', resolve, { once: true }));
   });
   const ctx = new Context();
@@ -31,6 +31,11 @@ async function bootChat() {
     {
       apply(pluginCtx: Context) {
         pluginCtx.reflect.provide('models', {
+          defaultModelId: 'deepseek-chat',
+          snapshot: () => [
+            { baseURL: '', id: 'deepseek-chat', label: 'DeepSeek Chat', model: '', provider: 'deepseek' },
+            { baseURL: '', id: 'qwen-plus', label: 'Qwen Plus', model: '', provider: 'qwen' },
+          ],
           stream,
         } as never);
       },
@@ -63,7 +68,7 @@ describe('agent chat module', () => {
 
   afterEach(() => vi.unstubAllGlobals());
 
-  it('sends with DeepSeek and stops the active stream', async () => {
+  it('sends with the selected model and stops the active stream', async () => {
     const { container, ctx, dispose, stream } = await bootChat();
     let unmount!: () => void;
 
@@ -72,7 +77,10 @@ describe('agent chat module', () => {
     });
 
     await act(async () => {
-      expect(container.querySelector('select')).toBeNull();
+      const modelPicker = container.querySelector<HTMLSelectElement>('select')!;
+      expect(modelPicker.value).toBe('deepseek-chat');
+      modelPicker.value = 'qwen-plus';
+      modelPicker.dispatchEvent(new Event('change', { bubbles: true }));
       const message = container.querySelector<HTMLElement>('[aria-label="Message"]')!;
       expect(message.getAttribute('contenteditable')).toBe('true');
       const paragraph = document.createElement('p');
@@ -87,8 +95,8 @@ describe('agent chat module', () => {
     });
 
     await vi.waitFor(() => {
-      expect(stream).toHaveBeenCalledWith(expect.objectContaining({ messages: expect.any(Array) }));
-      expect(container.textContent).toContain('first');
+      expect(stream).toHaveBeenCalledWith(expect.objectContaining({ modelId: 'qwen-plus', messages: expect.any(Array) }));
+      expect(container.textContent).toContain('qwen-plus: first');
     });
     expect(container.querySelector('[aria-label="Message"]')?.getAttribute('contenteditable')).toBe('false');
 

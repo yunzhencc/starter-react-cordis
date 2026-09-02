@@ -17,6 +17,7 @@ const messages = {
   'zh-CN': {
     chat: {
       message: '消息',
+      model: '模型',
       placeholder: '输入消息',
       send: '发送',
       stop: '停止',
@@ -26,6 +27,7 @@ const messages = {
   'en-US': {
     chat: {
       message: 'Message',
+      model: 'Model',
       placeholder: 'Message Codex',
       send: 'Send',
       stop: 'Stop',
@@ -51,6 +53,7 @@ export function apply(ctx: Context) {
 function ChatPage({ models }: Pick<Context, 'models'>) {
   const { t } = useTranslation();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [selectedModelId, setSelectedModelId] = useState<string>(models.defaultModelId);
   const [streaming, setStreaming] = useState(false);
   const controllerRef = useRef<AbortController | undefined>(undefined);
   const messageIdRef = useRef(0);
@@ -72,6 +75,7 @@ function ChatPage({ models }: Pick<Context, 'models'>) {
       for await (const chunk of models.stream({
         abortSignal: controller.signal,
         messages: requestMessages,
+        modelId: selectedModelId,
       })) {
         setMessages(current => appendAssistantText(current, chunk));
       }
@@ -106,7 +110,11 @@ function ChatPage({ models }: Pick<Context, 'models'>) {
           placeholder={t('chat.placeholder')}
           sendLabel={t('chat.send')}
           stopLabel={t('chat.stop')}
-        />
+        >
+          <select aria-label={t('chat.model')} className={styles.modelPicker} value={selectedModelId} onChange={event => setSelectedModelId(event.target.value)}>
+            {models.snapshot().map(model => <option key={model.id} value={model.id}>{model.label}</option>)}
+          </select>
+        </ChatComposer>
       </div>
     </section>
   );

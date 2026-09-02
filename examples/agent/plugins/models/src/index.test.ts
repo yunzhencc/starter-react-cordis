@@ -41,8 +41,17 @@ describe('agent models module', () => {
     const { ctx, dispose } = await boot();
     await expect(collect(ctx.models.stream({
       messages: [{ content: 'Hi', role: 'user' }],
+      modelId: 'deepseek-chat',
     }))).resolves.toEqual(['Hello']);
 
+    expect(ctx.models.defaultModelId).toBe('deepseek-chat');
+    expect(ctx.models.snapshot()).toEqual([{
+      baseURL: 'https://api.deepseek.com/v1',
+      id: 'deepseek-chat',
+      label: 'DeepSeek Chat',
+      model: 'deepseek-chat',
+      provider: 'deepseek',
+    }]);
     expect(requests).toHaveLength(1);
     const [input, init] = requests[0]!;
     expect(String(input)).toBe('https://api.deepseek.com/v1/chat/completions');
@@ -52,17 +61,13 @@ describe('agent models module', () => {
     await dispose();
   });
 
-  it('rejects non-DeepSeek model configuration before fetching', async () => {
+  it('rejects unknown model IDs before fetching', async () => {
     const fetchMock = vi.fn();
     vi.stubGlobal('fetch', fetchMock);
 
-    const invalidCtx = new Context();
-    const invalidFiber = invalidCtx.plugin({ apply, inject }, {
-      ...config,
-      provider: 'other',
-    });
-    await expect(invalidFiber.await()).rejects.toThrow('models config only supports apiKey');
-    await invalidFiber.dispose();
+    const { ctx, dispose } = await boot();
+    await expect(collect(ctx.models.stream({ messages: [], modelId: 'missing' }))).rejects.toThrow('unknown model: missing');
+    await dispose();
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

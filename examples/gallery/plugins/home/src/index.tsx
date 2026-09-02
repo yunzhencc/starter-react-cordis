@@ -16,9 +16,13 @@ export function apply(ctx: Context) {
     }
     catch {}
   };
-  ctx.slots.inject('shell.overlay', () => ctx.slots.register(
-    { name: 'shell.overlay', id: 'sidebar-toggle' },
-    () => <SidebarToggle layout={ctx.layout} onToggleSidebar={toggleSidebar} />,
+  ctx.slots.inject('sidebar.trigger', () => ctx.slots.register(
+    { name: 'sidebar.trigger', id: 'gallery-sidebar-toggle' },
+    () => <SidebarToggle layout={ctx.layout} placement="toolbar" onToggleSidebar={toggleSidebar} />,
+  ));
+  ctx.slots.inject('sidebar.rail', () => ctx.slots.register(
+    { name: 'sidebar.rail', id: 'gallery-sidebar-toggle' },
+    () => <SidebarToggle layout={ctx.layout} placement="rail" onToggleSidebar={toggleSidebar} />,
   ));
   ctx.routes.inject('app-layout', () => ctx.routes.register({
     id: 'home',

@@ -67,6 +67,10 @@ describe('app layout', () => {
     expect(layoutStyles).toContain('.main {\n  box-sizing: border-box;\n  height: 100%;\n  min-width: 0;\n  overflow-x: hidden;\n  overflow-y: auto;');
   });
 
+  it('keeps the open sidebar trigger clear of macOS window controls', () => {
+    expect(layoutStyles).toContain('.sidebarTrigger {\n  display: flex;\n  align-items: center;\n  justify-content: flex-end;');
+  });
+
   it('mounts as a static root without routes', async () => {
     const { ctx, container, dispose } = await bootStaticLayout();
     let unmount!: () => void;

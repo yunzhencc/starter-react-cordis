@@ -43,14 +43,19 @@ it('keeps one sidebar control while the sidebar is toggled', async () => {
   expect(container.querySelector('h1')?.textContent).toBe('Hello, Gallery!');
   const collapseButton = container.querySelector<HTMLButtonElement>('[data-sidebar-toggle][aria-label="折叠左侧栏"]');
   expect(collapseButton).not.toBeNull();
+  expect(container.querySelector('[data-sidebar-trigger="toolbar"]')?.contains(collapseButton!)).toBe(true);
   expect(container.querySelectorAll('[data-sidebar-toggle]')).toHaveLength(1);
   expect(collapseButton?.querySelector('svg')?.getAttribute('class')).toContain('lucide-panel-left-close');
 
   await act(async () => collapseButton?.click());
 
   expect(container.querySelector('[data-sidebar-column]')).toBeNull();
+  const rail = container.querySelector<HTMLElement>('[data-sidebar-rail]');
+  expect(rail).not.toBeNull();
   const expandButton = container.querySelector<HTMLButtonElement>('[data-sidebar-toggle][aria-label="展开左侧栏"]');
   expect(expandButton).not.toBeNull();
+  expect(rail?.contains(expandButton!)).toBe(true);
+  expect(rail?.querySelector('[data-sidebar-trigger="rail"]')).not.toBeNull();
   expect(expandButton?.querySelector('svg')?.getAttribute('class')).toContain('lucide-panel-left-open');
   expect(container.querySelectorAll('[data-sidebar-toggle]')).toHaveLength(1);
   expect(localStorage.getItem('gallery.sidebar-open')).toBe('false');
@@ -58,6 +63,7 @@ it('keeps one sidebar control while the sidebar is toggled', async () => {
   await act(async () => expandButton?.click());
 
   expect(container.querySelector('[data-sidebar-column]')).not.toBeNull();
+  expect(container.querySelector('[data-sidebar-rail]')).toBeNull();
   expect(container.querySelector<HTMLButtonElement>('[data-sidebar-toggle][aria-label="折叠左侧栏"]')).not.toBeNull();
   expect(localStorage.getItem('gallery.sidebar-open')).toBe('true');
 

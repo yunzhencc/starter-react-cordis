@@ -1,5 +1,7 @@
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { loadWebBootGraph } from '@yunzhen/cordis-host-plugin-catalog';
-import { expect, it } from 'vitest';
+import { expect, it, vi } from 'vitest';
 import { cordisWebBoot, emitWebBootGraph, renderWebBootVirtualModule } from './vite-plugin';
 
 const graph = {
@@ -25,6 +27,37 @@ it('resolves a supplied virtual module id', () => {
   const plugin = cordisWebBoot({ virtualModuleId: 'virtual:cordis-gallery-boot' });
 
   expect(plugin.resolveId?.('virtual:cordis-gallery-boot')).toBe('\0virtual:cordis-gallery-boot');
+});
+
+it('reloads the virtual boot graph when its catalog changes', () => {
+  const root = mkdtempSync(join(import.meta.dirname, '.cordis-vite-plugin-'));
+  const configPath = join(root, 'cordis.yml');
+  const virtualModuleId = 'virtual:cordis-agent-test-boot';
+  const resolvedVirtualModuleId = `\0${virtualModuleId}`;
+  writeFileSync(configPath, '- id: i18n\n  name: \'@yunzhen/cordis-ui-i18n\'\n');
+  const plugin = cordisWebBoot({ configPath, virtualModuleId });
+  const module = { id: resolvedVirtualModuleId };
+  const add = vi.fn();
+  const invalidateModule = vi.fn();
+  const send = vi.fn();
+
+  try {
+    plugin.configureServer!({ watcher: { add } } as never);
+    expect(add).toHaveBeenCalledWith(configPath);
+    expect(plugin.load?.(resolvedVirtualModuleId)).not.toContain('@yunzhen/cordis-ui-renderer');
+    writeFileSync(configPath, '- id: i18n\n  name: \'@yunzhen/cordis-ui-i18n\'\n- id: renderer\n  name: \'@yunzhen/cordis-ui-renderer\'\n');
+    plugin.handleHotUpdate!({
+      file: configPath,
+      server: { moduleGraph: { getModuleById: () => module, invalidateModule }, ws: { send } },
+    } as never);
+
+    expect(invalidateModule).toHaveBeenCalledWith(module);
+    expect(send).toHaveBeenCalledWith({ type: 'full-reload' });
+    expect(plugin.load?.(resolvedVirtualModuleId)).toContain('@yunzhen/cordis-ui-renderer');
+  }
+  finally {
+    rmSync(root, { force: true, recursive: true });
+  }
 });
 
 it('boots the locale runtime before the UI and its language settings extension', () => {

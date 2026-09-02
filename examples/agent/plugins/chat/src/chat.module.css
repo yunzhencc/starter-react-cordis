@@ -1,9 +1,9 @@
 .chatPage {
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 4rem);
+  min-height: calc(100vh - 3.5rem);
   width: min(100%, 52rem);
-  margin: 0 auto;
+  margin: 0 auto -0.5rem;
 }
 
 .visuallyHidden {
@@ -54,23 +54,23 @@
 }
 
 .composer {
-  padding: 0.75rem;
+  padding: 0;
   background: color-mix(in srgb, var(--app-surface) 92%, var(--app-background));
-  border: 1px solid color-mix(in srgb, var(--app-border) 78%, transparent);
-  border-radius: 1.25rem;
-  box-shadow: 0 0.75rem 2.25rem color-mix(in srgb, #000 18%, transparent);
+  border: 0;
+  border-radius: 1.5rem;
+  box-shadow: 0 0.5rem 1.5rem color-mix(in srgb, #000 18%, transparent);
 }
 
 .editor {
   position: relative;
-  min-height: 3.25rem;
-  padding: 0.5rem;
+  min-height: 2rem;
+  padding: 0 0.75rem 0.25rem;
 }
 
 .editor :global(.ProseMirror) {
-  min-height: 2.25rem;
+  min-height: 2rem;
   outline: none;
-  line-height: 1.5;
+  line-height: 1.35;
 }
 
 .editor :global(.ProseMirror p) {
@@ -79,23 +79,42 @@
 
 .placeholder {
   position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
+  top: 0;
+  left: 0.75rem;
   color: color-mix(in srgb, var(--app-text) 48%, transparent);
   pointer-events: none;
 }
 
 .composerFooter {
   display: flex;
-  gap: 0.75rem;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  padding: 0 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .composerControls {
   display: flex;
   min-width: 0;
   align-items: center;
+  gap: 0.25rem;
+}
+
+.modelPicker {
+  max-width: 14rem;
+  padding: 0.25rem 0.375rem;
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+  background: transparent;
+  border: 0;
+  border-radius: 0.5rem;
+  outline: none;
+}
+
+.modelPicker:hover,
+.modelPicker:focus-visible {
+  background: color-mix(in srgb, var(--app-text) 8%, transparent);
 }
 
 .sendButton,
@@ -136,10 +155,6 @@
 }
 
 @media (max-width: 42rem) {
-  .chatPage {
-    min-height: calc(100vh - 2rem);
-  }
-
   .messageList {
     padding-top: 1.5rem;
   }

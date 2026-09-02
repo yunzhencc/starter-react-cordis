@@ -107,18 +107,20 @@ export function ChatComposer({ children, disabled, onSend, onStop, placeholder =
         {!canSend && <span aria-hidden="true" className={styles.placeholder}>{placeholder}</span>}
       </div>
       <div className={styles.composerFooter}>
-        <div className={styles.composerControls}>{children}</div>
-        {disabled && onStop
-          ? (
-              <button aria-label={stopLabel} className={styles.stopButton} type="button" onClick={onStop}>
-                <span aria-hidden="true" />
-              </button>
-            )
-          : (
-              <button aria-label={sendLabel} className={styles.sendButton} disabled={disabled || !canSend} type="submit">
-                <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M10 16.5V3.5m0 0L5.5 8M10 3.5 14.5 8" /></svg>
-              </button>
-            )}
+        <div className={styles.composerControls}>
+          {children}
+          {disabled && onStop
+            ? (
+                <button aria-label={stopLabel} className={styles.stopButton} type="button" onClick={onStop}>
+                  <span aria-hidden="true" />
+                </button>
+              )
+            : (
+                <button aria-label={sendLabel} className={styles.sendButton} disabled={disabled || !canSend} type="submit">
+                  <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M10 16.5V3.5m0 0L5.5 8M10 3.5 14.5 8" /></svg>
+                </button>
+              )}
+        </div>
       </div>
     </form>
   );

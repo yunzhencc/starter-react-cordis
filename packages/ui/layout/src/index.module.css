@@ -23,6 +23,24 @@
   border-right: 1px solid var(--app-border);
 }
 
+.sidebarTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 36px;
+  margin: -0.5rem -0.5rem 0.5rem;
+}
+
+.sidebarRail {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  padding-top: 8px;
+  background: var(--app-surface);
+  border-right: 1px solid var(--app-border);
+}
+
 .workbench {
   border-left: 1px solid var(--app-border);
 }

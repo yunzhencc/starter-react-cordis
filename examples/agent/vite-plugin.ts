@@ -22,14 +22,18 @@ export function cordisWebBoot({
   configPath = resolve(import.meta.dirname, 'cordis.yml'),
   virtualModuleId = 'virtual:cordis-example-agent-boot',
 }: CordisWebBootOptions = {}): Plugin {
+  const resolvedConfigPath = resolve(configPath);
   const resolvedVirtualModuleId = `\0${virtualModuleId}`;
   let graph: WebBootGraph | undefined;
-  const loadGraph = () => graph ??= loadWebBootGraph(configPath);
+  const loadGraph = () => graph ??= loadWebBootGraph(resolvedConfigPath);
 
   return {
     name: 'cordis-example-agent-boot',
     buildStart() {
       loadGraph();
+    },
+    configureServer(server) {
+      server.watcher.add(resolvedConfigPath);
     },
     generateBundle() {
       emitWebBootGraph(this, loadGraph());
@@ -41,6 +45,16 @@ export function cordisWebBoot({
     resolveId(id) {
       if (id === virtualModuleId)
         return resolvedVirtualModuleId;
+    },
+    handleHotUpdate({ file, server }) {
+      if (resolve(file) !== resolvedConfigPath)
+        return;
+      graph = undefined;
+      const module = server.moduleGraph.getModuleById(resolvedVirtualModuleId);
+      if (module)
+        server.moduleGraph.invalidateModule(module);
+      server.ws.send({ type: 'full-reload' });
+      return [];
     },
   };
 }

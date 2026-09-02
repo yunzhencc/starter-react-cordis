@@ -7,17 +7,28 @@ export interface ModelsConfig {
   apiKey?: string;
 }
 
+export interface ModelDefinition {
+  baseURL: string;
+  id: string;
+  label: string;
+  model: string;
+  provider: string;
+}
+
 export interface ModelStreamRequest {
   abortSignal?: AbortSignal;
   messages: ModelMessage[];
+  modelId: string;
 }
 
 export const MODEL_CONFIG_STORAGE_KEY = '@examples/agent-models:config';
 const deepseek = {
   baseURL: 'https://api.deepseek.com/v1',
+  id: 'deepseek-chat',
+  label: 'DeepSeek Chat',
   model: 'deepseek-chat',
   name: 'deepseek',
-};
+} as const;
 
 declare module '@deepseek-ai/cordis' {
   interface Context {
@@ -32,6 +43,20 @@ export class ModelRegistry {
     this.config = readStoredConfig(config);
   }
 
+  get defaultModelId() {
+    return deepseek.id;
+  }
+
+  snapshot(): readonly ModelDefinition[] {
+    return [{
+      baseURL: deepseek.baseURL,
+      id: deepseek.id,
+      label: deepseek.label,
+      model: deepseek.model,
+      provider: deepseek.name,
+    }];
+  }
+
   settings() {
     return this.config;
   }
@@ -41,7 +66,10 @@ export class ModelRegistry {
     writeStorage(MODEL_CONFIG_STORAGE_KEY, JSON.stringify(this.config));
   }
 
-  async* stream({ abortSignal, messages }: ModelStreamRequest): AsyncIterable<string> {
+  async* stream({ abortSignal, messages, modelId }: ModelStreamRequest): AsyncIterable<string> {
+    if (modelId !== deepseek.id)
+      throw new Error(`unknown model: ${modelId}`);
+
     const provider = createOpenAICompatible({
       apiKey: this.config.apiKey,
       baseURL: deepseek.baseURL,
