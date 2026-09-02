@@ -139,6 +139,15 @@ importers:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
 
+  packages/host/plugin-catalog:
+    dependencies:
+      '@yunzhen/cordis-client-modules':
+        specifier: workspace:*
+        version: link:../../client/modules
+      yaml:
+        specifier: ^2.9.0
+        version: 2.9.0
+
   packages/ui/layout:
     dependencies:
       '@deepseek-ai/cordis':
