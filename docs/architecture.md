@@ -2,31 +2,31 @@
 
 ## 状态与范围
 
-当前生效的架构规格是 [DeepSeek 对齐的插件运行时设计](superpowers/specs/2026-09-01-deepseek-aligned-plugin-runtime-design.md)。首版只启动随仓库构建发布的静态模块；不提供第三方安装、远程模块、Node/CDN Provider、懒 CJS、HMR 或运行时插件装卸。
+当前生效的架构规格是 [静态插件启动设计](superpowers/specs/2026-09-01-deepseek-aligned-static-plugin-boot-design.md)。生产只发布静态 `dist`；不提供生产 Node 服务、HMR、第三方安装、远程模块、运行时插件装卸或 YAML `!!js` 配置。
 
 ## 静态启动链
 
 ```text
-apps/web
-  └─ 创建 Cordis Context
-      └─ bundle/web-app 的固定模块顺序
-          renderer → router → layout → theme → dashboard → settings
-              └─ ctx.uiRenderer.mount(container)
+apps/web/cordis.yml
+  └─ host/plugin-catalog 读取包元数据
+      └─ WebBootGraph
+          └─ Vite 虚拟 registry（开发）/ cordis.boot.json + chunks（构建）
+              └─ client/modules Boot Loader
+                  └─ Cordis Context → ctx.uiRenderer.mount(container)
 ```
 
-`apps/web` 直接创建 Context 并逐个安装 `webAppPlugins`。模块的 `inject` 声明所需 Service；依赖父 Route 或 Slot 的贡献使用 `ctx.routes.inject()` / `ctx.slots.inject()` 等待声明，而不是依赖同级模块的加载时序。
+`apps/web/cordis.yml` 是该应用唯一的启用来源。catalog 在 Node 构建阶段读取它和每个包的 `yunzhen.client` 元数据，禁用条目在依赖验证前移除。Vite 将图转为 ESM `import()` registry，生产构建同时输出相同内容的 `cordis.boot.json`。浏览器只导入图中条目；缺失的 Dashboard 不会加载其 chunk 或注册路由。
 
 ## 包职责
 
 | 包 | 职责 |
 | --- | --- |
-| `@yunzhen/cordis-client-modules` | 仅导出未来动态模块的 `WebBootGraph` 与 `PluginCatalogProvider` 协议类型；首版没有 Provider 或运行时代码。 |
+| `@yunzhen/cordis-client-modules` | WebBootGraph 验证、浏览器 ESM 导入/激活、失败呈现与 UI 挂载。 |
 | `@yunzhen/cordis-ui-slots` | 纯 `SlotMap` / `SlotCore`，支持 `root`、`single`、`list` 与唯一 `root` scope。 |
 | `@yunzhen/cordis-ui-renderer` | `ctx.slots` 的 SlotRegistry Service，以及 `ctx.uiRenderer` 的唯一 React 根挂载。 |
 | `@yunzhen/cordis-ui-router` | `ctx.routes` 的 RouteRegistry、React Router 适配和 Route 的 Slot owner。 |
 | `@yunzhen/cordis-ui-layout` | `ctx.layout` 面板动作和无路径 `app-layout` 三栏 Route。 |
 | `feature/dashboard`、`feature/settings`、`ui/theme` | 通过 Cordis `inject` + `apply` 注册 Route 或 Slot 贡献。 |
-| `bundle/web-app` | 静态导入并固定组合上述内置模块。 |
 
 旧的 `core/runtime`、`react/bridge`、`router/react-router` 与 `ui/shell` 分层已不属于当前实现。
 
@@ -50,6 +50,6 @@ app-layout
 
 Dashboard 和 Settings 都是 `app-layout` 的子 Route；主题插件向 Settings 的 `settings.section` list Slot 提供 Appearance 区块。`ctx.layout` 仅管理侧栏与工作台开关；不持久化尺寸、不支持拖拽或响应式自动折叠。
 
-## 未来动态模块协议
+## 部署边界
 
-`WebBootGraph` 和 `PluginCatalogProvider` 只固定将来 Provider 的数据契约。未来可由 Node、HTTP 或 CDN 提供同一 graph；实际 Loader、Fiber 生命周期与 HMR 仍需单独实现，不能把当前的静态 boot 误认为动态模块运行时。
+开发期 Vite 进程可读取 `apps/web/cordis.yml` 生成虚拟 registry；生产环境仅托管 `apps/web/dist` 的静态文件和 ESM chunks。生产不运行 Node catalog 扫描，不支持 HMR、远程插件、运行时安装或动态运行器。
