@@ -1,18 +1,23 @@
 import type { Context } from '@deepseek-ai/cordis';
+import type {} from '@yunzhen/cordis-ui-i18n';
 import type {} from '@yunzhen/cordis-ui-renderer';
 import type {} from '@yunzhen/cordis-ui-router';
 import { Settings } from 'lucide-react';
 import { createElement, useSyncExternalStore } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Navigate, NavLink, Outlet, useLocation } from 'react-router-dom';
 import styles from './index.module.css';
+import { settingsLayoutMessages } from './locales';
 import { SettingsRegistry } from './registry';
 
 export { SettingsRegistry } from './registry';
 export type { SettingsEntry } from './registry';
 
-export const inject = ['routes', 'slots'];
+export const inject = ['routes', 'slots', 'i18n'];
 
 export function apply(ctx: Context) {
+  const i18n = ctx.i18n;
+  i18n.register(settingsLayoutMessages);
   const settings = new SettingsRegistry(ctx);
   ctx.routes.inject('app-layout', () => ctx.routes.register({
     id: 'settings',
@@ -28,13 +33,14 @@ export function apply(ctx: Context) {
 }
 
 function SettingsLayout({ settings }: { settings: SettingsRegistry }) {
+  const { t } = useTranslation();
   const entries = useSettingsEntries(settings);
   const location = useLocation();
   if (!entries.length) {
     return (
       <section className={styles.empty}>
-        <h1>Settings</h1>
-        <p>No settings available.</p>
+        <h1>{t('settings.title')}</h1>
+        <p>{t('settings.empty')}</p>
       </section>
     );
   }
@@ -44,26 +50,27 @@ function SettingsLayout({ settings }: { settings: SettingsRegistry }) {
   const current = entries.find(entry => location.pathname === `/settings/${entry.id}`);
   return (
     <section className={styles.content}>
-      <h1>{current?.label ?? 'Settings'}</h1>
+      <h1>{current ? labelOf(current, t) : t('settings.title')}</h1>
       <Outlet />
     </section>
   );
 }
 
 function SettingsSidebar({ settings }: { settings: SettingsRegistry }) {
+  const { t } = useTranslation();
   const entries = useSettingsEntries(settings);
   const groups = Map.groupBy(entries, entry => entry.group.id);
   return (
     <div className={styles.sidebar} data-settings-sidebar>
-      <NavLink className={styles.returnLink} to="/">Return to app</NavLink>
-      <nav className={styles.menu} data-settings-menu aria-label="Settings">
+      <NavLink className={styles.returnLink} to="/">{t('settings.returnToApp')}</NavLink>
+      <nav className={styles.menu} data-settings-menu aria-label={t('settings.title')}>
         {[...groups.values()].map(group => (
           <section key={group[0]!.group.id}>
-            <h2>{group[0]!.group.label}</h2>
+            <h2>{groupLabelOf(group[0]!, t)}</h2>
             {group.map(entry => (
               <NavLink key={entry.id} className={styles.menuItem} to={`/settings/${entry.id}`}>
                 {entry.Icon && createElement(entry.Icon, { size: 18 })}
-                {entry.label}
+                {labelOf(entry, t)}
               </NavLink>
             ))}
           </section>
@@ -74,12 +81,21 @@ function SettingsSidebar({ settings }: { settings: SettingsRegistry }) {
 }
 
 function SettingsFooterLink() {
+  const { t } = useTranslation();
   return (
     <NavLink className={styles.footerLink} to="/settings">
       <Settings size={18} />
-      Settings
+      {t('settings.title')}
     </NavLink>
   );
+}
+
+function labelOf(entry: ReturnType<SettingsRegistry['snapshot']>[number], t: (key: string) => string) {
+  return entry.labelKey ? t(entry.labelKey) : entry.label;
+}
+
+function groupLabelOf(entry: ReturnType<SettingsRegistry['snapshot']>[number], t: (key: string) => string) {
+  return entry.group.labelKey ? t(entry.group.labelKey) : entry.group.label;
 }
 
 function useSettingsEntries(settings: SettingsRegistry) {

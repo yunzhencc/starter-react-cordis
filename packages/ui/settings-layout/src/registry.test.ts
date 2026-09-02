@@ -1,6 +1,7 @@
 import type { Context as CordisContext } from '@deepseek-ai/cordis';
 import { Context } from '@deepseek-ai/cordis';
-import { apply as applyRenderer } from '@yunzhen/cordis-ui-renderer';
+import { apply as applyI18n } from '@yunzhen/cordis-ui-i18n';
+import { apply as applyRenderer, inject as rendererInject } from '@yunzhen/cordis-ui-renderer';
 import { apply as applyRouter } from '@yunzhen/cordis-ui-router';
 import { describe, expect, it } from 'vitest';
 import { apply } from './index';
@@ -12,7 +13,8 @@ async function bootSettings() {
   const fibers: ReturnType<CordisContext['plugin']>[] = [];
 
   for (const module of [
-    { apply: applyRenderer },
+    { apply: applyI18n },
+    { apply: applyRenderer, inject: rendererInject },
     { inject: ['slots'], apply: applyRouter },
     {
       inject: ['routes'],
@@ -20,7 +22,7 @@ async function bootSettings() {
         pluginCtx.routes.register({ id: 'app-layout', Component: Null });
       },
     },
-    { inject: ['routes', 'slots'], apply },
+    { inject: ['i18n', 'routes', 'slots'], apply },
   ]) {
     const fiber = ctx.plugin(module);
     fibers.push(fiber);

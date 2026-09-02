@@ -2,15 +2,21 @@
 
 import type { Context as CordisContext } from '@deepseek-ai/cordis';
 import { Context } from '@deepseek-ai/cordis';
-import { apply as applyRenderer, Slot } from '@yunzhen/cordis-ui-renderer';
+import { apply as applyI18n } from '@yunzhen/cordis-ui-i18n';
+import { apply as applyRenderer, inject as rendererInject, Slot } from '@yunzhen/cordis-ui-renderer';
 import { apply as applyRouter } from '@yunzhen/cordis-ui-router';
 import { act } from 'react';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { apply } from './index';
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 
 const Null = () => null;
+
+beforeEach(() => {
+  localStorage.clear();
+  Object.defineProperty(navigator, 'languages', { configurable: true, value: ['zh-CN'] });
+});
 
 async function bootSettings(path: string) {
   window.history.replaceState({}, '', path);
@@ -24,7 +30,8 @@ async function bootSettings(path: string) {
   );
 
   for (const module of [
-    { apply: applyRenderer },
+    { apply: applyI18n },
+    { inject: rendererInject, apply: applyRenderer },
     { inject: ['slots'], apply: applyRouter },
     {
       inject: ['routes', 'slots'],
@@ -46,7 +53,7 @@ async function bootSettings(path: string) {
         }));
       },
     },
-    { inject: ['routes', 'slots'], apply },
+    { inject: ['routes', 'slots', 'i18n'], apply },
   ]) {
     const fiber = ctx.plugin(module);
     fibers.push(fiber);
@@ -86,7 +93,8 @@ describe('settings layout', () => {
     });
 
     expect(container.querySelector('[data-settings-sidebar]')).not.toBeNull();
-    expect(container.textContent).toContain('Return to app');
+    expect(container.textContent).toContain('返回应用');
+    expect(container.textContent).not.toContain('Return to app');
     expect([...container.querySelectorAll('[data-settings-menu] a')].map(link => link.textContent)).toEqual([
       'Appearance',
       'Keyboard shortcuts',

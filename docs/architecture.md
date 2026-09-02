@@ -26,11 +26,18 @@ apps/web/cordis.yml
 | `@yunzhen/cordis-ui-renderer` | `ctx.slots` 的 SlotRegistry Service，以及 `ctx.uiRenderer` 的唯一 React 根挂载。 |
 | `@yunzhen/cordis-ui-router` | `ctx.routes` 的 RouteRegistry、React Router 适配和 Route 的 Slot owner。 |
 | `@yunzhen/cordis-ui-layout` | `ctx.layout` 面板动作和无路径 `app-layout` 三栏 Route。 |
-| `feature/dashboard`、`feature/settings-appearance` | 通过 Cordis `inject` + `apply` 注册 Route 或 Slot 贡献。 |
+| `@yunzhen/cordis-ui-i18n` | `ctx.i18n`、浏览器语言识别、用户选择持久化与 i18next React Provider。 |
+| `feature/dashboard`、`feature/settings-appearance`、`feature/settings-language` | 通过 Cordis `inject` + `apply` 注册 Route、Slot 或设置贡献，并拥有各自文案资源。 |
 | `ui/settings-layout` | `/settings` 路由壳、设置侧栏、底部 Settings 入口与 `ctx.settings.register()`。 |
 | `ui/theme` | ThemeRuntime、token 与 DOM 同步；具体设置页面由独立扩展提供。 |
 
 旧的 `core/runtime`、`react/bridge`、`router/react-router` 与 `ui/shell` 分层已不属于当前实现。
+
+## 多语言
+
+`ui/i18n` 目前提供 `zh-CN` 与 `en-US`。首次启动优先使用浏览器语言（任一 `zh*` 选择 `zh-CN`，其余选择 `en-US`）；用户在语言设置页选择后写入 localStorage。renderer 在唯一 React 根部包裹 i18next Provider，语言变更会刷新所有 Slot 与 Route 组件。
+
+功能包将自己的 `zh-CN` / `en-US` 资源通过 `ctx.i18n.register()` 注册到共享词典；不要集中维护应用级大词典。Route 导航和设置项保持英文 `label` 作为回退，并可提供 `labelKey`，供宿主在渲染时翻译，从而确保侧栏菜单同样随语言切换刷新。
 
 ## Slot、Route 与布局
 

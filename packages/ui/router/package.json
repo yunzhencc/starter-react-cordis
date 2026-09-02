@@ -8,9 +8,11 @@
   },
   "dependencies": {
     "@deepseek-ai/cordis": "^4.0.2",
+    "@yunzhen/cordis-ui-i18n": "workspace:*",
     "@yunzhen/cordis-ui-renderer": "workspace:*",
     "@yunzhen/cordis-ui-slots": "workspace:*",
     "react": "^19.2.8",
+    "react-i18next": "^16.5.9",
     "react-router-dom": "^7.18.3"
   },
   "yunzhen": {

@@ -1,5 +1,5 @@
 {
-  "name": "@yunzhen/cordis-feature-settings-appearance",
+  "name": "@yunzhen/cordis-feature-settings-language",
   "type": "module",
   "private": true,
   "exports": {
@@ -10,8 +10,7 @@
     "@deepseek-ai/cordis": "^4.0.2",
     "@yunzhen/cordis-ui-i18n": "workspace:*",
     "@yunzhen/cordis-ui-settings-layout": "workspace:*",
-    "@yunzhen/cordis-ui-theme": "workspace:*",
-    "lucide-react": "^0.576.0",
+    "lucide-react": "^1.38.0",
     "react": "^19.2.8",
     "react-i18next": "^16.5.9"
   },
@@ -23,7 +22,7 @@
   "yunzhen": {
     "client": {
       "platform": "web",
-      "inject": ["@yunzhen/cordis-ui-i18n", "@yunzhen/cordis-ui-settings-layout", "@yunzhen/cordis-ui-theme"],
+      "inject": ["@yunzhen/cordis-ui-i18n", "@yunzhen/cordis-ui-settings-layout"],
       "immediately": false
     }
   }

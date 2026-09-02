@@ -3,6 +3,7 @@ import type { SlotOwnerHandle, SlotRenderer } from '@yunzhen/cordis-ui-renderer'
 import type { RouteObject } from 'react-router-dom';
 import { Slot, SlotOwner } from '@yunzhen/cordis-ui-renderer';
 import { createElement, useLayoutEffect, useState, useSyncExternalStore } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BrowserRouter, matchRoutes, NavLink, Outlet, useLocation, useRoutes } from 'react-router-dom';
 import { RouteRegistry } from './routes';
 
@@ -72,6 +73,7 @@ function RouteOutlet() {
 }
 
 function NavigationSidebar({ routes }: { routes: RouteRenderer }) {
+  const { t } = useTranslation();
   const snapshot = useSyncExternalStore(routes.subscribe, routes.snapshot, routes.snapshot);
   const location = useLocation();
   const Sidebar = findMatchedSidebar(snapshot, location.pathname);
@@ -87,7 +89,7 @@ function NavigationSidebar({ routes }: { routes: RouteRenderer }) {
     <>
       <nav>
         {links.map(route => (
-          <NavLink key={route.id} to={routeHref(route, byId)}>{route.navigation!.label}</NavLink>
+          <NavLink key={route.id} to={routeHref(route, byId)}>{route.navigation!.labelKey ? t(route.navigation!.labelKey) : route.navigation!.label}</NavLink>
         ))}
         <Slot name="sidebar.navigation" />
       </nav>

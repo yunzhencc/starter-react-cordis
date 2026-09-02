@@ -1,13 +1,15 @@
 import type { ThemeRuntime } from '@yunzhen/cordis-ui-theme';
 import { useSyncExternalStore } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from './appearance-settings.module.css';
 
 export function AppearanceSettings({ theme }: { theme: ThemeRuntime }) {
+  const { t } = useTranslation();
   const snapshot = useSyncExternalStore(theme.subscribe, () => theme.snapshot);
 
   return (
     <fieldset className={styles.panel}>
-      <legend>Appearance</legend>
+      <legend>{t('appearance.title')}</legend>
       {(['system', 'light', 'dark'] as const).map(value => (
         <label key={value}>
           <input
@@ -17,11 +19,11 @@ export function AppearanceSettings({ theme }: { theme: ThemeRuntime }) {
             value={value}
             onChange={() => theme.setTheme(value)}
           />
-          {value}
+          {t(`appearance.preference.${value}`)}
         </label>
       ))}
       <label>
-        Content font size
+        {t('appearance.fontSize')}
         <input
           min={12}
           max={20}

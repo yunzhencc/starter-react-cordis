@@ -10,7 +10,7 @@ export interface RouteDefinition {
   index?: boolean;
   Component: ComponentType;
   Sidebar?: ComponentType;
-  navigation?: { label: string; order: number };
+  navigation?: { label: string; labelKey?: string; order: number };
   children?: Record<string, SlotSpec>;
 }
 

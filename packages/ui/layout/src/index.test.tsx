@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 
 import { Context } from '@deepseek-ai/cordis';
-import { apply as applyRenderer } from '@yunzhen/cordis-ui-renderer';
+import { apply as applyI18n } from '@yunzhen/cordis-ui-i18n';
+import { apply as applyRenderer, inject as rendererInject } from '@yunzhen/cordis-ui-renderer';
 import { apply as applyRouter } from '@yunzhen/cordis-ui-router';
 import { act } from 'react';
 import { describe, expect, it } from 'vitest';
@@ -16,7 +17,9 @@ const EmptyPage = () => null;
 async function bootLayout() {
   window.history.replaceState({}, '', '/');
   const ctx = new Context();
-  const renderer = ctx.plugin({ apply: applyRenderer });
+  const i18n = ctx.plugin({ apply: applyI18n });
+  await i18n.await();
+  const renderer = ctx.plugin({ apply: applyRenderer, inject: rendererInject });
   await renderer.await();
   const router = ctx.plugin({ inject: ['slots'], apply: applyRouter });
   await router.await();
@@ -31,6 +34,7 @@ async function bootLayout() {
       await layout.dispose();
       await router.dispose();
       await renderer.dispose();
+      await i18n.dispose();
     },
   };
 }

@@ -2,6 +2,7 @@
 
 import type { Context as CordisContext } from '@deepseek-ai/cordis';
 import { Context } from '@deepseek-ai/cordis';
+import * as i18n from '@yunzhen/cordis-ui-i18n';
 import * as layout from '@yunzhen/cordis-ui-layout';
 import * as renderer from '@yunzhen/cordis-ui-renderer';
 import * as router from '@yunzhen/cordis-ui-router';
@@ -16,7 +17,7 @@ async function bootDashboard() {
   const ctx = new Context();
   const fibers: ReturnType<CordisContext['plugin']>[] = [];
 
-  for (const module of [renderer, router, layout, dashboard]) {
+  for (const module of [i18n, renderer, router, layout, dashboard]) {
     const fiber = ctx.plugin(module);
     fibers.push(fiber);
     await fiber.await();
@@ -33,6 +34,8 @@ async function bootDashboard() {
 
 describe('dashboard module', () => {
   beforeEach(() => {
+    localStorage.clear();
+    Object.defineProperty(navigator, 'languages', { configurable: true, value: ['zh-CN'] });
     vi.stubGlobal('matchMedia', () => ({
       matches: false,
       addEventListener() {},
@@ -50,6 +53,8 @@ describe('dashboard module', () => {
       unmount = ctx.uiRenderer.mount(container);
     });
 
+    expect(container.querySelector('h1')?.textContent).toBe('仪表盘');
+    expect(container.querySelector('button')?.textContent).toBe('打开工作台');
     expect(ctx.layout.snapshot().workbenchOpen).toBe(false);
 
     await act(async () => {
@@ -57,7 +62,7 @@ describe('dashboard module', () => {
     });
 
     expect(ctx.layout.snapshot().workbenchOpen).toBe(true);
-    expect(container.querySelector('[data-workbench-column]')?.textContent).toContain('Dashboard workbench');
+    expect(container.querySelector('[data-workbench-column]')?.textContent).toContain('仪表盘工作台');
 
     await act(async () => unmount());
     await dispose();

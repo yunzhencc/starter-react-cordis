@@ -1,21 +1,36 @@
 // @vitest-environment jsdom
 
 import { Context } from '@deepseek-ai/cordis';
+import { apply as applyI18n } from '@yunzhen/cordis-ui-i18n';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
-import { apply, Slot, SlotOwner } from './index';
+import { useTranslation } from 'react-i18next';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { apply, inject, Slot, SlotOwner } from './index';
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 
 const Null = () => null;
 
+beforeEach(() => {
+  localStorage.clear();
+  Object.defineProperty(navigator, 'languages', { configurable: true, value: ['zh-CN'] });
+});
+
 async function bootRenderer() {
   const ctx = new Context();
-  const fiber = ctx.plugin({ apply });
+  const i18nFiber = ctx.plugin({ apply: applyI18n });
+  await i18nFiber.await();
+  const fiber = ctx.plugin({ apply, inject });
   await fiber.await();
-  return { ctx, dispose: () => fiber.dispose() };
+  return {
+    ctx,
+    async dispose() {
+      await fiber.dispose();
+      await i18nFiber.dispose();
+    },
+  };
 }
 
 describe('ui renderer', () => {
@@ -99,6 +114,32 @@ describe('ui renderer', () => {
     });
 
     expect(container.innerHTML).toBe('<main><h1>Settings</h1></main>');
+    await act(async () => unmount());
+    await dispose();
+  });
+
+  it('refreshes slot content when the active language changes', async () => {
+    const { ctx, dispose } = await bootRenderer();
+    const Greeting = () => {
+      const { t } = useTranslation();
+      return <h1>{t('greeting')}</h1>;
+    };
+    ctx.i18n.register({
+      'zh-CN': { greeting: '你好' },
+      'en-US': { greeting: 'Hello' },
+    });
+    ctx.slots.register({ name: 'root' }, Greeting);
+    const container = document.createElement('div');
+
+    let unmount!: () => void;
+    await act(async () => {
+      unmount = ctx.uiRenderer.mount(container);
+    });
+    expect(container.textContent).toBe('你好');
+
+    await act(async () => ctx.i18n.setLocale('en-US'));
+    expect(container.textContent).toBe('Hello');
+
     await act(async () => unmount());
     await dispose();
   });

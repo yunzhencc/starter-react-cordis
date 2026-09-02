@@ -1,3 +1,4 @@
+import { loadWebBootGraph } from '@yunzhen/cordis-host-plugin-catalog';
 import { expect, it } from 'vitest';
 import { emitWebBootGraph, renderWebBootVirtualModule } from './vite-plugin';
 
@@ -18,4 +19,12 @@ it('emits the same graph as cordis.boot.json', () => {
   emitWebBootGraph({ emitFile: file => output.push(file as never) }, graph);
 
   expect(JSON.parse(output[0]!.source)).toEqual(graph);
+});
+
+it('boots the locale runtime before the UI and its language settings extension', () => {
+  const entries = loadWebBootGraph(new URL('./cordis.yml', import.meta.url).pathname).entries;
+  const ids = entries.map(entry => entry.id);
+
+  expect(ids.indexOf('i18n')).toBeLessThan(ids.indexOf('renderer'));
+  expect(ids.indexOf('settings-layout')).toBeLessThan(ids.indexOf('settings-language'));
 });

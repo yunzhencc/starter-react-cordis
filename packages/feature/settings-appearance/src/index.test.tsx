@@ -2,7 +2,8 @@
 
 import type { Context as CordisContext } from '@deepseek-ai/cordis';
 import { Context } from '@deepseek-ai/cordis';
-import { apply as applyRenderer, Slot } from '@yunzhen/cordis-ui-renderer';
+import { apply as applyI18n } from '@yunzhen/cordis-ui-i18n';
+import { apply as applyRenderer, inject as rendererInject, Slot } from '@yunzhen/cordis-ui-renderer';
 import { apply as applyRouter } from '@yunzhen/cordis-ui-router';
 import { apply as applySettingsLayout } from '@yunzhen/cordis-ui-settings-layout';
 import { apply as applyTheme } from '@yunzhen/cordis-ui-theme';
@@ -24,7 +25,8 @@ async function bootAppearance() {
   );
 
   for (const module of [
-    { apply: applyRenderer },
+    { apply: applyI18n },
+    { inject: rendererInject, apply: applyRenderer },
     { inject: ['slots'], apply: applyRouter },
     {
       inject: ['routes', 'slots'],
@@ -39,9 +41,9 @@ async function bootAppearance() {
         });
       },
     },
-    { inject: ['routes', 'slots'], apply: applySettingsLayout },
+    { inject: ['routes', 'slots', 'i18n'], apply: applySettingsLayout },
     { apply: applyTheme },
-    { inject: ['settings', 'theme'], apply },
+    { inject: ['settings', 'theme', 'i18n'], apply },
   ]) {
     const fiber = ctx.plugin(module);
     fibers.push(fiber);
@@ -59,6 +61,8 @@ async function bootAppearance() {
 
 describe('appearance settings extension', () => {
   beforeEach(() => {
+    localStorage.clear();
+    Object.defineProperty(navigator, 'languages', { configurable: true, value: ['zh-CN'] });
     vi.stubGlobal('matchMedia', () => ({ matches: false, addEventListener() {}, removeEventListener() {} }));
   });
 
@@ -82,7 +86,8 @@ describe('appearance settings extension', () => {
       unmount = ctx.uiRenderer.mount(container);
     });
 
-    expect(container.textContent).toContain('Appearance');
+    expect(container.textContent).toContain('外观');
+    expect(container.textContent).toContain('系统');
     expect(container.querySelectorAll('input[type="radio"]')).toHaveLength(3);
     expect(container.querySelector('input[type="range"]')).not.toBeNull();
     await act(async () => unmount());

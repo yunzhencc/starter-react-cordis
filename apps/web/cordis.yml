@@ -1,3 +1,5 @@
+- id: i18n
+  name: '@yunzhen/cordis-ui-i18n'
 - id: renderer
   name: '@yunzhen/cordis-ui-renderer'
 - id: router
@@ -12,3 +14,5 @@
   name: '@yunzhen/cordis-ui-settings-layout'
 - id: settings-appearance
   name: '@yunzhen/cordis-feature-settings-appearance'
+- id: settings-language
+  name: '@yunzhen/cordis-feature-settings-language'

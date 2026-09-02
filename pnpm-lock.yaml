@@ -71,9 +71,15 @@ importers:
       '@yunzhen/cordis-feature-settings-appearance':
         specifier: workspace:*
         version: link:../../packages/feature/settings-appearance
+      '@yunzhen/cordis-feature-settings-language':
+        specifier: workspace:*
+        version: link:../../packages/feature/settings-language
       '@yunzhen/cordis-host-plugin-catalog':
         specifier: workspace:*
         version: link:../../packages/host/plugin-catalog
+      '@yunzhen/cordis-ui-i18n':
+        specifier: workspace:*
+        version: link:../../packages/ui/i18n
       '@yunzhen/cordis-ui-layout':
         specifier: workspace:*
         version: link:../../packages/ui/layout
@@ -104,6 +110,9 @@ importers:
       '@deepseek-ai/cordis':
         specifier: ^4.0.2
         version: 4.0.2
+      '@yunzhen/cordis-ui-i18n':
+        specifier: workspace:*
+        version: link:../../ui/i18n
       '@yunzhen/cordis-ui-layout':
         specifier: workspace:*
         version: link:../../ui/layout
@@ -116,12 +125,18 @@ importers:
       react:
         specifier: ^19.2.8
         version: 19.2.8
+      react-i18next:
+        specifier: ^16.5.9
+        version: 16.6.6(i18next@25.10.10(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)
 
   packages/feature/settings-appearance:
     dependencies:
       '@deepseek-ai/cordis':
         specifier: ^4.0.2
         version: 4.0.2
+      '@yunzhen/cordis-ui-i18n':
+        specifier: workspace:*
+        version: link:../../ui/i18n
       '@yunzhen/cordis-ui-settings-layout':
         specifier: workspace:*
         version: link:../../ui/settings-layout
@@ -134,6 +149,40 @@ importers:
       react:
         specifier: ^19.2.8
         version: 19.2.8
+      react-i18next:
+        specifier: ^16.5.9
+        version: 16.6.6(i18next@25.10.10(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)
+    devDependencies:
+      '@yunzhen/cordis-ui-renderer':
+        specifier: workspace:*
+        version: link:../../ui/renderer
+      '@yunzhen/cordis-ui-router':
+        specifier: workspace:*
+        version: link:../../ui/router
+      react-dom:
+        specifier: ^19.2.8
+        version: 19.2.8(react@19.2.8)
+
+  packages/feature/settings-language:
+    dependencies:
+      '@deepseek-ai/cordis':
+        specifier: ^4.0.2
+        version: 4.0.2
+      '@yunzhen/cordis-ui-i18n':
+        specifier: workspace:*
+        version: link:../../ui/i18n
+      '@yunzhen/cordis-ui-settings-layout':
+        specifier: workspace:*
+        version: link:../../ui/settings-layout
+      lucide-react:
+        specifier: ^1.38.0
+        version: 1.38.0(react@19.2.8)
+      react:
+        specifier: ^19.2.8
+        version: 19.2.8
+      react-i18next:
+        specifier: ^16.5.9
+        version: 16.6.6(i18next@25.10.10(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)
     devDependencies:
       '@yunzhen/cordis-ui-renderer':
         specifier: workspace:*
@@ -153,6 +202,21 @@ importers:
       yaml:
         specifier: ^2.9.0
         version: 2.9.0
+
+  packages/ui/i18n:
+    dependencies:
+      '@deepseek-ai/cordis':
+        specifier: ^4.0.2
+        version: 4.0.2
+      i18next:
+        specifier: ^25.8.13
+        version: 25.10.10(typescript@6.0.3)
+      react:
+        specifier: ^19.2.8
+        version: 19.2.8
+      react-i18next:
+        specifier: ^16.5.9
+        version: 16.6.6(i18next@25.10.10(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)
 
   packages/ui/layout:
     dependencies:
@@ -174,12 +238,19 @@ importers:
       react-resizable-panels:
         specifier: ^4.12.3
         version: 4.12.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+    devDependencies:
+      '@yunzhen/cordis-ui-i18n':
+        specifier: workspace:*
+        version: link:../i18n
 
   packages/ui/renderer:
     dependencies:
       '@deepseek-ai/cordis':
         specifier: ^4.0.2
         version: 4.0.2
+      '@yunzhen/cordis-ui-i18n':
+        specifier: workspace:*
+        version: link:../i18n
       '@yunzhen/cordis-ui-slots':
         specifier: workspace:*
         version: link:../slots
@@ -189,12 +260,18 @@ importers:
       react-dom:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
+      react-i18next:
+        specifier: ^16.5.9
+        version: 16.6.6(i18next@25.10.10(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)
 
   packages/ui/router:
     dependencies:
       '@deepseek-ai/cordis':
         specifier: ^4.0.2
         version: 4.0.2
+      '@yunzhen/cordis-ui-i18n':
+        specifier: workspace:*
+        version: link:../i18n
       '@yunzhen/cordis-ui-renderer':
         specifier: workspace:*
         version: link:../renderer
@@ -204,6 +281,9 @@ importers:
       react:
         specifier: ^19.2.8
         version: 19.2.8
+      react-i18next:
+        specifier: ^16.5.9
+        version: 16.6.6(i18next@25.10.10(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)
       react-router-dom:
         specifier: ^7.18.3
         version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -213,6 +293,9 @@ importers:
       '@deepseek-ai/cordis':
         specifier: ^4.0.2
         version: 4.0.2
+      '@yunzhen/cordis-ui-i18n':
+        specifier: workspace:*
+        version: link:../i18n
       '@yunzhen/cordis-ui-renderer':
         specifier: workspace:*
         version: link:../renderer
@@ -225,6 +308,9 @@ importers:
       react:
         specifier: ^19.2.8
         version: 19.2.8
+      react-i18next:
+        specifier: ^16.5.9
+        version: 16.6.6(i18next@25.10.10(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)
       react-router-dom:
         specifier: ^7.18.3
         version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -340,6 +426,10 @@ packages:
     resolution: {integrity: sha512-E8lTAYNB1KW+FH+VGJuZM1ioAx2E6oVlvQFRrf5P8ZZmsiJXYAD9vTFV7yyEURNzgh1dFqMZuO6tUwcARbqFCA==}
     engines: {node: '>=6.0.0'}
     hasBin: true
+
+  '@babel/runtime@7.29.7':
+    resolution: {integrity: sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw==}
+    engines: {node: '>=6.9.0'}
 
   '@babel/types@7.29.8':
     resolution: {integrity: sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg==}
@@ -1613,6 +1703,17 @@ packages:
   html-entities@2.6.0:
     resolution: {integrity: sha512-kig+rMn/QOVRvr7c86gQ8lWXq+Hkv6CbAH1hLu+RG338StTpE8Z0b44SDVaqVu7HGKf27frdmUYEs9hTUX/cLQ==}
 
+  html-parse-stringify@3.1.0:
+    resolution: {integrity: sha512-E0oAXcELOtsXe+BmpJ2EZyedbldPpriV5vICzEuo6xjC/D1lDukOI7KrpfQGF2Qc4wWEy0nk3bFORS2K5ZAhFQ==}
+
+  i18next@25.10.10:
+    resolution: {integrity: sha512-cqUW2Z3EkRx7NqSyywjkgCLK7KLCL6IFVFcONG7nVYIJ3ekZ1/N5jUsihHV6Bq37NfhgtczxJcxduELtjTwkuQ==}
+    peerDependencies:
+      typescript: ^5 || ^6
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   identifier-regex@1.1.0:
     resolution: {integrity: sha512-SLX4H/vtcYlYnL7XqnuJKHU7Z8517TgsW9nmQiGOgMCjQ8V/deLYu6bEmbGoXe7WMMhc9+EUGyFFneHja8KabA==}
     engines: {node: '>=18'}
@@ -2131,6 +2232,22 @@ packages:
     peerDependencies:
       react: ^19.2.8
 
+  react-i18next@16.6.6:
+    resolution: {integrity: sha512-ZgL2HUoW34UKUkOV7uSQFE1CDnRPD+tCR3ywSuWH7u2iapnz86U8Bi3Vrs620qNDzCf1F47NxglCEkchCTDOHw==}
+    peerDependencies:
+      i18next: '>= 25.10.9'
+      react: '>= 16.8.0'
+      react-dom: '*'
+      react-native: '*'
+      typescript: ^5 || ^6
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+      typescript:
+        optional: true
+
   react-resizable-panels@4.12.3:
     resolution: {integrity: sha512-GHMJWnDXui/3RX4bT+cgBP+N3N2nkwcoZATr/2xLFpqQQe7TlBrE0cGM0dUa9ceT7A90tUrSRsiqgRG+g0/2AA==}
     peerDependencies:
@@ -2386,6 +2503,11 @@ packages:
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
 
+  use-sync-external-store@1.6.0:
+    resolution: {integrity: sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
@@ -2476,6 +2598,10 @@ packages:
         optional: true
       jsdom:
         optional: true
+
+  void-elements@3.1.0:
+    resolution: {integrity: sha512-Dhxzh5HZuiHQhbvTW9AMetFfBHDMYpo23Uo9btPXgdYP+3T5S+p+jgNy7spra+veYhBP2dCSgxR/i2Y02h5/6w==}
+    engines: {node: '>=0.10.0'}
 
   vue-eslint-parser@10.4.1:
     resolution: {integrity: sha512-Gk6gRDj0n/fkRa3C3l0bBheoBckUq/Rs0F/TvMWIS6nzzx67amAViMe9CkNgsP2tXyQONvGiHQESHwFtZ3aYDA==}
@@ -2650,6 +2776,8 @@ snapshots:
   '@babel/parser@7.29.8':
     dependencies:
       '@babel/types': 7.29.8
+
+  '@babel/runtime@7.29.7': {}
 
   '@babel/types@7.29.8':
     dependencies:
@@ -4003,6 +4131,16 @@ snapshots:
 
   html-entities@2.6.0: {}
 
+  html-parse-stringify@3.1.0:
+    dependencies:
+      void-elements: 3.1.0
+
+  i18next@25.10.10(typescript@6.0.3):
+    dependencies:
+      '@babel/runtime': 7.29.7
+    optionalDependencies:
+      typescript: 6.0.3
+
   identifier-regex@1.1.0:
     dependencies:
       reserved-identifiers: 1.2.0
@@ -4682,6 +4820,17 @@ snapshots:
       react: 19.2.8
       scheduler: 0.27.0
 
+  react-i18next@16.6.6(i18next@25.10.10(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3):
+    dependencies:
+      '@babel/runtime': 7.29.7
+      html-parse-stringify: 3.1.0
+      i18next: 25.10.10(typescript@6.0.3)
+      react: 19.2.8
+      use-sync-external-store: 1.6.0(react@19.2.8)
+    optionalDependencies:
+      react-dom: 19.2.8(react@19.2.8)
+      typescript: 6.0.3
+
   react-resizable-panels@4.12.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
       react: 19.2.8
@@ -4917,6 +5066,10 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
+  use-sync-external-store@1.6.0(react@19.2.8):
+    dependencies:
+      react: 19.2.8
+
   util-deprecate@1.0.2: {}
 
   verkit@0.3.2: {}
@@ -4961,6 +5114,8 @@ snapshots:
       jsdom: 30.0.1
     transitivePeerDependencies:
       - msw
+
+  void-elements@3.1.0: {}
 
   vue-eslint-parser@10.4.1(eslint@10.9.1(jiti@2.6.1)):
     dependencies:

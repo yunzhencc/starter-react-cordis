@@ -2,21 +2,29 @@
 
 import type { Context as CordisContext } from '@deepseek-ai/cordis';
 import { Context } from '@deepseek-ai/cordis';
-import { apply as applyRenderer, Slot } from '@yunzhen/cordis-ui-renderer';
+import { apply as applyI18n } from '@yunzhen/cordis-ui-i18n';
+import { apply as applyRenderer, inject as rendererInject, Slot } from '@yunzhen/cordis-ui-renderer';
 import { act, StrictMode } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
-import { apply as applyRouter } from './index';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { apply as applyRouter, inject as routerInject } from './index';
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 
+beforeEach(() => {
+  localStorage.clear();
+  Object.defineProperty(navigator, 'languages', { configurable: true, value: ['zh-CN'] });
+});
+
 async function boot() {
   const ctx = new Context();
-  const renderer = ctx.plugin({ apply: applyRenderer });
+  const i18n = ctx.plugin({ apply: applyI18n });
+  await i18n.await();
+  const renderer = ctx.plugin({ apply: applyRenderer, inject: rendererInject });
   await renderer.await();
-  const router = ctx.plugin({ inject: ['slots'], apply: applyRouter });
+  const router = ctx.plugin({ inject: routerInject, apply: applyRouter });
   await router.await();
-  const fibers = [router, renderer];
+  const fibers = [router, renderer, i18n];
   return {
     ctx,
     container: document.createElement('div'),
@@ -39,8 +47,12 @@ async function bootRouterWithLayout() {
   );
   const Settings = () => <h1>Settings</h1>;
   const layout = app.ctx.plugin({
-    inject: ['routes', 'slots'],
+    inject: ['routes', 'slots', 'i18n'],
     apply(ctx) {
+      ctx.i18n.register({
+        'zh-CN': { navigation: { dashboard: '仪表盘', settings: '设置' } },
+        'en-US': { navigation: { dashboard: 'Dashboard', settings: 'Settings' } },
+      });
       ctx.routes.register({
         id: 'app-layout',
         Component: Layout,
@@ -54,14 +66,14 @@ async function bootRouterWithLayout() {
         parentId: 'app-layout',
         path: 'settings',
         Component: Settings,
-        navigation: { label: 'Settings', order: 2 },
+        navigation: { label: 'Settings', labelKey: 'navigation.settings', order: 2 },
       }));
       ctx.routes.inject('app-layout', () => ctx.routes.register({
         id: 'dashboard',
         parentId: 'app-layout',
         path: 'dashboard',
         Component: () => null,
-        navigation: { label: 'Dashboard', order: 1 },
+        navigation: { label: 'Dashboard', labelKey: 'navigation.dashboard', order: 1 },
       }));
       ctx.slots.inject('sidebar.navigation', () => ctx.slots.register(
         { name: 'sidebar.navigation', id: 'custom' },
@@ -205,8 +217,8 @@ describe('router host', () => {
     });
 
     expect([...container.querySelectorAll('nav a')].map(link => [link.textContent, link.getAttribute('href')])).toEqual([
-      ['Dashboard', '/dashboard'],
-      ['Settings', '/settings'],
+      ['仪表盘', '/dashboard'],
+      ['设置', '/settings'],
     ]);
     expect(container.textContent).toContain('Custom');
     expect(container.textContent).toContain('Account');

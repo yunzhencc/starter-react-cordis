@@ -8,9 +8,11 @@ export interface SettingsEntry {
   group: {
     id: string;
     label: string;
+    labelKey?: string;
     order: number;
   };
   label: string;
+  labelKey?: string;
   Icon?: ComponentType<{ size?: number; strokeWidth?: number }>;
   order: number;
   Component: ComponentType;
@@ -78,7 +80,7 @@ export class SettingsRegistry extends Service {
       throw new Error(`duplicate settings entry id: ${entry.id}`);
 
     const group = [...this.entries.values()].find(item => item.group.id === entry.group.id)?.group;
-    if (group && (group.label !== entry.group.label || group.order !== entry.group.order))
+    if (group && (group.label !== entry.group.label || group.labelKey !== entry.group.labelKey || group.order !== entry.group.order))
       throw new Error(`inconsistent settings group: ${entry.group.id}`);
   }
 
