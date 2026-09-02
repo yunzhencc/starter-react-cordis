@@ -20,5 +20,8 @@
       ],
       "immediately": false
     }
+  },
+  "devDependencies": {
+    "react-dom": "^19.2.8"
   }
 }

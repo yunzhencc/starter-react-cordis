@@ -34,9 +34,7 @@ export async function createJxlThumbnail(source: Uint8Array): Promise<Thumbnail>
   const sourceContext = sourceCanvas.getContext('2d');
   if (!sourceContext)
     throw new Error('canvas is unavailable');
-  const pixels = new Uint8ClampedArray(new ArrayBuffer(image.pixels.byteLength));
-  pixels.set(image.pixels);
-  sourceContext.putImageData(new ImageData(pixels, image.width, image.height), 0, 0);
+  sourceContext.putImageData(new ImageData(image.pixels, image.width, image.height), 0, 0);
 
   const scale = Math.min(1, MAX_THUMBNAIL_EDGE / longestEdge);
   const canvas = document.createElement('canvas');
@@ -69,6 +67,8 @@ function JxlViewer({ name, source }: { name: string; source: Uint8Array }) {
       if (image)
         image.src = sourceUrl;
     }).catch(() => {
+      if (disposed)
+        return;
       image?.removeAttribute('src');
     });
     return () => {
@@ -140,6 +140,6 @@ function toArrayBuffer(bytes: Uint8Array) {
 
 interface DecodedImage {
   height: number;
-  pixels: Uint8ClampedArray;
+  pixels: Uint8ClampedArray<ArrayBuffer>;
   width: number;
 }

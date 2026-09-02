@@ -8,7 +8,7 @@ export interface DecodeRequest {
 export interface DecodeSuccess {
   height: number;
   id: string;
-  pixels: Uint8ClampedArray;
+  pixels: Uint8ClampedArray<ArrayBuffer>;
   width: number;
 }
 
