@@ -62,37 +62,30 @@ importers:
 
   apps/web:
     dependencies:
-      '@deepseek-ai/cordis':
-        specifier: ^4.0.2
-        version: 4.0.2
-      '@yunzhen/cordis-bundle-web-app':
+      '@yunzhen/cordis-client-modules':
         specifier: workspace:*
-        version: link:../../packages/bundle/web-app
-
-  packages/bundle/web-app:
-    dependencies:
+        version: link:../../packages/client/modules
       '@yunzhen/cordis-feature-dashboard':
         specifier: workspace:*
-        version: link:../../feature/dashboard
+        version: link:../../packages/feature/dashboard
       '@yunzhen/cordis-feature-settings':
         specifier: workspace:*
-        version: link:../../feature/settings
+        version: link:../../packages/feature/settings
+      '@yunzhen/cordis-host-plugin-catalog':
+        specifier: workspace:*
+        version: link:../../packages/host/plugin-catalog
       '@yunzhen/cordis-ui-layout':
         specifier: workspace:*
-        version: link:../../ui/layout
+        version: link:../../packages/ui/layout
       '@yunzhen/cordis-ui-renderer':
         specifier: workspace:*
-        version: link:../../ui/renderer
+        version: link:../../packages/ui/renderer
       '@yunzhen/cordis-ui-router':
         specifier: workspace:*
-        version: link:../../ui/router
+        version: link:../../packages/ui/router
       '@yunzhen/cordis-ui-theme':
         specifier: workspace:*
-        version: link:../../ui/theme
-    devDependencies:
-      '@deepseek-ai/cordis':
-        specifier: ^4.0.2
-        version: 4.0.2
+        version: link:../../packages/ui/theme
 
   packages/client/modules:
     dependencies:

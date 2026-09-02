@@ -4,6 +4,7 @@
   "private": true,
   "exports": {
     ".": "./src/index.ts",
+    "./client": "./src/index.ts",
     "./theme": "./src/theme.ts",
     "./styles": "./src/styles.ts"
   },
@@ -18,8 +19,7 @@
   "yunzhen": {
     "client": {
       "platform": "web",
-      "inject": [],
-      "external": [],
+      "inject": ["@yunzhen/cordis-ui-renderer"],
       "immediately": false
     }
   }

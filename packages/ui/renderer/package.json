@@ -2,7 +2,10 @@
   "name": "@yunzhen/cordis-ui-renderer",
   "type": "module",
   "private": true,
-  "exports": "./src/index.tsx",
+  "exports": {
+    ".": "./src/index.tsx",
+    "./client": "./src/index.tsx"
+  },
   "dependencies": {
     "@deepseek-ai/cordis": "^4.0.2",
     "@yunzhen/cordis-ui-slots": "workspace:*",
@@ -13,8 +16,7 @@
     "client": {
       "platform": "web",
       "inject": [],
-      "external": [],
-      "immediately": false
+      "immediately": true
     }
   }
 }

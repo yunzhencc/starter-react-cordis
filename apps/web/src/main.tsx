@@ -1,15 +1,8 @@
-import { Context } from '@deepseek-ai/cordis';
-import { webAppPlugins } from '@yunzhen/cordis-bundle-web-app';
+import { bootWebApp } from '@yunzhen/cordis-client-modules';
+import { graph, registry } from 'virtual:cordis-web-boot';
 
-async function bootstrap() {
-  const ctx = new Context();
-
-  for (const module of webAppPlugins) {
-    const fiber = ctx.plugin(module);
-    await fiber.await();
-  }
-
-  ctx.uiRenderer.mount(document.getElementById('root')!);
-}
-
-void bootstrap();
+void bootWebApp({
+  container: document.getElementById('root')!,
+  graph,
+  registry,
+}).catch(error => console.error(error));

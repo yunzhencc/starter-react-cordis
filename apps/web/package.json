@@ -7,7 +7,13 @@
     "dev": "vite"
   },
   "dependencies": {
-    "@deepseek-ai/cordis": "^4.0.2",
-    "@yunzhen/cordis-bundle-web-app": "workspace:*"
+    "@yunzhen/cordis-client-modules": "workspace:*",
+    "@yunzhen/cordis-feature-dashboard": "workspace:*",
+    "@yunzhen/cordis-feature-settings": "workspace:*",
+    "@yunzhen/cordis-host-plugin-catalog": "workspace:*",
+    "@yunzhen/cordis-ui-layout": "workspace:*",
+    "@yunzhen/cordis-ui-renderer": "workspace:*",
+    "@yunzhen/cordis-ui-router": "workspace:*",
+    "@yunzhen/cordis-ui-theme": "workspace:*"
   }
 }
