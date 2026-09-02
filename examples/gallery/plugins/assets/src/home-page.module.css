@@ -1,3 +1,28 @@
+.page {
+  padding: 16px;
+}
+
+.grid {
+  min-height: 1px;
+}
+
+.item {
+  width: 250px;
+  overflow: hidden;
+  background: var(--app-surface);
+  border-radius: 6px;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.info {
+  padding: 8px;
+}
+
 .toggle {
   display: inline-grid;
   place-items: center;

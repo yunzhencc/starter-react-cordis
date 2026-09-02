@@ -1,5 +1,5 @@
 {
-  "name": "@examples/gallery-home",
+  "name": "@examples/gallery-assets",
   "type": "module",
   "private": true,
   "exports": {
@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@deepseek-ai/cordis": "^4.0.2",
+    "@egjs/react-infinitegrid": "^4.13.0",
     "@yunzhen/cordis-ui-layout": "workspace:*",
     "@yunzhen/cordis-ui-router": "workspace:*",
     "lucide-react": "^1.38.0",

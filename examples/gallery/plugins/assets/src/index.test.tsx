@@ -25,7 +25,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-it('keeps the sidebar control in the titlebar safe area while the sidebar is toggled', async () => {
+it('renders the first official justified-grid mock page', async () => {
   const ctx = new Context();
   const fibers: ReturnType<CordisContext['plugin']>[] = [];
   for (const module of [i18n, renderer, router, layout, home]) {
@@ -40,7 +40,9 @@ it('keeps the sidebar control in the titlebar safe area while the sidebar is tog
     unmount = ctx.uiRenderer.mount(container);
   });
 
-  expect(container.querySelector('h1')?.textContent).toBe('Hello, Gallery!');
+  expect(container.querySelectorAll('[data-grid-groupkey]')).toHaveLength(10);
+  expect(container.querySelector('img')?.getAttribute('src')).toBe('https://naver.github.io/egjs-infinitegrid/assets/image/1.jpg');
+  expect(container.querySelector('img')?.getAttribute('data-grid-maintained-target')).toBe('true');
   const collapseButton = container.querySelector<HTMLButtonElement>('[data-sidebar-toggle][aria-label="折叠左侧栏"]');
   expect(collapseButton).not.toBeNull();
   const headerAction = container.querySelector<HTMLElement>('[data-sidebar-header-action]');
