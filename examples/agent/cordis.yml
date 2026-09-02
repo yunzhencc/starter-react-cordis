@@ -28,6 +28,8 @@
         provider: qwen
         baseURL: https://dashscope.aliyuncs.com/compatible-mode/v1
         model: qwen-plus
+- id: chat
+  name: '@examples/agent-chat'
 - id: dashboard
   name: '@examples/agent-dashboard'
 - id: settings-layout

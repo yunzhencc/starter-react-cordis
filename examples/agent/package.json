@@ -7,6 +7,7 @@
     "dev": "vite"
   },
   "dependencies": {
+    "@examples/agent-chat": "workspace:*",
     "@examples/agent-dashboard": "workspace:*",
     "@examples/agent-models": "workspace:*",
     "@examples/agent-settings-appearance": "workspace:*",
