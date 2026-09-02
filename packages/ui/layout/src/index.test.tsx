@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 
+import { readFileSync } from 'node:fs';
 import { Context } from '@deepseek-ai/cordis';
 import { apply as applyI18n } from '@yunzhen/cordis-ui-i18n';
 import { apply as applyRenderer, inject as rendererInject } from '@yunzhen/cordis-ui-renderer';
@@ -12,6 +13,7 @@ Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 
 const Workbench = () => <section>Workbench</section>;
 const EmptyPage = () => null;
+const layoutStyles = readFileSync('packages/ui/layout/src/index.module.css', 'utf8');
 
 async function bootLayout() {
   const ctx = new Context();
@@ -58,6 +60,13 @@ async function bootStaticLayout() {
 }
 
 describe('app layout', () => {
+  it('keeps the sidebar and main area in separate viewport-bound scroll containers', () => {
+    expect(layoutStyles).toContain('.layout {\n  position: relative;\n  height: 100dvh;\n  overflow: hidden;\n}');
+    expect(layoutStyles).toContain('.group {\n  height: 100%;\n}');
+    expect(layoutStyles).toContain('.sidebar,\n.workbench {\n  box-sizing: border-box;\n  height: 100%;\n  min-width: 0;\n  overflow-x: hidden;\n  overflow-y: auto;');
+    expect(layoutStyles).toContain('.main {\n  box-sizing: border-box;\n  height: 100%;\n  min-width: 0;\n  overflow-x: hidden;\n  overflow-y: auto;');
+  });
+
   it('mounts as a static root without routes', async () => {
     const { ctx, container, dispose } = await bootStaticLayout();
     let unmount!: () => void;
