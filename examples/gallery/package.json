@@ -21,11 +21,15 @@
     "@yunzhen/cordis-ui-theme": "workspace:*",
     "@yunzhen/gallery-formats": "workspace:*",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "yauzl": "3.4.0"
   },
   "devDependencies": {
     "@types/node": "^26.4.0",
+    "@types/yauzl": "3.4.0",
+    "@types/yazl": "^3.3.1",
     "electron": "^44.1.0",
-    "electron-vite": "^5.0.0"
+    "electron-vite": "^5.0.0",
+    "yazl": "3.3.1"
   }
 }

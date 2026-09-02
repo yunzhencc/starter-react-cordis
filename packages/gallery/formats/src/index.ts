@@ -15,6 +15,35 @@ export interface Thumbnail {
   mimeType: 'image/png' | 'image/webp';
 }
 
+export interface PluginFormatDescriptor {
+  extension: string;
+  thumbnailWorker: string;
+  viewer: string;
+}
+
+export interface GalleryFormatPluginManifest {
+  schemaVersion: 1;
+  id: string;
+  name: string;
+  version: string;
+  formats: Record<string, Omit<PluginFormatDescriptor, 'extension'>>;
+}
+
+export interface InstalledGalleryPlugin {
+  id: string;
+  name: string;
+  version: string;
+  enabled: boolean;
+  formats: readonly PluginFormatDescriptor[];
+}
+
+export interface GalleryPluginApi {
+  install: () => Promise<InstalledGalleryPlugin>;
+  list: () => Promise<readonly InstalledGalleryPlugin[]>;
+  setEnabled: (id: string, enabled: boolean) => Promise<readonly InstalledGalleryPlugin[]>;
+  uninstall: (id: string) => Promise<readonly InstalledGalleryPlugin[]>;
+}
+
 export interface FormatExtension {
   id: string;
   version: string;
