@@ -25,6 +25,10 @@ interface HomePageProps {
 
 export function HomePage({ layout, media }: HomePageProps) {
   const snapshot = useSyncExternalStore(media.subscribe, media.snapshot, media.snapshot);
+  const openAsset = async (id: string) => {
+    if (await media.open(id))
+      layout.openWorkbench();
+  };
   useEffect(() => {
     void media.listAssets();
     return layout.closeWorkbench;
@@ -38,16 +42,25 @@ export function HomePage({ layout, media }: HomePageProps) {
         gap={5}
       >
         {snapshot.assets.map(item => (
-          <article
+          <button
             key={item.asset.id}
             className={styles.item}
             data-asset-id={item.asset.id}
             data-grid-groupkey="assets"
             data-selected={snapshot.selectedId === item.asset.id ? 'true' : undefined}
+            title={item.asset.name}
+            type="button"
             onClick={() => media.select(item.asset.id)}
-            onDoubleClick={async () => {
-              if (await media.open(item.asset.id))
-                layout.openWorkbench();
+            onDoubleClick={() => openAsset(item.asset.id)}
+            onKeyDown={(event) => {
+              if (event.key === ' ') {
+                event.preventDefault();
+                media.select(item.asset.id);
+              }
+              else if (event.key === 'Enter') {
+                event.preventDefault();
+                void openAsset(item.asset.id);
+              }
             }}
           >
             {item.thumbnailUrl && <img alt={item.asset.name} className={styles.image} data-grid-maintained-target="true" src={item.thumbnailUrl} />}
@@ -59,7 +72,7 @@ export function HomePage({ layout, media }: HomePageProps) {
             <div className={styles.info}>
               {item.asset.name}
             </div>
-          </article>
+          </button>
         ))}
       </JustifiedInfiniteGrid>
     </section>

@@ -1,5 +1,7 @@
 import type { AssetRecord, FormatExtension, FormatRegistry, GalleryMediaApi, Thumbnail } from '@yunzhen/gallery-formats';
 
+const THUMBNAIL_WORKER_COUNT = 4;
+
 export interface AssetItem {
   asset: AssetRecord;
   status: 'loading' | 'ready' | 'error';
@@ -27,6 +29,7 @@ export class MediaStore {
   constructor(
     private readonly formats: FormatRegistry,
     private readonly media: GalleryMediaApi,
+    private readonly onReplace = () => {},
   ) {}
 
   snapshot = () => this.current;
@@ -91,9 +94,20 @@ export class MediaStore {
     const assets = records
       .filter(asset => this.formats.find(asset.extension))
       .map(asset => ({ asset, status: 'loading' as const }));
+    this.onReplace();
     this.revokeThumbnails(this.current.assets);
     this.publish({ assets });
-    await Promise.all(assets.map(item => this.loadThumbnail(item.asset, generation)));
+    let nextIndex = 0;
+    const worker = async () => {
+      while (nextIndex < assets.length) {
+        const item = assets[nextIndex++]!;
+        await this.loadThumbnail(item.asset, generation);
+      }
+    };
+    await Promise.all(Array.from(
+      { length: Math.min(THUMBNAIL_WORKER_COUNT, assets.length) },
+      worker,
+    ));
   }
 
   private async loadThumbnail(asset: AssetRecord, generation: number) {

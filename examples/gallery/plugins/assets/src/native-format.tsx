@@ -1,5 +1,5 @@
 import type { FormatExtension } from '@yunzhen/gallery-formats';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useRef } from 'react';
 
 const MAX_THUMBNAIL_EDGE = 400;
 
@@ -39,12 +39,18 @@ export const nativeFormat: FormatExtension = {
 // The extension contract requires its Viewer to live beside the format implementation.
 // eslint-disable-next-line react-refresh/only-export-components
 function NativeViewer({ name, source }: { name: string; source: Uint8Array }) {
-  const sourceUrl = useMemo(
-    () => URL.createObjectURL(new Blob([toArrayBuffer(source)], { type: mimeTypeForName(name) })),
-    [name, source],
-  );
-  useEffect(() => () => URL.revokeObjectURL(sourceUrl), [sourceUrl]);
-  return <img alt={name} src={sourceUrl} />;
+  const imageRef = useRef<HTMLImageElement>(null);
+  useEffect(() => {
+    const sourceUrl = URL.createObjectURL(new Blob([toArrayBuffer(source)], { type: mimeTypeForName(name) }));
+    const image = imageRef.current;
+    if (image)
+      image.src = sourceUrl;
+    return () => {
+      image?.removeAttribute('src');
+      URL.revokeObjectURL(sourceUrl);
+    };
+  }, [name, source]);
+  return <img ref={imageRef} alt={name} />;
 }
 
 function loadImage(sourceUrl: string) {
