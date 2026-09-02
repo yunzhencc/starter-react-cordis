@@ -23,17 +23,17 @@ describe('theme bootstrap', () => {
     ['malformed', 'large'],
     ['non-finite', 'Infinity'],
     ['below range', '11'],
-    ['above range', '21'],
-  ])('uses 16px for a %s persisted font size', (_label, storedValue) => {
+    ['above range', '18'],
+  ])('uses 14px for a %s persisted font size', (_label, storedValue) => {
     if (storedValue !== null)
       localStorage.setItem(fontSizeKey, storedValue);
 
     window.eval(bootstrap ?? '');
 
-    expect(document.documentElement.style.getPropertyValue('--app-content-font-size')).toBe('16px');
+    expect(document.documentElement.style.getPropertyValue('--app-content-font-size')).toBe('14px');
   });
 
-  it.each(['12', '16', '18.5', '20'])('restores the valid persisted font size %s', (storedValue) => {
+  it.each(['12', '14', '15', '17'])('restores the valid persisted font size %s', (storedValue) => {
     localStorage.setItem(fontSizeKey, storedValue);
 
     window.eval(bootstrap ?? '');

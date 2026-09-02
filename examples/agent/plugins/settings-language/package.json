@@ -22,7 +22,11 @@
   "yunzhen": {
     "client": {
       "platform": "web",
-      "inject": ["@yunzhen/cordis-ui-i18n", "@examples/agent-settings-general"],
+      "inject": [
+        "@yunzhen/cordis-ui-i18n",
+        "@examples/agent-settings-general",
+        "@yunzhen/cordis-ui-renderer"
+      ],
       "immediately": false
     }
   }

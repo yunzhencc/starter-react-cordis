@@ -18,7 +18,12 @@
   "yunzhen": {
     "client": {
       "platform": "web",
-      "inject": ["@yunzhen/cordis-ui-i18n", "@yunzhen/cordis-ui-layout"],
+      "inject": [
+        "@yunzhen/cordis-ui-i18n",
+        "@yunzhen/cordis-ui-layout",
+        "@yunzhen/cordis-ui-renderer",
+        "@yunzhen/cordis-ui-router"
+      ],
       "immediately": false
     }
   }
