@@ -12,7 +12,7 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tests/tsconfig.json && pnpm -r exec tsc --noEmit",
     "prepare": "simple-git-hooks",
     "preinstall": "npx only-allow pnpm"
   },
@@ -25,6 +25,7 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "@vitejs/plugin-react": "^6.1.1",
+    "@yunzhen/tsconfig": "^1.0.1",
     "eslint": "^10.9.1",
     "eslint-plugin-react-refresh": "^0.5.5",
     "jsdom": "^30.0.1",

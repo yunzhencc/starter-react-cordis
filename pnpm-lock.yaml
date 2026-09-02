@@ -32,6 +32,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.1.1
         version: 6.1.1(vite@8.2.2(@types/node@26.4.0)(jiti@2.6.1)(yaml@2.9.0))
+      '@yunzhen/tsconfig':
+        specifier: ^1.0.1
+        version: 1.0.1
       eslint:
         specifier: ^10.9.1
         version: 10.9.1(jiti@2.6.1)
@@ -924,6 +927,9 @@ packages:
 
   '@vue/shared@3.5.42':
     resolution: {integrity: sha512-2rPxex1jQf4jvl9MOHl6YaXCPcrNqz/FstMOEh3QWY+/OME9nQTvl9WYeCwhW7AFjaR0SnngZGlp/wkR6rkI6g==}
+
+  '@yunzhen/tsconfig@1.0.1':
+    resolution: {integrity: sha512-egiTbOD8JwZjJ04lsPQ4xeSUYRRSHgfqDaWK/wgBSjFYpXYQmjuDm8Afvp99I+eMm9Jy5QU+z7R5JHtRo7FtNw==}
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -3265,6 +3271,8 @@ snapshots:
       '@vue/shared': 3.5.42
 
   '@vue/shared@3.5.42': {}
+
+  '@yunzhen/tsconfig@1.0.1': {}
 
   acorn-jsx@5.3.2(acorn@8.18.0):
     dependencies:

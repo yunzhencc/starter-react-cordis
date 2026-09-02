@@ -173,7 +173,7 @@ describe('route registry', () => {
       exposed.navigation!.label = 'Changed';
     }).toThrow(TypeError);
     expect(() => {
-      exposed.children!['settings.section'].kind = 'single';
+      exposed.children!['settings.section']!.kind = 'single';
     }).toThrow(TypeError);
 
     remove();

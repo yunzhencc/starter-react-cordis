@@ -1,4 +1,4 @@
 {
   "extends": "@yunzhen/tsconfig/node.json",
-  "include": ["vitest.config.mts"]
+  "include": ["src"]
 }
