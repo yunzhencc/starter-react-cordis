@@ -94,7 +94,14 @@ importers:
         specifier: ^4.0.2
         version: 4.0.2
 
-  packages/client/modules: {}
+  packages/client/modules:
+    dependencies:
+      '@deepseek-ai/cordis':
+        specifier: ^4.0.2
+        version: 4.0.2
+      '@yunzhen/cordis-ui-renderer':
+        specifier: workspace:*
+        version: link:../../ui/renderer
 
   packages/feature/dashboard:
     dependencies:
