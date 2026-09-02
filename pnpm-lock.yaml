@@ -476,6 +476,19 @@ importers:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
 
+  examples/gallery/plugins/format-psd:
+    dependencies:
+      ag-psd:
+        specifier: 31.0.2
+        version: 31.0.2
+    devDependencies:
+      vite:
+        specifier: ^8.2.2
+        version: 8.2.2(@types/node@26.4.0)(jiti@2.6.1)(yaml@2.9.0)
+      yazl:
+        specifier: 3.3.1
+        version: 3.3.1
+
   packages/client/modules:
     dependencies:
       '@deepseek-ai/cordis':
@@ -1641,6 +1654,9 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
+  ag-psd@31.0.2:
+    resolution: {integrity: sha512-5s5PvqbomPIIJ9YjL6robz55rT4RYPiQkww4brisyZEb5jzlHB1EKh47IJg7gIFj0RUrD0cMgdntM907qaZjXA==}
+
   ai@7.0.87:
     resolution: {integrity: sha512-/hrT7toRx8vLIyr/lTKOOPDxCGdxk2tVs5viHDwIPlUsge5FBaLe9h3BhPAr7cOmEAXkN/Cf2+2N8HYGCjJbHg==}
     engines: {node: '>=22'}
@@ -1683,6 +1699,9 @@ packages:
   balanced-match@4.0.4:
     resolution: {integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==}
     engines: {node: 18 || 20 || >=22}
+
+  base64-js@1.5.1:
+    resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
 
   baseline-browser-mapping@2.11.20:
     resolution: {integrity: sha512-H0ulySigv6icDJ1F7SjtdCD6PrhTpdYCmP0CactWy1+ekh0AFd0o1Wn5T8b+hnTmdBx19u9yhL6wvCylXMY7zw==}
@@ -2786,6 +2805,9 @@ packages:
 
   package-manager-detector@1.8.0:
     resolution: {integrity: sha512-yQA4H19AmPEoMUeavPMDIe1higySl/gH/yaQrkT/s07Qp+7pp2hYz30N3z2l5BkjVkF9Ow6o0wjJamm2y7Sn0A==}
+
+  pako@2.1.0:
+    resolution: {integrity: sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==}
 
   parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
@@ -4434,6 +4456,11 @@ snapshots:
 
   acorn@8.18.0: {}
 
+  ag-psd@31.0.2:
+    dependencies:
+      base64-js: 1.5.1
+      pako: 2.1.0
+
   ai@7.0.87(zod@4.5.4):
     dependencies:
       '@ai-sdk/gateway': 4.0.70(zod@4.5.4)
@@ -4470,6 +4497,8 @@ snapshots:
   assertion-error@2.0.1: {}
 
   balanced-match@4.0.4: {}
+
+  base64-js@1.5.1: {}
 
   baseline-browser-mapping@2.11.20: {}
 
@@ -5800,6 +5829,8 @@ snapshots:
   p-timeout@6.1.4: {}
 
   package-manager-detector@1.8.0: {}
+
+  pako@2.1.0: {}
 
   parent-module@1.0.1:
     dependencies:
