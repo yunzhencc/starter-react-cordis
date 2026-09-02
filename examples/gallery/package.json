@@ -18,6 +18,7 @@
     "@yunzhen/cordis-ui-renderer": "workspace:*",
     "@yunzhen/cordis-ui-router": "workspace:*",
     "@yunzhen/cordis-ui-theme": "workspace:*",
+    "@yunzhen/gallery-formats": "workspace:*",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

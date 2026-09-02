@@ -398,6 +398,9 @@ importers:
       '@yunzhen/cordis-ui-theme':
         specifier: workspace:*
         version: link:../../packages/ui/theme
+      '@yunzhen/gallery-formats':
+        specifier: workspace:*
+        version: link:../../packages/gallery/formats
       react:
         specifier: ^19.2.8
         version: 19.2.8
@@ -444,6 +447,15 @@ importers:
       '@yunzhen/cordis-ui-renderer':
         specifier: workspace:*
         version: link:../../ui/renderer
+
+  packages/gallery/formats:
+    dependencies:
+      '@deepseek-ai/cordis':
+        specifier: ^4.0.2
+        version: 4.0.2
+      react:
+        specifier: ^19.2.8
+        version: 19.2.8
 
   packages/host/plugin-catalog:
     dependencies:

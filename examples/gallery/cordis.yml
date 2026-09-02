@@ -8,5 +8,7 @@
   name: '@yunzhen/cordis-ui-layout'
 - id: theme
   name: '@yunzhen/cordis-ui-theme'
+- id: formats
+  name: '@yunzhen/gallery-formats'
 - id: assets
   name: '@examples/gallery-assets'
