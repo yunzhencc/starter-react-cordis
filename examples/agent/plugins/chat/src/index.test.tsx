@@ -80,8 +80,11 @@ describe('agent chat module', () => {
       const select = container.querySelector<HTMLSelectElement>('[aria-label="Model"]')!;
       Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value')!.set!.call(select, 'qwen-plus');
       select.dispatchEvent(new Event('change', { bubbles: true }));
-      const message = container.querySelector<HTMLTextAreaElement>('[aria-label="Message"]')!;
-      Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')!.set!.call(message, 'Hi');
+      const message = container.querySelector<HTMLElement>('[aria-label="Message"]')!;
+      expect(message.getAttribute('contenteditable')).toBe('true');
+      const paragraph = document.createElement('p');
+      paragraph.textContent = 'Hi';
+      message.replaceChildren(paragraph);
       message.dispatchEvent(new Event('input', { bubbles: true }));
     });
 
@@ -94,12 +97,16 @@ describe('agent chat module', () => {
       expect(stream).toHaveBeenCalledWith(expect.objectContaining({ modelId: 'qwen-plus' }));
       expect(container.textContent).toContain('qwen-plus: first');
     });
+    expect(container.querySelector('[aria-label="Message"]')?.getAttribute('contenteditable')).toBe('false');
 
     await act(async () => {
       (container.querySelector('button[type="button"]') as HTMLButtonElement).click();
     });
 
     expect(stream.mock.calls[0]![0].abortSignal?.aborted).toBe(true);
+    await vi.waitFor(() => {
+      expect(container.querySelector('[aria-label="Message"]')?.getAttribute('contenteditable')).toBe('true');
+    });
     await act(async () => unmount());
     await dispose();
   });

@@ -4,6 +4,7 @@ import type {} from '@yunzhen/cordis-ui-i18n';
 import type {} from '@yunzhen/cordis-ui-router';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ChatComposer } from './chat-composer';
 
 interface ChatMessage {
   content: string;
@@ -48,7 +49,6 @@ export function apply(ctx: Context) {
 
 function ChatPage({ models }: Pick<Context, 'models'>) {
   const { t } = useTranslation();
-  const [input, setInput] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [selectedModelId, setSelectedModelId] = useState(models.defaultModelId);
   const [streaming, setStreaming] = useState(false);
@@ -57,9 +57,7 @@ function ChatPage({ models }: Pick<Context, 'models'>) {
 
   useEffect(() => () => controllerRef.current?.abort(), []);
 
-  async function send(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const content = input.trim();
+  async function send(content: string) {
     if (!content || controllerRef.current)
       return;
 
@@ -67,7 +65,6 @@ function ChatPage({ models }: Pick<Context, 'models'>) {
     const requestMessages = [...messages, userMessage];
     const controller = new AbortController();
     controllerRef.current = controller;
-    setInput('');
     setMessages([...requestMessages, { content: '', id: String(messageIdRef.current++), role: 'assistant' }]);
     setStreaming(true);
 
@@ -98,20 +95,14 @@ function ChatPage({ models }: Pick<Context, 'models'>) {
       <ul aria-label={t('chat.title')}>
         {messages.map(message => <li key={message.id}>{message.content}</li>)}
       </ul>
-      <form onSubmit={send}>
-        <label>
-          {t('chat.model')}
-          <select aria-label={t('chat.model')} value={selectedModelId} onChange={event => setSelectedModelId(event.target.value)}>
-            {models.snapshot().map(model => <option key={model.id} value={model.id}>{model.label}</option>)}
-          </select>
-        </label>
-        <label>
-          {t('chat.message')}
-          <textarea aria-label={t('chat.message')} value={input} onChange={event => setInput(event.target.value)} />
-        </label>
-        <button disabled={streaming || !input.trim()} type="submit">{t('chat.send')}</button>
-        {streaming && <button type="button" onClick={() => controllerRef.current?.abort()}>{t('chat.stop')}</button>}
-      </form>
+      <label>
+        {t('chat.model')}
+        <select aria-label={t('chat.model')} value={selectedModelId} onChange={event => setSelectedModelId(event.target.value)}>
+          {models.snapshot().map(model => <option key={model.id} value={model.id}>{model.label}</option>)}
+        </select>
+      </label>
+      <ChatComposer disabled={streaming} onSend={content => void send(content)} sendLabel={t('chat.send')} />
+      {streaming && <button type="button" onClick={() => controllerRef.current?.abort()}>{t('chat.stop')}</button>}
     </section>
   );
 }

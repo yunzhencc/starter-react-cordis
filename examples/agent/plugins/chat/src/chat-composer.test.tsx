@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 
+import type { Context as CordisContext } from '@deepseek-ai/cordis';
 import { Context } from '@deepseek-ai/cordis';
 import * as i18n from '@yunzhen/cordis-ui-i18n';
 import * as renderer from '@yunzhen/cordis-ui-renderer';
@@ -17,7 +18,7 @@ afterEach(async () => {
 
 async function renderComposer(props: Partial<React.ComponentProps<typeof ChatComposer>> = {}) {
   const ctx = new Context();
-  const fibers = [];
+  const fibers: ReturnType<CordisContext['plugin']>[] = [];
   for (const module of [i18n, renderer]) {
     const fiber = ctx.plugin(module);
     fibers.push(fiber);
