@@ -374,6 +374,9 @@ importers:
 
   examples/eagle:
     dependencies:
+      '@examples/eagle-home':
+        specifier: workspace:*
+        version: link:plugins/home
       '@yunzhen/cordis-client-modules':
         specifier: workspace:*
         version: link:../../packages/client/modules
@@ -411,6 +414,21 @@ importers:
       electron-vite:
         specifier: ^5.0.0
         version: 5.0.0(vite@8.2.2(@types/node@26.4.0)(jiti@2.6.1)(yaml@2.9.0))
+
+  examples/eagle/plugins/home:
+    dependencies:
+      '@deepseek-ai/cordis':
+        specifier: ^4.0.2
+        version: 4.0.2
+      '@yunzhen/cordis-ui-layout':
+        specifier: workspace:*
+        version: link:../../../../packages/ui/layout
+      '@yunzhen/cordis-ui-router':
+        specifier: workspace:*
+        version: link:../../../../packages/ui/router
+      react:
+        specifier: ^19.2.8
+        version: 19.2.8
 
   packages/client/modules:
     dependencies:

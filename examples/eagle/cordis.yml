@@ -8,3 +8,5 @@
   name: '@yunzhen/cordis-ui-layout'
 - id: theme
   name: '@yunzhen/cordis-ui-theme'
+- id: home
+  name: '@examples/eagle-home'
