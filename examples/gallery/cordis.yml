@@ -12,3 +12,5 @@
   name: '@yunzhen/gallery-formats'
 - id: assets
   name: '@examples/gallery-assets'
+- id: jxl
+  name: '@examples/gallery-format-jxl'

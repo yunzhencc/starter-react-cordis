@@ -377,6 +377,9 @@ importers:
       '@examples/gallery-assets':
         specifier: workspace:*
         version: link:plugins/assets
+      '@examples/gallery-format-jxl':
+        specifier: workspace:*
+        version: link:plugins/format-jxl
       '@yunzhen/cordis-client-modules':
         specifier: workspace:*
         version: link:../../packages/client/modules
@@ -438,6 +441,21 @@ importers:
       lucide-react:
         specifier: ^1.38.0
         version: 1.38.0(react@19.2.8)
+      react:
+        specifier: ^19.2.8
+        version: 19.2.8
+
+  examples/gallery/plugins/format-jxl:
+    dependencies:
+      '@deepseek-ai/cordis':
+        specifier: ^4.0.2
+        version: 4.0.2
+      '@jsquash/jxl':
+        specifier: 1.3.0
+        version: 1.3.0
+      '@yunzhen/gallery-formats':
+        specifier: workspace:*
+        version: link:../../../../packages/gallery/formats
       react:
         specifier: ^19.2.8
         version: 19.2.8
@@ -1264,6 +1282,9 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@jsquash/jxl@1.3.0':
+    resolution: {integrity: sha512-IVOPTneyOd9eBAuow+FnCYIP6wkIc7CjrCDnZGiqAPyJ63vMVxv3zoWiucGiZVh6u9vi/l40AkcS9QwkoVSAqA==}
 
   '@ota-meshi/ast-token-store@0.3.0':
     resolution: {integrity: sha512-XRO0zi2NIUKq2lUk3T1ecFSld1fMWRKE6naRFGkgkdeosx7IslyUKNv5Dcb5PJTja9tHJoFu0v/7yEpAkrkrTg==}
@@ -3247,6 +3268,9 @@ packages:
     resolution: {integrity: sha512-o8qghlI8NZHU1lLPrpi2+Uq7abh4GGPpYANlalzWxyWteJOCsr/P+oPBA49TOLu5FTZO4d3F9MnWJfiMo4BkmA==}
     engines: {node: '>=18'}
 
+  wasm-feature-detect@1.9.0:
+    resolution: {integrity: sha512-zonE+xlIIYtxPy++L24ow0hAD8CICb4+FgPyROd3buyXIqsJvUEDkBgfCCoXOd1Hu3DUr0GOfnPIdcGV+YpNaA==}
+
   web-worker@1.5.0:
     resolution: {integrity: sha512-RiMReJrTAiA+mBjGONMnjVDP2u3p9R1vkcGz6gDIrOMT3oGuYwX2WRMYI9ipkphSuE5XKEhydbhNEJh4NY9mlw==}
 
@@ -4048,6 +4072,10 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
+
+  '@jsquash/jxl@1.3.0':
+    dependencies:
+      wasm-feature-detect: 1.9.0
 
   '@ota-meshi/ast-token-store@0.3.0': {}
 
@@ -6170,6 +6198,8 @@ snapshots:
   w3c-xmlserializer@5.0.0:
     dependencies:
       xml-name-validator: 5.0.0
+
+  wasm-feature-detect@1.9.0: {}
 
   web-worker@1.5.0: {}
 
