@@ -65,7 +65,9 @@ Gallery 主进程拥有本地目录授权：只有原生目录选择器能设置
 
 Gallery 格式宿主与所有首版格式实现都随应用静态发布。`examples/gallery/cordis.yml` 在构建期固定登记格式宿主、包含原生格式处理器的 assets 插件和 JXL 扩展；生产 renderer 只加载该 Cordis 启动图生成的 ESM chunks。`FormatRegistry.register()` 是这些已打包模块的运行期贡献接口，不是安装器或任意代码加载入口。
 
-未来若支持动态第三方格式扩展，必须另行设计扩展签名与信任链、权限声明及执行时授权、代码隔离与受限 IPC，以及安装、更新、卸载和运行时模块加载/启动图生命周期。当前静态注册表不提供这些保证，因此不能直接用于加载用户提供或远程下载的扩展。
+Gallery 支持用户从桌面选择 ZIP 格式包安装；这不是 Cordis 运行时启动图加载。主进程校验、解压并持久化包，`gallery-plugin://` 只提供声明入口及其资源；缩略图运行在 sandbox iframe 的 Worker 中，预览运行在 script-only iframe 中。插件只接收当前素材字节，不能获取 Node、IPC、素材路径或 Gallery DOM。包协议、限制和 PSD 验证包见 [桌面格式插件安装设计](superpowers/specs/2026-09-02-gallery-desktop-format-plugin-installation-design.md)。
+
+该例外不提供签名、远程商店、自动更新或 Eagle 插件兼容；通用 Cordis 插件仍然只能来自构建期静态启动图。
 
 ## 部署边界
 
