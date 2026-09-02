@@ -23,6 +23,7 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
       preload: join(mainDirectory, '../preload/index.mjs'),
+      sandbox: false,
     },
   });
   const rendererUrl = process.env.ELECTRON_RENDERER_URL;
