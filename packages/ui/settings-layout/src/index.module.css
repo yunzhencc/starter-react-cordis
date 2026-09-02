@@ -1,0 +1,61 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: var(--app-text);
+}
+
+.returnLink,
+.menuItem,
+.footerLink {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: 0 0.75rem;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 0.5rem;
+}
+
+.returnLink {
+  margin-bottom: 1rem;
+  color: color-mix(in srgb, var(--app-text) 70%, transparent);
+}
+
+.menu {
+  display: grid;
+  gap: 1rem;
+}
+
+.menu section {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.menu h2 {
+  margin: 0;
+  padding: 0 0.75rem;
+  font-size: 0.875rem;
+  color: color-mix(in srgb, var(--app-text) 60%, transparent);
+}
+
+.menuItem[aria-current='page'] {
+  background: color-mix(in srgb, var(--app-text) 12%, transparent);
+}
+
+.footerLink {
+  margin-top: auto;
+}
+
+.content,
+.empty {
+  display: grid;
+  gap: 1.5rem;
+  width: min(100%, 64rem);
+}
+
+.content h1,
+.empty h1 {
+  margin: 0;
+}
