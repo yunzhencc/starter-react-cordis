@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@examples/agent-dashboard": "workspace:*",
+    "@examples/agent-models": "workspace:*",
     "@examples/agent-settings-appearance": "workspace:*",
     "@examples/agent-settings-general": "workspace:*",
     "@examples/agent-settings-language": "workspace:*",
