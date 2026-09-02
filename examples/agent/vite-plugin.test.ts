@@ -1,6 +1,6 @@
 import { loadWebBootGraph } from '@yunzhen/cordis-host-plugin-catalog';
 import { expect, it } from 'vitest';
-import { emitWebBootGraph, renderWebBootVirtualModule } from './vite-plugin';
+import { cordisWebBoot, emitWebBootGraph, renderWebBootVirtualModule } from './vite-plugin';
 
 const graph = {
   revision: 'r1',
@@ -19,6 +19,12 @@ it('emits the same graph as cordis.boot.json', () => {
   emitWebBootGraph({ emitFile: file => output.push(file as never) }, graph);
 
   expect(JSON.parse(output[0]!.source)).toEqual(graph);
+});
+
+it('resolves a supplied virtual module id', () => {
+  const plugin = cordisWebBoot({ virtualModuleId: 'virtual:cordis-eagle-boot' });
+
+  expect(plugin.resolveId?.('virtual:cordis-eagle-boot')).toBe('\0virtual:cordis-eagle-boot');
 });
 
 it('boots the locale runtime before the UI and its language settings extension', () => {
