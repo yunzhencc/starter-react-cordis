@@ -4,6 +4,7 @@
   "private": true,
   "main": "./out/main/index.js",
   "scripts": {
+    "bootstrap": "install-electron",
     "build": "electron-vite build",
     "dev": "electron-vite dev",
     "start": "electron-vite preview"
