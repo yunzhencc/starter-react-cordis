@@ -10,6 +10,7 @@
     "@yunzhen/cordis-client-modules": "workspace:*",
     "@yunzhen/cordis-feature-dashboard": "workspace:*",
     "@yunzhen/cordis-feature-settings-appearance": "workspace:*",
+    "@yunzhen/cordis-feature-settings-general": "workspace:*",
     "@yunzhen/cordis-feature-settings-language": "workspace:*",
     "@yunzhen/cordis-host-plugin-catalog": "workspace:*",
     "@yunzhen/cordis-ui-i18n": "workspace:*",

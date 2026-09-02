@@ -27,7 +27,7 @@ apps/web/cordis.yml
 | `@yunzhen/cordis-ui-router` | `ctx.routes` 的 RouteRegistry、React Router 适配和 Route 的 Slot owner。 |
 | `@yunzhen/cordis-ui-layout` | `ctx.layout` 面板动作和无路径 `app-layout` 三栏 Route。 |
 | `@yunzhen/cordis-ui-i18n` | `ctx.i18n`、浏览器语言识别、用户选择持久化与 i18next React Provider。 |
-| `feature/dashboard`、`feature/settings-appearance`、`feature/settings-language` | 通过 Cordis `inject` + `apply` 注册 Route、Slot 或设置贡献，并拥有各自文案资源。 |
+| `feature/dashboard`、`feature/settings-general`、`feature/settings-appearance`、`feature/settings-language` | 通过 Cordis `inject` + `apply` 注册 Route、Slot 或设置贡献，并拥有各自文案资源。 |
 | `ui/settings-layout` | `/settings` 路由壳、设置侧栏、底部 Settings 入口与 `ctx.settings.register()`。 |
 | `ui/theme` | ThemeRuntime、token 与 DOM 同步；具体设置页面由独立扩展提供。 |
 
@@ -57,7 +57,7 @@ app-layout
 └─ shell.overlay (list)
 ```
 
-Dashboard 和 Settings 都是 `app-layout` 的子 Route；命中 Settings 时其 route Sidebar 替换默认应用侧栏。设置扩展通过 `ctx.settings.register()` 同时注册菜单与 `/settings/:id` 页面；Appearance 是首个扩展。`ctx.layout` 仅管理侧栏与工作台开关；不持久化尺寸、不支持拖拽或响应式自动折叠。
+Dashboard 和 Settings 都是 `app-layout` 的子 Route；命中 Settings 时其 route Sidebar 替换默认应用侧栏。设置扩展通过 `ctx.settings.register()` 同时注册菜单与 `/settings/:id` 页面。`settings-general` 注册左侧“常规”页面并声明 `settings.general.items` 子 Slot；语言及未来常规项向该 Slot 贡献设置行，不新增左侧菜单。Appearance 仍是独立页面。`ctx.layout` 仅管理侧栏与工作台开关；不持久化尺寸、不支持拖拽或响应式自动折叠。
 
 ## 部署边界
 

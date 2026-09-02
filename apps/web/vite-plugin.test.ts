@@ -26,5 +26,6 @@ it('boots the locale runtime before the UI and its language settings extension',
   const ids = entries.map(entry => entry.id);
 
   expect(ids.indexOf('i18n')).toBeLessThan(ids.indexOf('renderer'));
-  expect(ids.indexOf('settings-layout')).toBeLessThan(ids.indexOf('settings-language'));
+  expect(ids.indexOf('settings-layout')).toBeLessThan(ids.indexOf('settings-general'));
+  expect(ids.indexOf('settings-general')).toBeLessThan(ids.indexOf('settings-language'));
 });

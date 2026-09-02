@@ -12,6 +12,8 @@
   name: '@yunzhen/cordis-feature-dashboard'
 - id: settings-layout
   name: '@yunzhen/cordis-ui-settings-layout'
+- id: settings-general
+  name: '@yunzhen/cordis-feature-settings-general'
 - id: settings-appearance
   name: '@yunzhen/cordis-feature-settings-appearance'
 - id: settings-language

@@ -71,6 +71,9 @@ importers:
       '@yunzhen/cordis-feature-settings-appearance':
         specifier: workspace:*
         version: link:../../packages/feature/settings-appearance
+      '@yunzhen/cordis-feature-settings-general':
+        specifier: workspace:*
+        version: link:../../packages/feature/settings-general
       '@yunzhen/cordis-feature-settings-language':
         specifier: workspace:*
         version: link:../../packages/feature/settings-language
@@ -163,7 +166,7 @@ importers:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
 
-  packages/feature/settings-language:
+  packages/feature/settings-general:
     dependencies:
       '@deepseek-ai/cordis':
         specifier: ^4.0.2
@@ -171,6 +174,9 @@ importers:
       '@yunzhen/cordis-ui-i18n':
         specifier: workspace:*
         version: link:../../ui/i18n
+      '@yunzhen/cordis-ui-renderer':
+        specifier: workspace:*
+        version: link:../../ui/renderer
       '@yunzhen/cordis-ui-settings-layout':
         specifier: workspace:*
         version: link:../../ui/settings-layout
@@ -180,16 +186,34 @@ importers:
       react:
         specifier: ^19.2.8
         version: 19.2.8
+
+  packages/feature/settings-language:
+    dependencies:
+      '@deepseek-ai/cordis':
+        specifier: ^4.0.2
+        version: 4.0.2
+      '@yunzhen/cordis-feature-settings-general':
+        specifier: workspace:*
+        version: link:../settings-general
+      '@yunzhen/cordis-ui-i18n':
+        specifier: workspace:*
+        version: link:../../ui/i18n
+      '@yunzhen/cordis-ui-renderer':
+        specifier: workspace:*
+        version: link:../../ui/renderer
+      react:
+        specifier: ^19.2.8
+        version: 19.2.8
       react-i18next:
         specifier: ^16.5.9
         version: 16.6.6(i18next@25.10.10(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)
     devDependencies:
-      '@yunzhen/cordis-ui-renderer':
-        specifier: workspace:*
-        version: link:../../ui/renderer
       '@yunzhen/cordis-ui-router':
         specifier: workspace:*
         version: link:../../ui/router
+      '@yunzhen/cordis-ui-settings-layout':
+        specifier: workspace:*
+        version: link:../../ui/settings-layout
       react-dom:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
@@ -302,6 +326,9 @@ importers:
       '@yunzhen/cordis-ui-router':
         specifier: workspace:*
         version: link:../router
+      '@yunzhen/cordis-ui-slots':
+        specifier: workspace:*
+        version: link:../slots
       lucide-react:
         specifier: ^1.38.0
         version: 1.38.0(react@19.2.8)

@@ -2,20 +2,21 @@
 
 import type { Context as CordisContext } from '@deepseek-ai/cordis';
 import { Context } from '@deepseek-ai/cordis';
+import { apply as applyGeneral, inject as generalInject } from '@yunzhen/cordis-feature-settings-general';
 import { apply as applyI18n } from '@yunzhen/cordis-ui-i18n';
 import { apply as applyRenderer, inject as rendererInject, Slot } from '@yunzhen/cordis-ui-renderer';
 import { apply as applyRouter } from '@yunzhen/cordis-ui-router';
 import { apply as applySettingsLayout } from '@yunzhen/cordis-ui-settings-layout';
 import { act } from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { apply } from './index';
+import { apply, inject } from './index';
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 
 beforeEach(() => {
   localStorage.clear();
   Object.defineProperty(navigator, 'languages', { configurable: true, value: ['zh-CN'] });
-  window.history.replaceState({}, '', '/settings/language');
+  window.history.replaceState({}, '', '/settings/general');
 });
 
 async function bootLanguageSettings() {
@@ -43,7 +44,8 @@ async function bootLanguageSettings() {
       },
     },
     { apply: applySettingsLayout, inject: ['i18n', 'routes', 'slots'] },
-    { apply, inject: ['i18n', 'settings'] },
+    { apply: applyGeneral, inject: generalInject },
+    { apply, inject },
   ]) {
     const fiber = ctx.plugin(module);
     fibers.push(fiber);
@@ -60,7 +62,7 @@ async function bootLanguageSettings() {
 }
 
 describe('language settings extension', () => {
-  it('switches the settings interface between Chinese and English', async () => {
+  it('contributes Language to General instead of creating another settings menu item', async () => {
     const { container, ctx, dispose } = await bootLanguageSettings();
     let unmount!: () => void;
 
@@ -68,7 +70,9 @@ describe('language settings extension', () => {
       unmount = ctx.uiRenderer.mount(container);
     });
 
-    expect(container.textContent).toContain('语言');
+    expect(container.querySelector('h1')?.textContent).toBe('常规');
+    expect([...container.querySelectorAll('[data-settings-menu] a')].map(link => link.textContent)).toEqual(['常规']);
+    expect(container.textContent).toContain('应用 UI 语言');
     const select = container.querySelector('select')!;
     expect(select.value).toBe('zh-CN');
 
@@ -77,7 +81,8 @@ describe('language settings extension', () => {
       select.dispatchEvent(new Event('change', { bubbles: true }));
     });
 
-    expect(container.textContent).toContain('Language');
+    expect(container.querySelector('h1')?.textContent).toBe('General');
+    expect(container.textContent).toContain('Application UI language');
     expect(container.textContent).toContain('Return to app');
     expect(select.value).toBe('en-US');
 
