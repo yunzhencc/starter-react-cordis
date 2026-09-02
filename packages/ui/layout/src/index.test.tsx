@@ -3,7 +3,6 @@
 import { Context } from '@deepseek-ai/cordis';
 import { apply as applyI18n } from '@yunzhen/cordis-ui-i18n';
 import { apply as applyRenderer, inject as rendererInject } from '@yunzhen/cordis-ui-renderer';
-import { apply as applyRouter } from '@yunzhen/cordis-ui-router';
 import { act } from 'react';
 import { describe, expect, it } from 'vitest';
 import { apply } from './index';
@@ -14,25 +13,44 @@ Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 const Workbench = () => <section>Workbench</section>;
 const EmptyPage = () => null;
 
-async function bootLayout(path = '/') {
-  window.history.replaceState({}, '', path);
+async function bootLayout() {
   const ctx = new Context();
   const i18n = ctx.plugin({ apply: applyI18n });
   await i18n.await();
   const renderer = ctx.plugin({ apply: applyRenderer, inject: rendererInject });
   await renderer.await();
-  const router = ctx.plugin({ inject: ['slots'], apply: applyRouter });
-  await router.await();
-  const layout = ctx.plugin({ inject: ['routes', 'slots'], apply });
+  const layout = ctx.plugin({ inject: ['slots'], apply });
   await layout.await();
-  ctx.routes.register({ id: 'layout-index', parentId: 'app-layout', index: true, Component: EmptyPage });
+  ctx.slots.register({ name: 'root' }, ctx.layout.Root);
+  ctx.slots.inject('main', () => ctx.slots.register({ name: 'main' }, EmptyPage));
 
   return {
     ctx,
     container: document.createElement('div'),
     async dispose() {
       await layout.dispose();
-      await router.dispose();
+      await renderer.dispose();
+      await i18n.dispose();
+    },
+  };
+}
+
+async function bootStaticLayout() {
+  const ctx = new Context();
+  const i18n = ctx.plugin({ apply: applyI18n });
+  await i18n.await();
+  const renderer = ctx.plugin({ apply: applyRenderer, inject: rendererInject });
+  await renderer.await();
+  const layout = ctx.plugin({ inject: ['slots'], apply });
+  await layout.await();
+  ctx.slots.register({ name: 'root' }, ctx.layout.Root);
+  ctx.slots.inject('main', () => ctx.slots.register({ name: 'main' }, () => <p>Static page</p>));
+
+  return {
+    ctx,
+    container: document.createElement('div'),
+    async dispose() {
+      await layout.dispose();
       await renderer.dispose();
       await i18n.dispose();
     },
@@ -40,6 +58,20 @@ async function bootLayout(path = '/') {
 }
 
 describe('app layout', () => {
+  it('mounts as a static root without routes', async () => {
+    const { ctx, container, dispose } = await bootStaticLayout();
+    let unmount!: () => void;
+
+    await act(async () => {
+      unmount = ctx.uiRenderer.mount(container);
+    });
+
+    expect(container.textContent).toContain('Static page');
+
+    await act(async () => unmount());
+    await dispose();
+  });
+
   it('publishes frozen snapshots that external writes cannot mutate', () => {
     const controller = new LayoutController();
     const initial = controller.snapshot();
@@ -113,26 +145,6 @@ describe('app layout', () => {
       ctx.slots.register({ name: 'workbench' }, Workbench);
     });
     expect(container.querySelector('[data-workbench-column]')).not.toBeNull();
-
-    await act(async () => unmount());
-    await dispose();
-  });
-
-  it('reclaims the workbench width for settings', async () => {
-    const { ctx, container, dispose } = await bootLayout('/settings');
-    ctx.routes.register({ id: 'settings', parentId: 'app-layout', path: 'settings', Component: EmptyPage });
-    let unmount!: () => void;
-
-    await act(async () => {
-      unmount = ctx.uiRenderer.mount(container);
-    });
-    await act(async () => {
-      ctx.slots.register({ name: 'workbench' }, Workbench);
-      ctx.layout.openWorkbench();
-    });
-
-    expect(container.querySelector('[data-workbench-column]')).toBeNull();
-    expect(container.querySelectorAll('[data-panel]')).toHaveLength(2);
 
     await act(async () => unmount());
     await dispose();

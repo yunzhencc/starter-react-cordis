@@ -1,0 +1,17 @@
+{
+  "name": "@examples/basic",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@examples/basic-page": "workspace:*",
+    "@yunzhen/cordis-client-modules": "workspace:*",
+    "@yunzhen/cordis-host-plugin-catalog": "workspace:*",
+    "@yunzhen/cordis-ui-i18n": "workspace:*",
+    "@yunzhen/cordis-ui-layout": "workspace:*",
+    "@yunzhen/cordis-ui-renderer": "workspace:*"
+  }
+}

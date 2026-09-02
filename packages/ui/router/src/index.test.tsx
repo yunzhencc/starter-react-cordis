@@ -3,6 +3,7 @@
 import type { Context as CordisContext } from '@deepseek-ai/cordis';
 import { Context } from '@deepseek-ai/cordis';
 import { apply as applyI18n } from '@yunzhen/cordis-ui-i18n';
+import { apply as applyLayout, inject as layoutInject } from '@yunzhen/cordis-ui-layout';
 import { apply as applyRenderer, inject as rendererInject, Slot } from '@yunzhen/cordis-ui-renderer';
 import { act, StrictMode } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
@@ -22,9 +23,11 @@ async function boot() {
   await i18n.await();
   const renderer = ctx.plugin({ apply: applyRenderer, inject: rendererInject });
   await renderer.await();
+  const layout = ctx.plugin({ apply: applyLayout, inject: layoutInject });
+  await layout.await();
   const router = ctx.plugin({ inject: routerInject, apply: applyRouter });
   await router.await();
-  const fibers = [router, renderer, i18n];
+  const fibers = [router, layout, renderer, i18n];
   return {
     ctx,
     container: document.createElement('div'),
@@ -39,12 +42,6 @@ async function boot() {
 
 async function bootRouterWithLayout() {
   const app = await boot();
-  const Layout = () => (
-    <>
-      <aside><Slot name="sidebar" /></aside>
-      <main><Slot name="main" /></main>
-    </>
-  );
   const Settings = () => <h1>Settings</h1>;
   const layout = app.ctx.plugin({
     inject: ['routes', 'slots', 'i18n'],
@@ -52,14 +49,6 @@ async function bootRouterWithLayout() {
       ctx.i18n.register({
         'zh-CN': { navigation: { dashboard: '仪表盘', settings: '设置' } },
         'en-US': { navigation: { dashboard: 'Dashboard', settings: 'Settings' } },
-      });
-      ctx.routes.register({
-        id: 'app-layout',
-        Component: Layout,
-        children: {
-          main: { kind: 'single', scope: 'root' },
-          sidebar: { kind: 'single', scope: 'root' },
-        },
       });
       ctx.routes.inject('app-layout', () => ctx.routes.register({
         id: 'settings',
@@ -96,12 +85,13 @@ async function bootRouterWithSettingsSlot() {
   const feature = app.ctx.plugin({
     inject: ['routes', 'slots'],
     apply(ctx) {
-      ctx.routes.register({
+      ctx.routes.inject('app-layout', () => ctx.routes.register({
         id: 'settings',
+        parentId: 'app-layout',
         path: 'settings',
         Component: Settings,
         children: { 'settings.section': { kind: 'list', scope: 'root' } },
-      });
+      }));
       ctx.slots.inject('settings.section', () => ctx.slots.register(
         { name: 'settings.section', id: 'appearance' },
         () => <>Appearance</>,
@@ -115,12 +105,6 @@ async function bootRouterWithSettingsSlot() {
 
 async function bootRouterWithRouteSidebar() {
   const app = await boot();
-  const Layout = () => (
-    <>
-      <aside><Slot name="sidebar" /></aside>
-      <main><Slot name="main" /></main>
-    </>
-  );
   const SettingsSidebar = () => (
     <nav data-settings-sidebar>
       <NavLink to="/">Return to app</NavLink>
@@ -129,14 +113,6 @@ async function bootRouterWithRouteSidebar() {
   const layout = app.ctx.plugin({
     inject: ['routes', 'slots'],
     apply(ctx) {
-      ctx.routes.register({
-        id: 'app-layout',
-        Component: Layout,
-        children: {
-          main: { kind: 'single', scope: 'root' },
-          sidebar: { kind: 'single', scope: 'root' },
-        },
-      });
       ctx.routes.inject('app-layout', () => ctx.routes.register({
         id: 'dashboard',
         parentId: 'app-layout',
@@ -165,6 +141,14 @@ async function bootRouterWithRouteSidebar() {
 }
 
 describe('router host', () => {
+  it('provides the layout as the app route', async () => {
+    const { ctx, dispose } = await boot();
+
+    expect(ctx.routes.snapshot().map(route => route.id)).toContain('app-layout');
+
+    await dispose();
+  });
+
   it('rejects children below an index route instead of dropping them', async () => {
     const { ctx, dispose } = await boot();
     ctx.routes.register({ id: 'index-parent', index: true, Component: () => null });
@@ -251,12 +235,7 @@ describe('router host', () => {
   it('commits route slot owners safely in StrictMode and replaces them by route definition', async () => {
     window.history.replaceState({}, '', '/settings');
     const { ctx, container, dispose } = await boot();
-    const Layout = () => (
-      <StrictMode>
-        <Slot name="main" />
-      </StrictMode>
-    );
-    const First = () => <Slot name="settings.first" />;
+    const First = () => <StrictMode><Slot name="settings.first" /></StrictMode>;
     const Second = () => <Slot name="settings.second" />;
     ctx.slots.inject('settings.first', () => ctx.slots.register(
       { name: 'settings.first' },
@@ -266,11 +245,6 @@ describe('router host', () => {
       { name: 'settings.second' },
       () => <>Second</>,
     ));
-    const removeLayout = ctx.routes.register({
-      id: 'app-layout',
-      Component: Layout,
-      children: { main: { kind: 'single', scope: 'root' } },
-    });
     const removeFirst = ctx.routes.register({
       id: 'settings',
       parentId: 'app-layout',
@@ -302,7 +276,6 @@ describe('router host', () => {
     await act(async () => unmount());
     expect(ctx.slots.spec('settings.second')).toBeUndefined();
     removeSecond();
-    removeLayout();
     await dispose();
   });
 });

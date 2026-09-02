@@ -3,7 +3,8 @@
 import type { Context as CordisContext } from '@deepseek-ai/cordis';
 import { Context } from '@deepseek-ai/cordis';
 import { apply as applyI18n } from '@yunzhen/cordis-ui-i18n';
-import { apply as applyRenderer, inject as rendererInject, Slot } from '@yunzhen/cordis-ui-renderer';
+import { apply as applyLayout, inject as layoutInject } from '@yunzhen/cordis-ui-layout';
+import { apply as applyRenderer, inject as rendererInject } from '@yunzhen/cordis-ui-renderer';
 import { apply as applyRouter } from '@yunzhen/cordis-ui-router';
 import { act } from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -22,28 +23,14 @@ async function bootSettings(path: string) {
   window.history.replaceState({}, '', path);
   const ctx = new Context();
   const fibers: ReturnType<CordisContext['plugin']>[] = [];
-  const Layout = () => (
-    <>
-      <aside><Slot name="sidebar" /></aside>
-      <main><Slot name="main" /></main>
-    </>
-  );
-
   for (const module of [
     { apply: applyI18n },
     { inject: rendererInject, apply: applyRenderer },
-    { inject: ['slots'], apply: applyRouter },
+    { inject: layoutInject, apply: applyLayout },
+    { inject: ['layout', 'slots'], apply: applyRouter },
     {
-      inject: ['routes', 'slots'],
+      inject: ['routes'],
       apply(pluginCtx: Context) {
-        pluginCtx.routes.register({
-          id: 'app-layout',
-          Component: Layout,
-          children: {
-            main: { kind: 'single', scope: 'root' },
-            sidebar: { kind: 'single', scope: 'root' },
-          },
-        });
         pluginCtx.routes.inject('app-layout', () => pluginCtx.routes.register({
           id: 'dashboard',
           parentId: 'app-layout',

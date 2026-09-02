@@ -278,6 +278,42 @@ importers:
         specifier: ^7.18.3
         version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
 
+  examples/basic:
+    dependencies:
+      '@examples/basic-page':
+        specifier: workspace:*
+        version: link:plugins/page
+      '@yunzhen/cordis-client-modules':
+        specifier: workspace:*
+        version: link:../../packages/client/modules
+      '@yunzhen/cordis-host-plugin-catalog':
+        specifier: workspace:*
+        version: link:../../packages/host/plugin-catalog
+      '@yunzhen/cordis-ui-i18n':
+        specifier: workspace:*
+        version: link:../../packages/ui/i18n
+      '@yunzhen/cordis-ui-layout':
+        specifier: workspace:*
+        version: link:../../packages/ui/layout
+      '@yunzhen/cordis-ui-renderer':
+        specifier: workspace:*
+        version: link:../../packages/ui/renderer
+
+  examples/basic/plugins/page:
+    dependencies:
+      '@deepseek-ai/cordis':
+        specifier: ^4.0.2
+        version: 4.0.2
+      '@yunzhen/cordis-ui-layout':
+        specifier: workspace:*
+        version: link:../../../../packages/ui/layout
+      '@yunzhen/cordis-ui-renderer':
+        specifier: workspace:*
+        version: link:../../../../packages/ui/renderer
+      react:
+        specifier: ^19.2.8
+        version: 19.2.8
+
   packages/client/modules:
     dependencies:
       '@deepseek-ai/cordis':
@@ -319,9 +355,6 @@ importers:
       '@yunzhen/cordis-ui-renderer':
         specifier: workspace:*
         version: link:../renderer
-      '@yunzhen/cordis-ui-router':
-        specifier: workspace:*
-        version: link:../router
       '@yunzhen/cordis-ui-slots':
         specifier: workspace:*
         version: link:../slots
@@ -331,9 +364,6 @@ importers:
       react-resizable-panels:
         specifier: ^4.12.3
         version: 4.12.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      react-router-dom:
-        specifier: ^7.18.3
-        version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
     devDependencies:
       '@yunzhen/cordis-ui-i18n':
         specifier: workspace:*
@@ -368,6 +398,9 @@ importers:
       '@yunzhen/cordis-ui-i18n':
         specifier: workspace:*
         version: link:../i18n
+      '@yunzhen/cordis-ui-layout':
+        specifier: workspace:*
+        version: link:../layout
       '@yunzhen/cordis-ui-renderer':
         specifier: workspace:*
         version: link:../renderer

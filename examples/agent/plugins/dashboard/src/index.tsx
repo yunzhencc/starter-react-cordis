@@ -33,15 +33,16 @@ export const inject = ['i18n', 'layout', 'routes', 'slots'];
 export function apply(ctx: Context) {
   ctx.i18n.register(dashboardMessages);
   const { closeWorkbench, openWorkbench } = ctx.layout;
-  ctx.slots.inject('workbench', () => ctx.slots.register(
+  ctx.slots.inject('dashboard.workbench', () => ctx.slots.inject('workbench', () => ctx.slots.register(
     { name: 'workbench' },
     DashboardWorkbench,
-  ));
+  )));
   ctx.routes.inject('app-layout', () => ctx.routes.register({
     id: 'dashboard',
     parentId: 'app-layout',
     index: true,
     Component: () => <DashboardPage closeWorkbench={closeWorkbench} openWorkbench={openWorkbench} />,
+    children: { 'dashboard.workbench': { kind: 'single', scope: 'root' } },
     navigation: { label: 'Dashboard', labelKey: 'dashboard.title', order: 0 },
   }));
 }

@@ -1,4 +1,5 @@
 import type { Context } from '@deepseek-ai/cordis';
+import type {} from '@yunzhen/cordis-ui-layout';
 import type { SlotOwnerHandle, SlotRenderer } from '@yunzhen/cordis-ui-renderer';
 import type { RouteObject } from 'react-router-dom';
 import { Slot, SlotOwner } from '@yunzhen/cordis-ui-renderer';
@@ -10,7 +11,7 @@ import { RouteRegistry } from './routes';
 export { RouteRegistry } from './routes';
 export type { RouteDefinition, RouteSnapshot } from './routes';
 
-export const inject = ['slots'];
+export const inject = ['layout', 'slots'];
 
 interface RouteRenderer {
   snapshot: RouteRegistry['snapshot'];
@@ -25,6 +26,7 @@ export function apply(ctx: Context) {
     snapshot: () => routes.snapshot(),
     subscribe: listener => routes.subscribe(listener),
   };
+  routes.register({ id: 'app-layout', Component: ctx.layout.Root });
   slotService.register({ name: 'root' }, () => <RouterRoot routes={routeRenderer} slots={slots} />);
   slotService.inject('main', () => slotService.register({ name: 'main' }, RouteOutlet));
   slotService.inject('sidebar', () => slotService.register({

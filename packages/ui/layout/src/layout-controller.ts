@@ -1,3 +1,5 @@
+import type { ComponentType } from 'react';
+
 export interface LayoutSnapshot {
   readonly sidebarOpen: boolean;
   readonly workbenchOpen: boolean;
@@ -35,6 +37,7 @@ declare module '@deepseek-ai/cordis' {
 }
 
 export class LayoutController {
+  Root: ComponentType = () => null;
   private current: LayoutSnapshot = Object.freeze({ sidebarOpen: true, workbenchOpen: false });
   private readonly listeners = new Set<() => void>();
 

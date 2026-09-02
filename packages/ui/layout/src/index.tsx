@@ -1,38 +1,48 @@
 import type { Context } from '@deepseek-ai/cordis';
-import type { SlotRenderer } from '@yunzhen/cordis-ui-renderer';
+import type { SlotOwnerHandle, SlotRenderer } from '@yunzhen/cordis-ui-renderer';
 import type { PanelImperativeHandle, PanelSize } from 'react-resizable-panels';
 import type { PanelBounds } from './layout-controller';
-import { Slot } from '@yunzhen/cordis-ui-renderer';
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { Slot, SlotOwner } from '@yunzhen/cordis-ui-renderer';
+import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { Group, Panel, Separator } from 'react-resizable-panels';
-import { useLocation } from 'react-router-dom';
 import styles from './index.module.css';
 import { getSidebarBounds, getWorkbenchBounds, getWorkspaceWidth, LayoutController, MAIN_MIN_WIDTH } from './layout-controller';
 
 export { LayoutController } from './layout-controller';
 export type { LayoutSnapshot } from './layout-controller';
 
-export const inject = ['routes', 'slots'];
+export const inject = ['slots'];
+
+const layoutSlots = {
+  'sidebar': { kind: 'single', scope: 'root' },
+  'main': { kind: 'single', scope: 'root' },
+  'workbench': { kind: 'single', scope: 'root' },
+  'shell.overlay': { kind: 'list', scope: 'root' },
+} as const;
 
 export function apply(ctx: Context) {
   const controller = new LayoutController();
   const slots = ctx.get('uiRenderer')!.slots;
+  controller.Root = () => <LayoutRoot controller={controller} slots={slots} />;
   ctx.effect(() => ctx.reflect.provide('layout', controller), 'layout.provide()');
-  ctx.routes.register({
-    id: 'app-layout',
-    Component: () => <AppLayout controller={controller} slots={slots} />,
-    children: {
-      'sidebar': { kind: 'single', scope: 'root' },
-      'main': { kind: 'single', scope: 'root' },
-      'workbench': { kind: 'single', scope: 'root' },
-      'shell.overlay': { kind: 'list', scope: 'root' },
-    },
-  });
+}
+
+function LayoutRoot({ controller, slots }: { controller: LayoutController; slots: SlotRenderer }) {
+  const [owner, setOwner] = useState<SlotOwnerHandle>();
+  useLayoutEffect(() => {
+    const nextOwner = slots.createOwner('app-layout', layoutSlots);
+    // eslint-disable-next-line react/set-state-in-effect
+    setOwner(nextOwner);
+    return nextOwner.dispose;
+  }, [slots]);
+
+  if (!owner)
+    return null;
+  return <SlotOwner owner={owner}><AppLayout controller={controller} slots={slots} /></SlotOwner>;
 }
 
 function AppLayout({ controller, slots }: { controller: LayoutController; slots: SlotRenderer }) {
   const snapshot = useSyncExternalStore(controller.subscribe, controller.snapshot, controller.snapshot);
-  const location = useLocation();
   const viewport = useViewport();
   const autoHiddenRef = useRef({ sidebar: false, workbench: false });
   useSyncExternalStore(
@@ -41,7 +51,7 @@ function AppLayout({ controller, slots }: { controller: LayoutController; slots:
     () => slots.version('workbench'),
   );
   const hasWorkbenchOccupant = slots.entries('workbench').length > 0;
-  const hasWorkbench = hasWorkbenchOccupant && !location.pathname.startsWith('/settings');
+  const hasWorkbench = hasWorkbenchOccupant;
   const sidebarBounds = getSidebarBounds(viewport.width);
   const [sidebarSize, setSidebarSize] = useStoredSize('sidebar-width', sidebarBounds);
   const sidebarDefaultSize = useRef(sidebarSize).current;

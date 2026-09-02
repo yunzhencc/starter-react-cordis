@@ -17,7 +17,7 @@ async function bootDashboard() {
   const ctx = new Context();
   const fibers: ReturnType<CordisContext['plugin']>[] = [];
 
-  for (const module of [i18n, renderer, router, layout, dashboard]) {
+  for (const module of [i18n, renderer, layout, router, dashboard]) {
     const fiber = ctx.plugin(module);
     fibers.push(fiber);
     await fiber.await();
@@ -63,6 +63,31 @@ describe('dashboard module', () => {
 
     expect(ctx.layout.snapshot().workbenchOpen).toBe(true);
     expect(container.querySelector('[data-workbench-column]')?.textContent).toContain('仪表盘工作台');
+
+    await act(async () => unmount());
+    await dispose();
+  });
+
+  it('removes its workbench after leaving the dashboard route', async () => {
+    const { ctx, container, dispose } = await bootDashboard();
+    ctx.routes.register({ id: 'settings', parentId: 'app-layout', path: 'settings', Component: () => <h1>Settings</h1> });
+    let unmount!: () => void;
+
+    await act(async () => {
+      unmount = ctx.uiRenderer.mount(container);
+    });
+    await act(async () => {
+      (container.querySelector('button') as HTMLButtonElement).click();
+    });
+
+    expect(container.querySelector('[data-workbench-column]')).not.toBeNull();
+
+    await act(async () => {
+      window.history.pushState({}, '', '/settings');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+
+    expect(container.querySelector('[data-workbench-column]')).toBeNull();
 
     await act(async () => unmount());
     await dispose();

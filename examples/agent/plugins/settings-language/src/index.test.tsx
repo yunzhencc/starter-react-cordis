@@ -5,7 +5,8 @@ import { Context } from '@deepseek-ai/cordis';
 import { apply as applyGeneral, inject as generalInject } from '@examples/agent-settings-general';
 import { apply as applySettingsLayout } from '@examples/agent-settings-layout';
 import { apply as applyI18n } from '@yunzhen/cordis-ui-i18n';
-import { apply as applyRenderer, inject as rendererInject, Slot } from '@yunzhen/cordis-ui-renderer';
+import { apply as applyLayout, inject as layoutInject } from '@yunzhen/cordis-ui-layout';
+import { apply as applyRenderer, inject as rendererInject } from '@yunzhen/cordis-ui-renderer';
 import { apply as applyRouter } from '@yunzhen/cordis-ui-router';
 import { act } from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -22,27 +23,11 @@ beforeEach(() => {
 async function bootLanguageSettings() {
   const ctx = new Context();
   const fibers: ReturnType<CordisContext['plugin']>[] = [];
-  const Layout = () => (
-    <>
-      <aside><Slot name="sidebar" /></aside>
-      <main><Slot name="main" /></main>
-    </>
-  );
-
   for (const module of [
     { apply: applyI18n },
     { apply: applyRenderer, inject: rendererInject },
-    { apply: applyRouter, inject: ['slots'] },
-    {
-      inject: ['routes', 'slots'],
-      apply(pluginCtx: Context) {
-        pluginCtx.routes.register({
-          id: 'app-layout',
-          Component: Layout,
-          children: { main: { kind: 'single', scope: 'root' }, sidebar: { kind: 'single', scope: 'root' } },
-        });
-      },
-    },
+    { apply: applyLayout, inject: layoutInject },
+    { apply: applyRouter, inject: ['layout', 'slots'] },
     { apply: applySettingsLayout, inject: ['i18n', 'routes', 'slots'] },
     { apply: applyGeneral, inject: generalInject },
     { apply, inject },
