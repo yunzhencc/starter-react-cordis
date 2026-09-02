@@ -1,7 +1,7 @@
 import type { GalleryFormatPluginManifest, InstalledGalleryPlugin, PluginFormatDescriptor } from '@yunzhen/gallery-formats';
 import { createWriteStream } from 'node:fs';
 import { lstat, mkdir, mkdtemp, readFile, rename, rm, writeFile } from 'node:fs/promises';
-import { isAbsolute, join, normalize, relative, resolve, sep } from 'node:path';
+import { dirname, isAbsolute, join, normalize, relative, resolve, sep } from 'node:path';
 import { pipeline } from 'node:stream/promises';
 import * as yauzl from 'yauzl';
 
@@ -192,7 +192,7 @@ function isInstalledPlugin(value: unknown): value is InstalledGalleryPlugin {
 }
 
 function isAllowedResource(plugin: InstalledGalleryPlugin, resource: string) {
-  return plugin.formats.some(format => resource === format.thumbnailWorker || resource === format.viewer) || resource.startsWith('assets/');
+  return plugin.formats.some(format => resource === format.thumbnailWorker || resource === format.viewer || resource.startsWith(`${dirname(format.thumbnailWorker)}/`) || resource.startsWith(`${dirname(format.viewer)}/`)) || resource.startsWith('assets/');
 }
 
 function isPluginId(value: unknown): value is string {

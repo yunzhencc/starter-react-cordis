@@ -60,6 +60,7 @@ it('allows declared viewer and worker resources but never manifest files', async
     throw new Error('expected declared viewer resource');
 
   await expect(readFile(viewerPath, 'utf8')).resolves.toBe(viewer);
+  await expect(manager.resolveResource('com.example.psd', 'viewer/psd.js')).resolves.toBeDefined();
   await expect(manager.resolveResource('com.example.psd', 'manifest.json')).resolves.toBeUndefined();
 });
 
@@ -88,6 +89,7 @@ async function createPluginZip(root: string, plugin: GalleryFormatPluginManifest
   zip.addBuffer(Buffer.from(JSON.stringify(plugin)), 'manifest.json');
   zip.addBuffer(Buffer.from(worker), 'thumbnail/psd.worker.js');
   zip.addBuffer(Buffer.from(viewer), 'viewer/psd.html');
+  zip.addBuffer(Buffer.from(worker), 'viewer/psd.js');
   zip.end();
   const chunks: Buffer[] = [];
   await new Promise<void>((resolve, reject) => {
