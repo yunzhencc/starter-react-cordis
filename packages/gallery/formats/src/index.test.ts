@@ -9,13 +9,20 @@ it('returns the registered extension for an asset suffix', async () => {
   const dispose = ctx.formats.register({
     id: 'fixture',
     version: '1',
-    extensions: ['.fixture'],
+    extensions: ['.PNG'],
     createThumbnail: vi.fn(),
     Viewer: () => null,
   });
 
-  expect(ctx.formats.find('.fixture')?.id).toBe('fixture');
+  expect(ctx.formats.find('.png')?.id).toBe('fixture');
+  expect(() => ctx.formats.register({
+    id: 'conflict',
+    version: '1',
+    extensions: ['.png'],
+    createThumbnail: vi.fn(),
+    Viewer: () => null,
+  })).toThrow('format extension already registered for suffix: .png');
   dispose();
-  expect(ctx.formats.find('.fixture')).toBeUndefined();
+  expect(ctx.formats.find('.png')).toBeUndefined();
   await fiber.dispose();
 });

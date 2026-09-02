@@ -3,10 +3,18 @@
   "type": "module",
   "private": true,
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./client": "./src/index.ts"
   },
   "dependencies": {
     "@deepseek-ai/cordis": "^4.0.2",
     "react": "^19.2.8"
+  },
+  "yunzhen": {
+    "client": {
+      "platform": "web",
+      "inject": [],
+      "immediately": false
+    }
   }
 }
