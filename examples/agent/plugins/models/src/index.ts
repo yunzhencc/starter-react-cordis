@@ -13,7 +13,7 @@ export interface ModelDefinition {
 
 export interface ModelsConfig {
   defaultModel: string;
-  models: readonly ConfiguredModel[];
+  models: readonly ModelConfig[];
 }
 
 export interface ModelStreamRequest {
@@ -22,9 +22,11 @@ export interface ModelStreamRequest {
   modelId: string;
 }
 
-interface ConfiguredModel extends ModelDefinition {
+export interface ModelConfig extends ModelDefinition {
   apiKey?: string;
 }
+
+export const MODEL_CONFIG_STORAGE_KEY = '@examples/agent-models:config';
 
 declare module '@deepseek-ai/cordis' {
   interface Context {
@@ -33,23 +35,31 @@ declare module '@deepseek-ai/cordis' {
 }
 
 export class ModelRegistry {
-  readonly defaultModelId: string;
-  private readonly models: readonly ConfiguredModel[];
-  private readonly publicModels: readonly ModelDefinition[];
+  private config: ModelsConfig;
 
   constructor(config: unknown) {
-    const parsed = parseConfig(config);
-    this.defaultModelId = parsed.defaultModel;
-    this.models = parsed.models;
-    this.publicModels = Object.freeze(parsed.models.map(({ apiKey: _apiKey, ...model }) => Object.freeze(model)));
+    this.config = readStoredConfig(config);
+  }
+
+  get defaultModelId() {
+    return this.config.defaultModel;
   }
 
   snapshot() {
-    return this.publicModels;
+    return Object.freeze(this.config.models.map(({ apiKey: _apiKey, ...model }) => Object.freeze(model)));
+  }
+
+  settings() {
+    return this.config;
+  }
+
+  update(config: unknown) {
+    this.config = parseConfig(config);
+    writeStorage(MODEL_CONFIG_STORAGE_KEY, JSON.stringify(this.config));
   }
 
   async* stream({ abortSignal, messages, modelId }: ModelStreamRequest): AsyncIterable<string> {
-    const entry = this.models.find(item => item.id === modelId);
+    const entry = this.config.models.find(item => item.id === modelId);
     if (!entry)
       throw new Error(`unknown model: ${modelId}`);
 
@@ -91,7 +101,7 @@ function parseConfig(value: unknown): ModelsConfig {
   return { defaultModel: value.defaultModel, models: Object.freeze(models) };
 }
 
-function parseModel(value: unknown): ConfiguredModel {
+function parseModel(value: unknown): ModelConfig {
   if (!isRecord(value))
     throw new TypeError('model config must be an object');
 
@@ -111,6 +121,34 @@ function parseModel(value: unknown): ConfiguredModel {
     model: value.model as string,
     provider: value.provider as string,
   };
+}
+
+function readStoredConfig(defaultConfig: unknown) {
+  const value = readStorage(MODEL_CONFIG_STORAGE_KEY);
+  if (value === null)
+    return parseConfig(defaultConfig);
+  try {
+    return parseConfig(JSON.parse(value));
+  }
+  catch {
+    return parseConfig(defaultConfig);
+  }
+}
+
+function readStorage(key: string) {
+  try {
+    return globalThis.localStorage?.getItem(key) ?? null;
+  }
+  catch {
+    return null;
+  }
+}
+
+function writeStorage(key: string, value: string) {
+  try {
+    globalThis.localStorage?.setItem(key, value);
+  }
+  catch {}
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

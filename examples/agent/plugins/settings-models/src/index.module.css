@@ -1,0 +1,60 @@
+.form {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 42rem;
+}
+
+.provider {
+  display: grid;
+  gap: 0.875rem;
+  padding: 1rem;
+  margin: 0;
+  border: 1px solid var(--app-border);
+  border-radius: 0.75rem;
+}
+
+.provider legend {
+  padding: 0 0.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.field {
+  display: grid;
+  gap: 0.375rem;
+  color: var(--app-text-muted);
+  font-size: 0.875rem;
+}
+
+.field input,
+.field select {
+  min-width: 0;
+  min-height: 2.25rem;
+  padding: 0.375rem 0.5rem;
+  color: var(--app-text);
+  font: inherit;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: 0.375rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.actions button {
+  min-height: 2.25rem;
+  padding: 0.375rem 0.75rem;
+  color: var(--app-surface);
+  font: inherit;
+  background: var(--app-accent);
+  border: 0;
+  border-radius: 0.375rem;
+}
+
+.actions output {
+  color: var(--app-text-muted);
+  font-size: 0.875rem;
+}

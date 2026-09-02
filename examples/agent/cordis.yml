@@ -36,6 +36,8 @@
   name: '@examples/agent-settings-layout'
 - id: settings-general
   name: '@examples/agent-settings-general'
+- id: settings-models
+  name: '@examples/agent-settings-models'
 - id: settings-appearance
   name: '@examples/agent-settings-appearance'
 - id: settings-language

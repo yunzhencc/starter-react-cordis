@@ -37,3 +37,10 @@ it('boots models before chat', () => {
   expect(ids.indexOf('models')).toBeGreaterThanOrEqual(0);
   expect(ids.indexOf('chat')).toBeGreaterThan(ids.indexOf('models'));
 });
+
+it('boots the model settings extension after the models runtime', () => {
+  const entries = loadWebBootGraph(new URL('./cordis.yml', import.meta.url).pathname).entries;
+  const ids = entries.map(entry => entry.id);
+
+  expect(ids.indexOf('settings-models')).toBeGreaterThan(ids.indexOf('models'));
+});

@@ -1,5 +1,7 @@
+// @vitest-environment jsdom
+
 import { Context } from '@deepseek-ai/cordis';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { apply, inject } from './index';
 
 const config = {
@@ -13,6 +15,8 @@ const config = {
     provider: 'deepseek',
   }],
 };
+
+beforeEach(() => localStorage.clear());
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -85,5 +89,35 @@ describe('agent models module', () => {
     });
     await expect(invalidFiber.await()).rejects.toThrow('default model is not configured: missing');
     await invalidFiber.dispose();
+  });
+
+  it('persists an updated model configuration while keeping credentials out of its public snapshot', async () => {
+    const updated = {
+      defaultModel: 'qwen-plus',
+      models: [{
+        apiKey: 'saved-key',
+        baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+        id: 'qwen-plus',
+        label: 'Qwen Plus',
+        model: 'qwen-plus',
+        provider: 'qwen',
+      }],
+    };
+    const { ctx, dispose } = await boot();
+
+    ctx.models.update(updated);
+    await dispose();
+
+    const { ctx: restored, dispose: disposeRestored } = await boot();
+    expect(restored.models.defaultModelId).toBe('qwen-plus');
+    expect(restored.models.snapshot()).toEqual([{
+      baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+      id: 'qwen-plus',
+      label: 'Qwen Plus',
+      model: 'qwen-plus',
+      provider: 'qwen',
+    }]);
+    expect(restored.models.settings()).toEqual(updated);
+    await disposeRestored();
   });
 });
