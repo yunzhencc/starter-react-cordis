@@ -54,21 +54,28 @@
 }
 
 .composer {
+  display: flex;
+  flex-direction: column;
+  position: relative;
   padding: 0;
-  background: color-mix(in srgb, var(--app-surface) 92%, var(--app-background));
+  background: color-mix(in srgb, var(--app-surface-elevated) 92%, transparent);
+  backdrop-filter: blur(1rem);
   border: 0;
   border-radius: 1.5rem;
-  box-shadow: 0 0.5rem 1.5rem color-mix(in srgb, #000 18%, transparent);
+  box-shadow: inset 0 0 1px 0 #ffffff33;
 }
 
 .editor {
   position: relative;
-  min-height: 2rem;
-  padding: 0 0.75rem 0.25rem;
+  flex-grow: 1;
+  min-height: 2.75rem;
+  padding: 0 0.75rem;
+  margin-bottom: 0.25rem;
+  overflow-y: auto;
 }
 
 .editor :global(.ProseMirror) {
-  min-height: 2rem;
+  min-height: 2.75rem;
   outline: none;
   line-height: 1.35;
 }
@@ -86,17 +93,20 @@
 }
 
 .composerFooter {
-  display: flex;
+  display: grid;
   align-items: center;
-  justify-content: flex-end;
+  grid-template-columns: minmax(0, auto) auto minmax(0, 1fr);
+  column-gap: 5px;
   padding: 0 0.5rem;
   margin-bottom: 0.5rem;
 }
 
 .composerControls {
   display: flex;
+  grid-column: 3;
   min-width: 0;
   align-items: center;
+  justify-content: flex-end;
   gap: 0.25rem;
 }
 
@@ -152,6 +162,12 @@
   height: 0.625rem;
   background: currentColor;
   border-radius: 0.125rem;
+}
+
+@supports (corner-shape: superellipse(1.5)) {
+  .composer {
+    corner-shape: superellipse(1.5);
+  }
 }
 
 @media (max-width: 42rem) {

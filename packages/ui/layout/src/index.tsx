@@ -15,8 +15,6 @@ export const inject = ['slots'];
 
 const layoutSlots = {
   'sidebar': { kind: 'single', scope: 'root' },
-  'sidebar.rail': { kind: 'list', scope: 'root' },
-  'sidebar.trigger': { kind: 'list', scope: 'root' },
   'main': { kind: 'single', scope: 'root' },
   'workbench': { kind: 'single', scope: 'root' },
   'shell.overlay': { kind: 'list', scope: 'root' },
@@ -52,20 +50,8 @@ function AppLayout({ controller, slots }: { controller: LayoutController; slots:
     () => slots.version('workbench'),
     () => slots.version('workbench'),
   );
-  useSyncExternalStore(
-    listener => slots.subscribe('sidebar.rail', listener),
-    () => slots.version('sidebar.rail'),
-    () => slots.version('sidebar.rail'),
-  );
-  useSyncExternalStore(
-    listener => slots.subscribe('sidebar.trigger', listener),
-    () => slots.version('sidebar.trigger'),
-    () => slots.version('sidebar.trigger'),
-  );
   const hasWorkbenchOccupant = slots.entries('workbench').length > 0;
   const hasWorkbench = hasWorkbenchOccupant;
-  const hasSidebarRail = slots.entries('sidebar.rail').length > 0;
-  const hasSidebarTrigger = slots.entries('sidebar.trigger').length > 0;
   const sidebarBounds = getSidebarBounds(viewport.width);
   const [sidebarSize, setSidebarSize] = useStoredSize('sidebar-width', sidebarBounds);
   const sidebarDefaultSize = useRef(sidebarSize).current;
@@ -133,18 +119,10 @@ function AppLayout({ controller, slots }: { controller: LayoutController; slots:
         {snapshot.sidebarOpen && (
           <>
             <Panel defaultSize={`${sidebarDefaultSize}px`} groupResizeBehavior="preserve-pixel-size" id="sidebar" maxSize={`${sidebarBounds.maxSize}px`} minSize={`${sidebarBounds.minSize}px`} onResize={updateSidebarSize}>
-              <aside className={styles.sidebar} data-sidebar-column>
-                {hasSidebarTrigger && <div className={styles.sidebarTrigger} data-sidebar-trigger="toolbar"><Slot name="sidebar.trigger" /></div>}
-                <Slot name="sidebar" />
-              </aside>
+              <aside className={styles.sidebar} data-sidebar-column><Slot name="sidebar" /></aside>
             </Panel>
             <Separator className={styles.separator} id="sidebar-resize" />
           </>
-        )}
-        {!snapshot.sidebarOpen && hasSidebarRail && (
-          <Panel defaultSize="52px" groupResizeBehavior="preserve-pixel-size" id="sidebar-rail" maxSize="52px" minSize="52px">
-            <aside className={styles.sidebarRail} data-sidebar-rail><Slot name="sidebar.rail" /></aside>
-          </Panel>
         )}
         <Panel groupResizeBehavior="preserve-relative-size" id="main" minSize={`${MAIN_MIN_WIDTH}px`}>
           <main className={styles.main}><Slot name="main" /></main>

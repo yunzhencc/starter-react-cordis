@@ -7,6 +7,7 @@
 :root[data-theme='light'] {
   --app-background: #f8fafc;
   --app-surface: #ffffff;
+  --app-surface-elevated: #ffffff;
   --app-text: #1f2937;
   --app-border: #e2e8f0;
   --app-accent: #1d4ed8;
@@ -16,6 +17,7 @@
 :root[data-theme='dark'] {
   --app-background: #111827;
   --app-surface: #1f2937;
+  --app-surface-elevated: #292929;
   --app-text: #f8fafc;
   --app-border: #374151;
   --app-accent: #93c5fd;
