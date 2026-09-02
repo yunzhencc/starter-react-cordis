@@ -395,6 +395,12 @@ importers:
       '@yunzhen/cordis-ui-theme':
         specifier: workspace:*
         version: link:../../packages/ui/theme
+      react:
+        specifier: ^19.2.8
+        version: 19.2.8
+      react-dom:
+        specifier: ^19.2.8
+        version: 19.2.8(react@19.2.8)
     devDependencies:
       '@types/node':
         specifier: ^26.4.0
