@@ -2,6 +2,16 @@
   padding: 16px;
 }
 
+.chooseRoot {
+  padding: 8px 12px;
+  margin-bottom: 16px;
+  color: inherit;
+  cursor: pointer;
+  background: var(--app-surface);
+  border: 1px solid color-mix(in srgb, var(--app-text) 18%, transparent);
+  border-radius: 6px;
+}
+
 .grid {
   min-height: 1px;
 }
@@ -10,7 +20,12 @@
   width: 250px;
   overflow: hidden;
   background: var(--app-surface);
+  border: 2px solid transparent;
   border-radius: 6px;
+}
+
+.item[data-selected='true'] {
+  border-color: var(--app-accent);
 }
 
 .image {
@@ -20,7 +35,33 @@
 }
 
 .info {
+  overflow: hidden;
   padding: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.placeholder {
+  display: grid;
+  width: 100%;
+  min-height: 160px;
+  color: color-mix(in srgb, var(--app-text) 62%, transparent);
+  background: color-mix(in srgb, var(--app-text) 5%, transparent);
+  place-items: center;
+}
+
+.workbench {
+  display: grid;
+  min-height: 100%;
+  padding: 16px;
+  place-items: center;
+}
+
+.workbench img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100vh - 32px);
+  object-fit: contain;
 }
 
 .toggle {

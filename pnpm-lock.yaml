@@ -432,6 +432,9 @@ importers:
       '@yunzhen/cordis-ui-router':
         specifier: workspace:*
         version: link:../../../../packages/ui/router
+      '@yunzhen/gallery-formats':
+        specifier: workspace:*
+        version: link:../../../../packages/gallery/formats
       lucide-react:
         specifier: ^1.38.0
         version: 1.38.0(react@19.2.8)

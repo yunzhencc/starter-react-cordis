@@ -1,8 +1,9 @@
 import type { LayoutController } from '@yunzhen/cordis-ui-layout';
 import type { CSSProperties } from 'react';
+import type { MediaStore } from './media';
 import { JustifiedInfiniteGrid } from '@egjs/react-infinitegrid';
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
-import { useState, useSyncExternalStore } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 import styles from './home-page.module.css';
 
 interface HomeProps {
@@ -17,37 +18,62 @@ const headerActionStyle = {
   zIndex: 1,
 } satisfies CSSProperties;
 
-function getItems(groupKey: number, count: number) {
-  return Array.from({ length: count }, (_, index) => ({
-    groupKey,
-    key: groupKey * count + index,
-  }));
+interface HomePageProps {
+  layout: LayoutController;
+  media: MediaStore;
 }
 
-export function HomePage() {
-  const [items, setItems] = useState(() => getItems(0, 10));
+export function HomePage({ layout, media }: HomePageProps) {
+  const snapshot = useSyncExternalStore(media.subscribe, media.snapshot, media.snapshot);
+  useEffect(() => {
+    void media.listAssets();
+    return layout.closeWorkbench;
+  }, [layout, media]);
 
   return (
     <section className={styles.page}>
+      <button className={styles.chooseRoot} data-choose-root type="button" onClick={media.chooseRoot}>选择素材文件夹</button>
       <JustifiedInfiniteGrid
         className={styles.grid}
         gap={5}
-        onRequestAppend={(event) => {
-          const nextGroupKey = (+event.groupKey! || 0) + 1;
-          setItems(items => [...items, ...getItems(nextGroupKey, 10)]);
-        }}
       >
-        {items.map(item => (
-          <article key={item.key} className={styles.item} data-grid-groupkey={item.groupKey}>
-            <img alt={`egjs ${item.key}`} className={styles.image} data-grid-maintained-target="true" src={`https://naver.github.io/egjs-infinitegrid/assets/image/${(item.key % 33) + 1}.jpg`} />
+        {snapshot.assets.map(item => (
+          <article
+            key={item.asset.id}
+            className={styles.item}
+            data-asset-id={item.asset.id}
+            data-grid-groupkey="assets"
+            data-selected={snapshot.selectedId === item.asset.id ? 'true' : undefined}
+            onClick={() => media.select(item.asset.id)}
+            onDoubleClick={async () => {
+              if (await media.open(item.asset.id))
+                layout.openWorkbench();
+            }}
+          >
+            {item.thumbnailUrl && <img alt={item.asset.name} className={styles.image} data-grid-maintained-target="true" src={item.thumbnailUrl} />}
+            {item.status !== 'ready' && (
+              <div className={styles.placeholder} data-grid-maintained-target="true">
+                {item.status === 'error' ? '预览失败' : '正在生成预览'}
+              </div>
+            )}
             <div className={styles.info}>
-              egjs
-              {' '}
-              {item.key}
+              {item.asset.name}
             </div>
           </article>
         ))}
       </JustifiedInfiniteGrid>
+    </section>
+  );
+}
+
+export function AssetsWorkbench({ media }: { media: MediaStore }) {
+  const { opened } = useSyncExternalStore(media.subscribe, media.snapshot, media.snapshot);
+  if (!opened)
+    return null;
+  const Viewer = opened.format.Viewer;
+  return (
+    <section className={styles.workbench}>
+      <Viewer name={opened.asset.name} source={opened.source} />
     </section>
   );
 }
