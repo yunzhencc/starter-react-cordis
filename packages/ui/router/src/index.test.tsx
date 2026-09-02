@@ -4,6 +4,7 @@ import type { Context as CordisContext } from '@deepseek-ai/cordis';
 import { Context } from '@deepseek-ai/cordis';
 import { apply as applyRenderer, Slot } from '@yunzhen/cordis-ui-renderer';
 import { act, StrictMode } from 'react';
+import { NavLink, Outlet } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import { apply as applyRouter } from './index';
 
@@ -100,6 +101,57 @@ async function bootRouterWithSettingsSlot() {
   return app;
 }
 
+async function bootRouterWithRouteSidebar() {
+  const app = await boot();
+  const Layout = () => (
+    <>
+      <aside><Slot name="sidebar" /></aside>
+      <main><Slot name="main" /></main>
+    </>
+  );
+  const SettingsSidebar = () => (
+    <nav data-settings-sidebar>
+      <NavLink to="/">Return to app</NavLink>
+    </nav>
+  );
+  const layout = app.ctx.plugin({
+    inject: ['routes', 'slots'],
+    apply(ctx) {
+      ctx.routes.register({
+        id: 'app-layout',
+        Component: Layout,
+        children: {
+          main: { kind: 'single', scope: 'root' },
+          sidebar: { kind: 'single', scope: 'root' },
+        },
+      });
+      ctx.routes.inject('app-layout', () => ctx.routes.register({
+        id: 'dashboard',
+        parentId: 'app-layout',
+        index: true,
+        Component: () => <h1>Dashboard</h1>,
+        navigation: { label: 'Dashboard', order: 0 },
+      }));
+      ctx.routes.inject('app-layout', () => ctx.routes.register({
+        id: 'settings',
+        parentId: 'app-layout',
+        path: 'settings',
+        Component: Outlet,
+        Sidebar: SettingsSidebar,
+      }));
+      ctx.routes.inject('settings', () => ctx.routes.register({
+        id: 'settings.appearance',
+        parentId: 'settings',
+        path: 'appearance',
+        Component: () => <h1>Appearance</h1>,
+      }));
+    },
+  });
+  await layout.await();
+  app.addFiber(layout);
+  return app;
+}
+
 describe('router host', () => {
   it('rejects children below an index route instead of dropping them', async () => {
     const { ctx, dispose } = await boot();
@@ -158,6 +210,28 @@ describe('router host', () => {
     ]);
     expect(container.textContent).toContain('Custom');
     expect(container.textContent).toContain('Account');
+    await act(async () => unmount());
+    await dispose();
+  });
+
+  it('replaces the application sidebar for a matched route and restores it when leaving', async () => {
+    window.history.replaceState({}, '', '/settings/appearance');
+    const { ctx, container, dispose } = await bootRouterWithRouteSidebar();
+    let unmount!: () => void;
+
+    await act(async () => {
+      unmount = ctx.uiRenderer.mount(container);
+    });
+
+    expect(container.querySelector('[data-settings-sidebar]')).not.toBeNull();
+    expect([...container.querySelectorAll('nav a')].map(link => link.textContent)).toEqual(['Return to app']);
+
+    await act(async () => {
+      container.querySelector<HTMLAnchorElement>('[data-settings-sidebar] a')!.click();
+    });
+
+    expect(container.querySelector('[data-settings-sidebar]')).toBeNull();
+    expect([...container.querySelectorAll('nav a')].map(link => link.textContent)).toEqual(['Dashboard']);
     await act(async () => unmount());
     await dispose();
   });

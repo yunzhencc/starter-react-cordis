@@ -150,10 +150,12 @@ describe('route registry', () => {
 
   it('publishes deeply immutable route snapshots without exposing registration records', async () => {
     const { ctx, dispose } = await bootRoutes();
+    const Sidebar = () => null;
     const definition: RouteDefinition = {
       id: 'settings',
       path: 'settings',
       Component: Null,
+      Sidebar,
       navigation: { label: 'Settings', order: 1 },
       children: { 'settings.section': { kind: 'list', scope: 'root' } },
     };
@@ -166,6 +168,7 @@ describe('route registry', () => {
     expect(Object.isFrozen(exposed.navigation)).toBe(true);
     expect(Object.isFrozen(exposed.children)).toBe(true);
     expect(Object.isFrozen(exposed.children!['settings.section'])).toBe(true);
+    expect(exposed.Sidebar).toBe(Sidebar);
     expect(() => {
       exposed.id = 'changed';
     }).toThrow(TypeError);

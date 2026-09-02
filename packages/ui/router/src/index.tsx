@@ -2,8 +2,8 @@ import type { Context } from '@deepseek-ai/cordis';
 import type { SlotOwnerHandle, SlotRenderer } from '@yunzhen/cordis-ui-renderer';
 import type { RouteObject } from 'react-router-dom';
 import { Slot, SlotOwner } from '@yunzhen/cordis-ui-renderer';
-import { useLayoutEffect, useState, useSyncExternalStore } from 'react';
-import { BrowserRouter, NavLink, Outlet, useRoutes } from 'react-router-dom';
+import { createElement, useLayoutEffect, useState, useSyncExternalStore } from 'react';
+import { BrowserRouter, matchRoutes, NavLink, Outlet, useLocation, useRoutes } from 'react-router-dom';
 import { RouteRegistry } from './routes';
 
 export { RouteRegistry } from './routes';
@@ -73,6 +73,11 @@ function RouteOutlet() {
 
 function NavigationSidebar({ routes }: { routes: RouteRenderer }) {
   const snapshot = useSyncExternalStore(routes.subscribe, routes.snapshot, routes.snapshot);
+  const location = useLocation();
+  const Sidebar = findMatchedSidebar(snapshot, location.pathname);
+  if (Sidebar)
+    return createElement(Sidebar);
+
   const byId = new Map(snapshot.map(route => [route.id, route]));
   const links = snapshot
     .filter(route => route.navigation)
@@ -89,6 +94,34 @@ function NavigationSidebar({ routes }: { routes: RouteRenderer }) {
       <footer><Slot name="sidebar.footer" /></footer>
     </>
   );
+}
+
+function findMatchedSidebar(routes: ReturnType<RouteRegistry['snapshot']>, pathname: string) {
+  const byId = new Map(routes.map(route => [route.id, route]));
+  const matches = matchRoutes(toMatchableRouteObjects(routes), pathname) ?? [];
+  for (const match of [...matches].reverse()) {
+    const Sidebar = match.route.id && byId.get(match.route.id)?.Sidebar;
+    if (Sidebar)
+      return Sidebar;
+  }
+}
+
+function toMatchableRouteObjects(routes: ReturnType<RouteRegistry['snapshot']>): RouteObject[] {
+  const children = new Map<string | undefined, typeof routes>();
+  for (const route of routes)
+    children.set(route.parentId, [...children.get(route.parentId) ?? [], route]);
+
+  const build = (route: typeof routes[number]): RouteObject => {
+    if (route.index)
+      return { id: route.id, index: true };
+    return {
+      id: route.id,
+      path: route.path,
+      children: children.get(route.id)?.map(build),
+    };
+  };
+
+  return children.get(undefined)?.map(build) ?? [];
 }
 
 function toRouteObjects(slots: SlotRenderer, routes: ReturnType<RouteRegistry['snapshot']>): RouteObject[] {
