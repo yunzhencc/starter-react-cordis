@@ -59,6 +59,14 @@ app-layout
 
 Dashboard 和 Settings 都是 `app-layout` 的子 Route；命中 Settings 时其 route Sidebar 替换默认应用侧栏。设置扩展通过 `ctx.settings.register()` 同时注册菜单与 `/settings/:id` 页面。`settings-general` 注册左侧“常规”页面并声明 `settings.general.items` 子 Slot；语言及未来常规项向该 Slot 贡献设置行，不新增左侧菜单。Appearance 仍是独立页面。`ctx.layout` 仅管理侧栏与工作台开关；不持久化尺寸、不支持拖拽或响应式自动折叠。
 
+## Gallery 本地素材与格式扩展边界
+
+Gallery 主进程拥有本地目录授权：只有原生目录选择器能设置素材根目录，扫描结果在主进程内建立素材 id 到授权文件的映射，读取素材和缩略图缓存时都会再次校验该映射。renderer 只能通过 `GalleryMediaApi` 按素材 id 请求字节或缓存，不能提交任意绝对路径，也没有直接文件系统访问权。
+
+Gallery 格式宿主与所有首版格式实现都随应用静态发布。`examples/gallery/cordis.yml` 在构建期固定登记格式宿主、包含原生格式处理器的 assets 插件和 JXL 扩展；生产 renderer 只加载该 Cordis 启动图生成的 ESM chunks。`FormatRegistry.register()` 是这些已打包模块的运行期贡献接口，不是安装器或任意代码加载入口。
+
+未来若支持动态第三方格式扩展，必须另行设计扩展签名与信任链、权限声明及执行时授权、代码隔离与受限 IPC，以及安装、更新、卸载和运行时模块加载/启动图生命周期。当前静态注册表不提供这些保证，因此不能直接用于加载用户提供或远程下载的扩展。
+
 ## 部署边界
 
 开发期 Vite 进程可读取 `examples/agent/cordis.yml` 生成虚拟 registry；生产环境仅托管 `examples/agent/dist` 的静态文件和 ESM chunks。生产不运行 Node catalog 扫描，不支持 HMR、远程插件、运行时安装或动态运行器。
