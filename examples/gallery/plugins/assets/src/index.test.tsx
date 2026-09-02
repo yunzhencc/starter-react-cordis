@@ -32,6 +32,12 @@ beforeEach(() => {
     createObjectURL: { configurable: true, value: vi.fn(() => `blob:fixture-${++nextObjectUrl}`) },
     revokeObjectURL: { configurable: true, value: vi.fn() },
   });
+  vi.stubGlobal('galleryPlugin', {
+    install: async () => { throw new Error('not implemented'); },
+    list: async () => [],
+    setEnabled: async () => [],
+    uninstall: async () => [],
+  });
 });
 
 afterEach(() => {

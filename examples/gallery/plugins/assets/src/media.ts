@@ -40,6 +40,10 @@ export class MediaStore {
   };
 
   listAssets = async () => {
+    await this.reload();
+  };
+
+  reload = async () => {
     try {
       await this.load(await this.media.listAssets());
     }

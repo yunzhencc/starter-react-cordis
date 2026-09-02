@@ -2,6 +2,7 @@ import type { Context } from '@deepseek-ai/cordis';
 import type {} from '@yunzhen/cordis-ui-router';
 import type { GalleryMediaApi } from '@yunzhen/gallery-formats';
 import { AssetsWorkbench, HomePage, SidebarToggle } from './home-page';
+import { InstalledFormatController } from './installed-formats';
 import { MediaStore } from './media';
 import { nativeFormat } from './native-format';
 
@@ -12,7 +13,10 @@ export function apply(ctx: Context) {
   ctx.effect(() => ctx.formats.register(nativeFormat), 'gallery.assets.native-format()');
   const mediaApi = (window as typeof window & { galleryMedia: GalleryMediaApi }).galleryMedia;
   const media = new MediaStore(ctx.formats, mediaApi, ctx.layout.closeWorkbench);
+  const installed = new InstalledFormatController(ctx.formats, window.galleryPlugin);
+  void installed.refresh().then(media.reload);
   ctx.effect(() => () => media.dispose(), 'gallery.assets.dispose()');
+  ctx.effect(() => () => installed.dispose(), 'gallery.assets.installed-formats.dispose()');
 
   if (readSidebarState() === false)
     ctx.layout.closeSidebar();
