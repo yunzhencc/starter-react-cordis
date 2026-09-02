@@ -14,8 +14,8 @@ Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 const Workbench = () => <section>Workbench</section>;
 const EmptyPage = () => null;
 
-async function bootLayout() {
-  window.history.replaceState({}, '', '/');
+async function bootLayout(path = '/') {
+  window.history.replaceState({}, '', path);
   const ctx = new Context();
   const i18n = ctx.plugin({ apply: applyI18n });
   await i18n.await();
@@ -113,6 +113,26 @@ describe('app layout', () => {
       ctx.slots.register({ name: 'workbench' }, Workbench);
     });
     expect(container.querySelector('[data-workbench-column]')).not.toBeNull();
+
+    await act(async () => unmount());
+    await dispose();
+  });
+
+  it('reclaims the workbench width for settings', async () => {
+    const { ctx, container, dispose } = await bootLayout('/settings');
+    ctx.routes.register({ id: 'settings', parentId: 'app-layout', path: 'settings', Component: EmptyPage });
+    let unmount!: () => void;
+
+    await act(async () => {
+      unmount = ctx.uiRenderer.mount(container);
+    });
+    await act(async () => {
+      ctx.slots.register({ name: 'workbench' }, Workbench);
+      ctx.layout.openWorkbench();
+    });
+
+    expect(container.querySelector('[data-workbench-column]')).toBeNull();
+    expect(container.querySelectorAll('[data-panel]')).toHaveLength(2);
 
     await act(async () => unmount());
     await dispose();

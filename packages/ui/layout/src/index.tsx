@@ -5,6 +5,7 @@ import type { PanelBounds } from './layout-controller';
 import { Slot } from '@yunzhen/cordis-ui-renderer';
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { Group, Panel, Separator } from 'react-resizable-panels';
+import { useLocation } from 'react-router-dom';
 import styles from './index.module.css';
 import { getSidebarBounds, getWorkbenchBounds, getWorkspaceWidth, LayoutController, MAIN_MIN_WIDTH } from './layout-controller';
 
@@ -31,15 +32,16 @@ export function apply(ctx: Context) {
 
 function AppLayout({ controller, slots }: { controller: LayoutController; slots: SlotRenderer }) {
   const snapshot = useSyncExternalStore(controller.subscribe, controller.snapshot, controller.snapshot);
+  const location = useLocation();
   const viewport = useViewport();
-  const autoHidden = useRef({ sidebar: false, workbench: false });
+  const autoHiddenRef = useRef({ sidebar: false, workbench: false });
   useSyncExternalStore(
     listener => slots.subscribe('workbench', listener),
     () => slots.version('workbench'),
     () => slots.version('workbench'),
   );
   const hasWorkbenchOccupant = slots.entries('workbench').length > 0;
-  const hasWorkbench = hasWorkbenchOccupant;
+  const hasWorkbench = hasWorkbenchOccupant && !location.pathname.startsWith('/settings');
   const sidebarBounds = getSidebarBounds(viewport.width);
   const [sidebarSize, setSidebarSize] = useStoredSize('sidebar-width', sidebarBounds);
   const sidebarDefaultSize = useRef(sidebarSize).current;
@@ -52,20 +54,20 @@ function AppLayout({ controller, slots }: { controller: LayoutController; slots:
 
   useEffect(() => {
     if (viewport.width <= 720 && snapshot.sidebarOpen) {
-      autoHidden.current.sidebar = true;
+      autoHiddenRef.current.sidebar = true;
       controller.closeSidebar();
     }
-    else if (viewport.width > 720 && autoHidden.current.sidebar) {
-      autoHidden.current.sidebar = false;
+    else if (viewport.width > 720 && autoHiddenRef.current.sidebar) {
+      autoHiddenRef.current.sidebar = false;
       controller.openSidebar();
     }
 
     if (viewport.width <= 960 && snapshot.workbenchOpen && hasWorkbench) {
-      autoHidden.current.workbench = true;
+      autoHiddenRef.current.workbench = true;
       controller.closeWorkbench();
     }
-    else if (viewport.width > 960 && autoHidden.current.workbench && hasWorkbenchOccupant) {
-      autoHidden.current.workbench = false;
+    else if (viewport.width > 960 && autoHiddenRef.current.workbench && hasWorkbenchOccupant) {
+      autoHiddenRef.current.workbench = false;
       controller.openWorkbench();
     }
   }, [controller, hasWorkbench, hasWorkbenchOccupant, snapshot.sidebarOpen, snapshot.workbenchOpen, viewport.width]);

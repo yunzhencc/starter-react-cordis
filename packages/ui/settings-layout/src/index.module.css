@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-width: 0;
   color: var(--app-text);
 }
 
@@ -19,13 +20,14 @@
 }
 
 .returnLink {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   color: color-mix(in srgb, var(--app-text) 70%, transparent);
+  font-size: 0.875rem;
 }
 
 .menu {
   display: grid;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .menu section {
@@ -36,12 +38,24 @@
 .menu h2 {
   margin: 0;
   padding: 0 0.75rem;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   color: color-mix(in srgb, var(--app-text) 60%, transparent);
+}
+
+.menuItem {
+  font-size: 0.9375rem;
+  transition: color 150ms ease, background-color 150ms ease;
+}
+
+.menuItem:hover {
+  background: color-mix(in srgb, var(--app-text) 7%, transparent);
 }
 
 .menuItem[aria-current='page'] {
   background: color-mix(in srgb, var(--app-text) 12%, transparent);
+  font-weight: 500;
 }
 
 .footerLink {
@@ -53,9 +67,14 @@
   display: grid;
   gap: 1.5rem;
   width: min(100%, 64rem);
+  margin: 3.25rem auto 4rem;
 }
 
 .content h1,
 .empty h1 {
   margin: 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
 }

@@ -89,6 +89,7 @@ describe('appearance settings extension', () => {
     expect(container.textContent).toContain('外观');
     expect(container.textContent).toContain('系统');
     expect(container.querySelectorAll('input[type="radio"]')).toHaveLength(3);
+    expect(container.querySelectorAll('[data-theme-preview]')).toHaveLength(3);
     expect(container.querySelector('input[type="range"]')).not.toBeNull();
     await act(async () => unmount());
     await dispose();
