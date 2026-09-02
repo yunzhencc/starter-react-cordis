@@ -3,30 +3,21 @@ import type { ModelMessage } from 'ai';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { streamText } from 'ai';
 
-export interface ModelDefinition {
-  baseURL: string;
-  id: string;
-  label: string;
-  model: string;
-  provider: string;
-}
-
 export interface ModelsConfig {
-  defaultModel: string;
-  models: readonly ModelConfig[];
+  apiKey?: string;
 }
 
 export interface ModelStreamRequest {
   abortSignal?: AbortSignal;
   messages: ModelMessage[];
-  modelId: string;
-}
-
-export interface ModelConfig extends ModelDefinition {
-  apiKey?: string;
 }
 
 export const MODEL_CONFIG_STORAGE_KEY = '@examples/agent-models:config';
+const deepseek = {
+  baseURL: 'https://api.deepseek.com/v1',
+  model: 'deepseek-chat',
+  name: 'deepseek',
+};
 
 declare module '@deepseek-ai/cordis' {
   interface Context {
@@ -41,14 +32,6 @@ export class ModelRegistry {
     this.config = readStoredConfig(config);
   }
 
-  get defaultModelId() {
-    return this.config.defaultModel;
-  }
-
-  snapshot() {
-    return Object.freeze(this.config.models.map(({ apiKey: _apiKey, ...model }) => Object.freeze(model)));
-  }
-
   settings() {
     return this.config;
   }
@@ -58,21 +41,17 @@ export class ModelRegistry {
     writeStorage(MODEL_CONFIG_STORAGE_KEY, JSON.stringify(this.config));
   }
 
-  async* stream({ abortSignal, messages, modelId }: ModelStreamRequest): AsyncIterable<string> {
-    const entry = this.config.models.find(item => item.id === modelId);
-    if (!entry)
-      throw new Error(`unknown model: ${modelId}`);
-
+  async* stream({ abortSignal, messages }: ModelStreamRequest): AsyncIterable<string> {
     const provider = createOpenAICompatible({
-      apiKey: entry.apiKey,
-      baseURL: entry.baseURL,
-      name: entry.provider,
+      apiKey: this.config.apiKey,
+      baseURL: deepseek.baseURL,
+      name: deepseek.name,
     });
     const result = streamText({
       abortSignal,
       maxRetries: 0,
       messages,
-      model: provider(entry.model),
+      model: provider(deepseek.model),
     });
     for await (const text of result.textStream) yield text;
   }
@@ -86,41 +65,11 @@ export function apply(ctx: Context, config: unknown) {
 }
 
 function parseConfig(value: unknown): ModelsConfig {
-  if (!isRecord(value) || typeof value.defaultModel !== 'string' || !Array.isArray(value.models))
-    throw new TypeError('models config requires defaultModel and models');
-
-  const models = value.models.map(parseModel);
-  const ids = new Set<string>();
-  for (const model of models) {
-    if (ids.has(model.id))
-      throw new TypeError(`duplicate model: ${model.id}`);
-    ids.add(model.id);
-  }
-  if (!ids.has(value.defaultModel))
-    throw new TypeError(`default model is not configured: ${value.defaultModel}`);
-  return { defaultModel: value.defaultModel, models: Object.freeze(models) };
-}
-
-function parseModel(value: unknown): ModelConfig {
-  if (!isRecord(value))
-    throw new TypeError('model config must be an object');
-
-  const fields = ['id', 'label', 'provider', 'baseURL', 'model'] as const;
-  for (const field of fields) {
-    if (typeof value[field] !== 'string' || value[field].trim() === '')
-      throw new TypeError(`model ${field} must be a non-empty string`);
-  }
-  if (value.apiKey !== undefined && typeof value.apiKey !== 'string')
-    throw new TypeError('model apiKey must be a string');
-
-  return {
-    apiKey: value.apiKey as string | undefined,
-    baseURL: value.baseURL as string,
-    id: value.id as string,
-    label: value.label as string,
-    model: value.model as string,
-    provider: value.provider as string,
-  };
+  if (!isRecord(value) || (value.apiKey !== undefined && typeof value.apiKey !== 'string'))
+    throw new TypeError('models config apiKey must be a string');
+  if (Object.keys(value).some(key => key !== 'apiKey'))
+    throw new TypeError('models config only supports apiKey');
+  return { apiKey: value.apiKey as string | undefined };
 }
 
 function readStoredConfig(defaultConfig: unknown) {

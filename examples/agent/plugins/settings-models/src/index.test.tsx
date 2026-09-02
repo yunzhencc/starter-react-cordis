@@ -14,16 +14,7 @@ import { apply, inject } from './index';
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 
-const modelsConfig = {
-  defaultModel: 'deepseek-chat',
-  models: [{
-    baseURL: 'https://api.deepseek.com/v1',
-    id: 'deepseek-chat',
-    label: 'DeepSeek Chat',
-    model: 'deepseek-chat',
-    provider: 'deepseek',
-  }],
-};
+const modelsConfig = {};
 
 beforeEach(() => {
   localStorage.clear();
@@ -60,7 +51,7 @@ async function bootModelSettings() {
 }
 
 describe('model settings extension', () => {
-  it('saves API keys from the settings page into the models runtime', async () => {
+  it('saves the DeepSeek API key without provider configuration controls', async () => {
     const { container, ctx, dispose } = await bootModelSettings();
     let unmount!: () => void;
 
@@ -69,6 +60,8 @@ describe('model settings extension', () => {
     });
 
     expect(container.textContent).toContain('模型提供商');
+    expect(container.querySelector('select')).toBeNull();
+    expect(container.querySelectorAll('input')).toHaveLength(1);
     const apiKey = container.querySelector<HTMLInputElement>('input[type="password"]')!;
     await act(async () => {
       Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(apiKey, 'sk-test');
@@ -76,7 +69,7 @@ describe('model settings extension', () => {
       container.querySelector('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     });
 
-    expect(ctx.models.settings().models[0]?.apiKey).toBe('sk-test');
+    expect(ctx.models.settings().apiKey).toBe('sk-test');
     expect(container.textContent).toContain('已保存');
     await act(async () => unmount());
     await dispose();

@@ -98,24 +98,6 @@
   align-items: center;
 }
 
-.modelPicker {
-  max-width: 15rem;
-  padding: 0.375rem 0.5rem;
-  color: inherit;
-  font: inherit;
-  font-size: 0.875rem;
-  font-weight: 600;
-  background: transparent;
-  border: 0;
-  border-radius: 0.5rem;
-  outline: none;
-}
-
-.modelPicker:hover,
-.modelPicker:focus-visible {
-  background: color-mix(in srgb, var(--app-text) 8%, transparent);
-}
-
 .sendButton,
 .stopButton {
   display: grid;

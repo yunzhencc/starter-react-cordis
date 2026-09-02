@@ -4,17 +4,7 @@ import { Context } from '@deepseek-ai/cordis';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { apply, inject } from './index';
 
-const config = {
-  defaultModel: 'deepseek-chat',
-  models: [{
-    apiKey: 'test-key',
-    baseURL: 'https://api.deepseek.com/v1',
-    id: 'deepseek-chat',
-    label: 'DeepSeek Chat',
-    model: 'deepseek-chat',
-    provider: 'deepseek',
-  }],
-};
+const config = { apiKey: 'test-key' };
 
 beforeEach(() => localStorage.clear());
 
@@ -51,17 +41,8 @@ describe('agent models module', () => {
     const { ctx, dispose } = await boot();
     await expect(collect(ctx.models.stream({
       messages: [{ content: 'Hi', role: 'user' }],
-      modelId: 'deepseek-chat',
     }))).resolves.toEqual(['Hello']);
 
-    expect(ctx.models.defaultModelId).toBe('deepseek-chat');
-    expect(ctx.models.snapshot()).toEqual([{
-      baseURL: 'https://api.deepseek.com/v1',
-      id: 'deepseek-chat',
-      label: 'DeepSeek Chat',
-      model: 'deepseek-chat',
-      provider: 'deepseek',
-    }]);
     expect(requests).toHaveLength(1);
     const [input, init] = requests[0]!;
     expect(String(input)).toBe('https://api.deepseek.com/v1/chat/completions');
@@ -71,37 +52,23 @@ describe('agent models module', () => {
     await dispose();
   });
 
-  it('rejects invalid configuration and unknown model IDs before fetching', async () => {
+  it('rejects non-DeepSeek model configuration before fetching', async () => {
     const fetchMock = vi.fn();
     vi.stubGlobal('fetch', fetchMock);
-
-    const { ctx, dispose } = await boot();
-    await expect(collect(ctx.models.stream({ messages: [], modelId: 'missing' })))
-      .rejects
-      .toThrow('unknown model: missing');
-    expect(fetchMock).not.toHaveBeenCalled();
-    await dispose();
 
     const invalidCtx = new Context();
     const invalidFiber = invalidCtx.plugin({ apply, inject }, {
       ...config,
-      defaultModel: 'missing',
+      provider: 'other',
     });
-    await expect(invalidFiber.await()).rejects.toThrow('default model is not configured: missing');
+    await expect(invalidFiber.await()).rejects.toThrow('models config only supports apiKey');
     await invalidFiber.dispose();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('persists an updated model configuration while keeping credentials out of its public snapshot', async () => {
+  it('persists the DeepSeek API key without accepting another provider configuration', async () => {
     const updated = {
-      defaultModel: 'qwen-plus',
-      models: [{
-        apiKey: 'saved-key',
-        baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
-        id: 'qwen-plus',
-        label: 'Qwen Plus',
-        model: 'qwen-plus',
-        provider: 'qwen',
-      }],
+      apiKey: 'saved-key',
     };
     const { ctx, dispose } = await boot();
 
@@ -109,14 +76,6 @@ describe('agent models module', () => {
     await dispose();
 
     const { ctx: restored, dispose: disposeRestored } = await boot();
-    expect(restored.models.defaultModelId).toBe('qwen-plus');
-    expect(restored.models.snapshot()).toEqual([{
-      baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
-      id: 'qwen-plus',
-      label: 'Qwen Plus',
-      model: 'qwen-plus',
-      provider: 'qwen',
-    }]);
     expect(restored.models.settings()).toEqual(updated);
     await disposeRestored();
   });
