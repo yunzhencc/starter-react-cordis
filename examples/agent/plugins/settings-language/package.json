@@ -9,6 +9,7 @@
   "dependencies": {
     "@deepseek-ai/cordis": "^4.0.2",
     "@examples/agent-settings-general": "workspace:*",
+    "@examples/agent-settings-layout": "workspace:*",
     "@yunzhen/cordis-ui-i18n": "workspace:*",
     "@yunzhen/cordis-ui-renderer": "workspace:*",
     "react": "^19.2.8",
@@ -16,7 +17,6 @@
   },
   "devDependencies": {
     "@yunzhen/cordis-ui-router": "workspace:*",
-    "@yunzhen/cordis-ui-settings-layout": "workspace:*",
     "react-dom": "^19.2.8"
   },
   "yunzhen": {

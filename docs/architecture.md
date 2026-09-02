@@ -27,8 +27,8 @@ examples/agent/cordis.yml
 | `@yunzhen/cordis-ui-router` | `ctx.routes` 的 RouteRegistry、React Router 适配和 Route 的 Slot owner。 |
 | `@yunzhen/cordis-ui-layout` | `ctx.layout` 面板动作和无路径 `app-layout` 三栏 Route。 |
 | `@yunzhen/cordis-ui-i18n` | `ctx.i18n`、浏览器语言识别、用户选择持久化与 i18next React Provider。 |
-| `examples/agent/plugins/dashboard`、`settings-general`、`settings-appearance`、`settings-language` | Agent 示例的业务插件；通过 Cordis `inject` + `apply` 注册 Route、Slot 或设置贡献，并拥有各自文案资源。 |
-| `ui/settings-layout` | `/settings` 路由壳、设置侧栏、底部 Settings 入口与 `ctx.settings.register()`。 |
+| `examples/agent/plugins/dashboard`、`settings-layout`、`settings-general`、`settings-appearance`、`settings-language` | Agent 示例的业务插件；通过 Cordis `inject` + `apply` 注册 Route、Slot 或设置贡献，并拥有各自文案资源。 |
+| `examples/agent/plugins/settings-layout` | Agent 示例的 `/settings` 路由壳、设置侧栏、底部 Settings 入口与 `ctx.settings.register()`。 |
 | `ui/theme` | ThemeRuntime、token 与 DOM 同步；具体设置页面由独立扩展提供。 |
 
 旧的 `core/runtime`、`react/bridge`、`router/react-router` 与 `ui/shell` 分层已不属于当前实现。

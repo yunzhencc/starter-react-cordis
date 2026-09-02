@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "@deepseek-ai/cordis": "^4.0.2",
+    "@examples/agent-settings-layout": "workspace:*",
     "@yunzhen/cordis-ui-i18n": "workspace:*",
-    "@yunzhen/cordis-ui-settings-layout": "workspace:*",
     "@yunzhen/cordis-ui-theme": "workspace:*",
     "lucide-react": "^0.576.0",
     "react": "^19.2.8",
@@ -23,7 +23,7 @@
   "yunzhen": {
     "client": {
       "platform": "web",
-      "inject": ["@yunzhen/cordis-ui-i18n", "@yunzhen/cordis-ui-settings-layout", "@yunzhen/cordis-ui-theme"],
+      "inject": ["@yunzhen/cordis-ui-i18n", "@examples/agent-settings-layout", "@yunzhen/cordis-ui-theme"],
       "immediately": false
     }
   }

@@ -74,6 +74,9 @@ importers:
       '@examples/agent-settings-language':
         specifier: workspace:*
         version: link:plugins/settings-language
+      '@examples/agent-settings-layout':
+        specifier: workspace:*
+        version: link:plugins/settings-layout
       '@yunzhen/cordis-client-modules':
         specifier: workspace:*
         version: link:../../packages/client/modules
@@ -92,9 +95,6 @@ importers:
       '@yunzhen/cordis-ui-router':
         specifier: workspace:*
         version: link:../../packages/ui/router
-      '@yunzhen/cordis-ui-settings-layout':
-        specifier: workspace:*
-        version: link:../../packages/ui/settings-layout
       '@yunzhen/cordis-ui-theme':
         specifier: workspace:*
         version: link:../../packages/ui/theme
@@ -128,12 +128,12 @@ importers:
       '@deepseek-ai/cordis':
         specifier: ^4.0.2
         version: 4.0.2
+      '@examples/agent-settings-layout':
+        specifier: workspace:*
+        version: link:../settings-layout
       '@yunzhen/cordis-ui-i18n':
         specifier: workspace:*
         version: link:../../../../packages/ui/i18n
-      '@yunzhen/cordis-ui-settings-layout':
-        specifier: workspace:*
-        version: link:../../../../packages/ui/settings-layout
       '@yunzhen/cordis-ui-theme':
         specifier: workspace:*
         version: link:../../../../packages/ui/theme
@@ -162,15 +162,15 @@ importers:
       '@deepseek-ai/cordis':
         specifier: ^4.0.2
         version: 4.0.2
+      '@examples/agent-settings-layout':
+        specifier: workspace:*
+        version: link:../settings-layout
       '@yunzhen/cordis-ui-i18n':
         specifier: workspace:*
         version: link:../../../../packages/ui/i18n
       '@yunzhen/cordis-ui-renderer':
         specifier: workspace:*
         version: link:../../../../packages/ui/renderer
-      '@yunzhen/cordis-ui-settings-layout':
-        specifier: workspace:*
-        version: link:../../../../packages/ui/settings-layout
       lucide-react:
         specifier: ^1.38.0
         version: 1.38.0(react@19.2.8)
@@ -186,6 +186,9 @@ importers:
       '@examples/agent-settings-general':
         specifier: workspace:*
         version: link:../settings-general
+      '@examples/agent-settings-layout':
+        specifier: workspace:*
+        version: link:../settings-layout
       '@yunzhen/cordis-ui-i18n':
         specifier: workspace:*
         version: link:../../../../packages/ui/i18n
@@ -202,12 +205,39 @@ importers:
       '@yunzhen/cordis-ui-router':
         specifier: workspace:*
         version: link:../../../../packages/ui/router
-      '@yunzhen/cordis-ui-settings-layout':
-        specifier: workspace:*
-        version: link:../../../../packages/ui/settings-layout
       react-dom:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
+
+  examples/agent/plugins/settings-layout:
+    dependencies:
+      '@deepseek-ai/cordis':
+        specifier: ^4.0.2
+        version: 4.0.2
+      '@yunzhen/cordis-ui-i18n':
+        specifier: workspace:*
+        version: link:../../../../packages/ui/i18n
+      '@yunzhen/cordis-ui-renderer':
+        specifier: workspace:*
+        version: link:../../../../packages/ui/renderer
+      '@yunzhen/cordis-ui-router':
+        specifier: workspace:*
+        version: link:../../../../packages/ui/router
+      '@yunzhen/cordis-ui-slots':
+        specifier: workspace:*
+        version: link:../../../../packages/ui/slots
+      lucide-react:
+        specifier: ^1.38.0
+        version: 1.38.0(react@19.2.8)
+      react:
+        specifier: ^19.2.8
+        version: 19.2.8
+      react-i18next:
+        specifier: ^16.5.9
+        version: 16.6.6(i18next@25.10.10(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)
+      react-router-dom:
+        specifier: ^7.18.3
+        version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
 
   packages/client/modules:
     dependencies:
@@ -305,36 +335,6 @@ importers:
       '@yunzhen/cordis-ui-slots':
         specifier: workspace:*
         version: link:../slots
-      react:
-        specifier: ^19.2.8
-        version: 19.2.8
-      react-i18next:
-        specifier: ^16.5.9
-        version: 16.6.6(i18next@25.10.10(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)
-      react-router-dom:
-        specifier: ^7.18.3
-        version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-
-  packages/ui/settings-layout:
-    dependencies:
-      '@deepseek-ai/cordis':
-        specifier: ^4.0.2
-        version: 4.0.2
-      '@yunzhen/cordis-ui-i18n':
-        specifier: workspace:*
-        version: link:../i18n
-      '@yunzhen/cordis-ui-renderer':
-        specifier: workspace:*
-        version: link:../renderer
-      '@yunzhen/cordis-ui-router':
-        specifier: workspace:*
-        version: link:../router
-      '@yunzhen/cordis-ui-slots':
-        specifier: workspace:*
-        version: link:../slots
-      lucide-react:
-        specifier: ^1.38.0
-        version: 1.38.0(react@19.2.8)
       react:
         specifier: ^19.2.8
         version: 19.2.8

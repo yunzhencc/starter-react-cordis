@@ -1,5 +1,5 @@
 {
-  "name": "@yunzhen/cordis-ui-settings-layout",
+  "name": "@examples/agent-settings-layout",
   "type": "module",
   "private": true,
   "exports": {

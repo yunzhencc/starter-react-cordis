@@ -11,7 +11,7 @@
 - id: dashboard
   name: '@examples/agent-dashboard'
 - id: settings-layout
-  name: '@yunzhen/cordis-ui-settings-layout'
+  name: '@examples/agent-settings-layout'
 - id: settings-general
   name: '@examples/agent-settings-general'
 - id: settings-appearance

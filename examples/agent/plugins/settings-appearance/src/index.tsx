@@ -1,5 +1,5 @@
 import type { Context } from '@deepseek-ai/cordis';
-import type {} from '@yunzhen/cordis-ui-settings-layout';
+import type {} from '@examples/agent-settings-layout';
 import type {} from '@yunzhen/cordis-ui-theme';
 import { Palette } from 'lucide-react';
 import { AppearanceSettings } from './appearance-settings';

@@ -3,10 +3,10 @@
 import type { Context as CordisContext } from '@deepseek-ai/cordis';
 import { Context } from '@deepseek-ai/cordis';
 import { apply as applyGeneral, inject as generalInject } from '@examples/agent-settings-general';
+import { apply as applySettingsLayout } from '@examples/agent-settings-layout';
 import { apply as applyI18n } from '@yunzhen/cordis-ui-i18n';
 import { apply as applyRenderer, inject as rendererInject, Slot } from '@yunzhen/cordis-ui-renderer';
 import { apply as applyRouter } from '@yunzhen/cordis-ui-router';
-import { apply as applySettingsLayout } from '@yunzhen/cordis-ui-settings-layout';
 import { act } from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { apply, inject } from './index';
