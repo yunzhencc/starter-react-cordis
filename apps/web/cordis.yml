@@ -8,5 +8,7 @@
   name: '@yunzhen/cordis-ui-theme'
 - id: dashboard
   name: '@yunzhen/cordis-feature-dashboard'
-- id: settings
-  name: '@yunzhen/cordis-feature-settings'
+- id: settings-layout
+  name: '@yunzhen/cordis-ui-settings-layout'
+- id: settings-appearance
+  name: '@yunzhen/cordis-feature-settings-appearance'
