@@ -1,4 +1,5 @@
 import type { Node as ProseMirrorNode } from 'prosemirror-model';
+import type { ReactNode } from 'react';
 import { baseKeymap } from 'prosemirror-commands';
 import { history } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
@@ -6,11 +7,16 @@ import { Schema } from 'prosemirror-model';
 import { EditorState, Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import styles from './chat.module.css';
 
 interface ChatComposerProps {
+  children?: ReactNode;
   disabled: boolean;
   onSend: (text: string) => void;
+  onStop?: () => void;
+  placeholder?: string;
   sendLabel: string;
+  stopLabel?: string;
 }
 
 const schema = new Schema({
@@ -25,7 +31,7 @@ export function serializeComposerText(doc: ProseMirrorNode) {
   return doc.textBetween(0, doc.content.size, '\n');
 }
 
-export function ChatComposer({ disabled, onSend, sendLabel }: ChatComposerProps) {
+export function ChatComposer({ children, disabled, onSend, onStop, placeholder = 'Message', sendLabel, stopLabel = 'Stop' }: ChatComposerProps) {
   const [canSend, setCanSend] = useState(false);
   const hostRef = useRef<HTMLDivElement>(null);
   const onSendRef = useRef(onSend);
@@ -89,13 +95,31 @@ export function ChatComposer({ disabled, onSend, sendLabel }: ChatComposerProps)
   }, [disabled]);
 
   return (
-    <form onSubmit={(event) => {
-      event.preventDefault();
-      send();
-    }}
+    <form
+      className={styles.composer}
+      onSubmit={(event) => {
+        event.preventDefault();
+        send();
+      }}
     >
-      <div ref={hostRef} />
-      <button disabled={disabled || !canSend} type="submit">{sendLabel}</button>
+      <div className={styles.editor} data-placeholder={placeholder}>
+        <div ref={hostRef} />
+        {!canSend && <span aria-hidden="true" className={styles.placeholder}>{placeholder}</span>}
+      </div>
+      <div className={styles.composerFooter}>
+        <div className={styles.composerControls}>{children}</div>
+        {disabled && onStop
+          ? (
+              <button aria-label={stopLabel} className={styles.stopButton} type="button" onClick={onStop}>
+                <span aria-hidden="true" />
+              </button>
+            )
+          : (
+              <button aria-label={sendLabel} className={styles.sendButton} disabled={disabled || !canSend} type="submit">
+                <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M10 16.5V3.5m0 0L5.5 8M10 3.5 14.5 8" /></svg>
+              </button>
+            )}
+      </div>
     </form>
   );
 }

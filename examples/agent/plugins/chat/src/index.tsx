@@ -5,6 +5,7 @@ import type {} from '@yunzhen/cordis-ui-router';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChatComposer } from './chat-composer';
+import styles from './chat.module.css';
 
 interface ChatMessage {
   content: string;
@@ -17,6 +18,7 @@ const messages = {
     chat: {
       message: '消息',
       model: '模型',
+      placeholder: '输入消息',
       send: '发送',
       stop: '停止',
       title: '聊天',
@@ -26,6 +28,7 @@ const messages = {
     chat: {
       message: 'Message',
       model: 'Model',
+      placeholder: 'Message Codex',
       send: 'Send',
       stop: 'Stop',
       title: 'Chat',
@@ -90,19 +93,29 @@ function ChatPage({ models }: Pick<Context, 'models'>) {
   }
 
   return (
-    <section>
-      <h1>{t('chat.title')}</h1>
-      <ul aria-label={t('chat.title')}>
-        {messages.map(message => <li key={message.id}>{message.content}</li>)}
+    <section className={styles.chatPage}>
+      <h1 className={styles.visuallyHidden}>{t('chat.title')}</h1>
+      <ul className={styles.messageList} aria-label={t('chat.title')}>
+        {messages.map(message => (
+          <li key={message.id} className={message.role === 'user' ? styles.userMessage : styles.assistantMessage}>
+            {message.content}
+          </li>
+        ))}
       </ul>
-      <label>
-        {t('chat.model')}
-        <select aria-label={t('chat.model')} value={selectedModelId} onChange={event => setSelectedModelId(event.target.value)}>
-          {models.snapshot().map(model => <option key={model.id} value={model.id}>{model.label}</option>)}
-        </select>
-      </label>
-      <ChatComposer disabled={streaming} onSend={content => void send(content)} sendLabel={t('chat.send')} />
-      {streaming && <button type="button" onClick={() => controllerRef.current?.abort()}>{t('chat.stop')}</button>}
+      <div className={styles.composerDock}>
+        <ChatComposer
+          disabled={streaming}
+          onSend={content => void send(content)}
+          onStop={() => controllerRef.current?.abort()}
+          placeholder={t('chat.placeholder')}
+          sendLabel={t('chat.send')}
+          stopLabel={t('chat.stop')}
+        >
+          <select aria-label={t('chat.model')} className={styles.modelPicker} value={selectedModelId} onChange={event => setSelectedModelId(event.target.value)}>
+            {models.snapshot().map(model => <option key={model.id} value={model.id}>{model.label}</option>)}
+          </select>
+        </ChatComposer>
+      </div>
     </section>
   );
 }

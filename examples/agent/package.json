@@ -20,6 +20,8 @@
     "@yunzhen/cordis-ui-layout": "workspace:*",
     "@yunzhen/cordis-ui-renderer": "workspace:*",
     "@yunzhen/cordis-ui-router": "workspace:*",
-    "@yunzhen/cordis-ui-theme": "workspace:*"
+    "@yunzhen/cordis-ui-theme": "workspace:*",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   }
 }
