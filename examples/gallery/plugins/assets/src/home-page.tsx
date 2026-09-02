@@ -1,10 +1,13 @@
 import type { LayoutController } from '@yunzhen/cordis-ui-layout';
+import type { GalleryPluginApi } from '@yunzhen/gallery-formats';
 import type { CSSProperties } from 'react';
+import type { InstalledFormatController } from './installed-formats';
 import type { MediaStore } from './media';
 import { JustifiedInfiniteGrid } from '@egjs/react-infinitegrid';
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useEffect, useSyncExternalStore } from 'react';
 import styles from './home-page.module.css';
+import { FormatPluginManager } from './plugin-manager';
 
 interface HomeProps {
   layout: LayoutController;
@@ -19,11 +22,13 @@ const headerActionStyle = {
 } satisfies CSSProperties;
 
 interface HomePageProps {
+  formats: InstalledFormatController;
   layout: LayoutController;
   media: MediaStore;
+  plugins: GalleryPluginApi;
 }
 
-export function HomePage({ layout, media }: HomePageProps) {
+export function HomePage({ formats, layout, media, plugins }: HomePageProps) {
   const snapshot = useSyncExternalStore(media.subscribe, media.snapshot, media.snapshot);
   const openAsset = async (id: string) => {
     if (await media.open(id))
@@ -37,6 +42,7 @@ export function HomePage({ layout, media }: HomePageProps) {
   return (
     <section className={styles.page}>
       <button className={styles.chooseRoot} data-choose-root type="button" onClick={media.chooseRoot}>选择素材文件夹</button>
+      <FormatPluginManager formats={formats} media={media} plugins={plugins} />
       <JustifiedInfiniteGrid
         className={styles.grid}
         gap={5}

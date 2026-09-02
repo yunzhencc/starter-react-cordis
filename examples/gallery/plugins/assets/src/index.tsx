@@ -37,7 +37,7 @@ export function apply(ctx: Context) {
     id: 'home',
     parentId: 'app-layout',
     index: true,
-    Component: () => <HomePage layout={ctx.layout} media={media} />,
+    Component: () => <HomePage formats={installed} layout={ctx.layout} media={media} plugins={window.galleryPlugin} />,
     children: { 'assets.workbench': { kind: 'single', scope: 'root' } },
   }));
 }
