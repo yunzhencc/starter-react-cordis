@@ -1,0 +1,25 @@
+{
+  "name": "@examples/eagle",
+  "type": "module",
+  "private": true,
+  "main": "./out/main/index.js",
+  "scripts": {
+    "build": "electron-vite build",
+    "dev": "electron-vite dev",
+    "start": "electron-vite preview"
+  },
+  "dependencies": {
+    "@yunzhen/cordis-client-modules": "workspace:*",
+    "@yunzhen/cordis-host-plugin-catalog": "workspace:*",
+    "@yunzhen/cordis-ui-i18n": "workspace:*",
+    "@yunzhen/cordis-ui-layout": "workspace:*",
+    "@yunzhen/cordis-ui-renderer": "workspace:*",
+    "@yunzhen/cordis-ui-router": "workspace:*",
+    "@yunzhen/cordis-ui-theme": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.0",
+    "electron": "^44.1.0",
+    "electron-vite": "^5.0.0"
+  }
+}

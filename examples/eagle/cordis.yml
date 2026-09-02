@@ -1,0 +1,10 @@
+- id: i18n
+  name: '@yunzhen/cordis-ui-i18n'
+- id: renderer
+  name: '@yunzhen/cordis-ui-renderer'
+- id: router
+  name: '@yunzhen/cordis-ui-router'
+- id: layout
+  name: '@yunzhen/cordis-ui-layout'
+- id: theme
+  name: '@yunzhen/cordis-ui-theme'
