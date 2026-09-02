@@ -1,4 +1,4 @@
-import type { GalleryMediaApi } from '@yunzhen/gallery-formats';
+import type { GalleryMediaApi, GalleryPluginApi } from '@yunzhen/gallery-formats';
 import { contextBridge, ipcRenderer } from 'electron';
 
 const galleryMedia: GalleryMediaApi = {
@@ -9,4 +9,12 @@ const galleryMedia: GalleryMediaApi = {
   writeThumbnail: (id, processor, thumbnail) => ipcRenderer.invoke('gallery-media:write-thumbnail', id, processor, thumbnail),
 };
 
+const galleryPlugin: GalleryPluginApi = {
+  install: () => ipcRenderer.invoke('gallery-plugin:install'),
+  list: () => ipcRenderer.invoke('gallery-plugin:list'),
+  setEnabled: (id, enabled) => ipcRenderer.invoke('gallery-plugin:set-enabled', id, enabled),
+  uninstall: id => ipcRenderer.invoke('gallery-plugin:uninstall', id),
+};
+
 contextBridge.exposeInMainWorld('galleryMedia', galleryMedia);
+contextBridge.exposeInMainWorld('galleryPlugin', galleryPlugin);

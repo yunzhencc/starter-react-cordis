@@ -1,8 +1,10 @@
 import { dirname, join } from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
-import { app, BrowserWindow, dialog, ipcMain } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, protocol } from 'electron';
+import { FormatPluginManager } from './format-plugin-manager';
 import { MediaLibrary } from './media-library';
+import { createPluginProtocolHandler } from './plugin-protocol';
 
 const mainDirectory = dirname(fileURLToPath(import.meta.url));
 const MEDIA_CHANNELS = {
@@ -12,6 +14,14 @@ const MEDIA_CHANNELS = {
   readThumbnail: 'gallery-media:read-thumbnail',
   writeThumbnail: 'gallery-media:write-thumbnail',
 } as const;
+const PLUGIN_CHANNELS = {
+  install: 'gallery-plugin:install',
+  list: 'gallery-plugin:list',
+  setEnabled: 'gallery-plugin:set-enabled',
+  uninstall: 'gallery-plugin:uninstall',
+} as const;
+
+protocol.registerSchemesAsPrivileged([{ scheme: 'gallery-plugin', privileges: { secure: true, standard: true, supportFetchAPI: true } }]);
 
 function createWindow() {
   const window = new BrowserWindow({
@@ -39,6 +49,11 @@ void app.whenReady().then(async () => {
     cacheRoot: join(galleryRoot, 'thumbnails'),
     configPath: join(galleryRoot, 'config.json'),
   });
+  const plugins = await FormatPluginManager.create({
+    configPath: join(galleryRoot, 'plugins.json'),
+    pluginsRoot: join(galleryRoot, 'plugins'),
+  });
+  protocol.handle('gallery-plugin', createPluginProtocolHandler(plugins));
   ipcMain.handle(MEDIA_CHANNELS.chooseRoot, async () => {
     const result = await dialog.showOpenDialog({ properties: ['openDirectory'] });
     const [root] = result.filePaths;
@@ -48,6 +63,19 @@ void app.whenReady().then(async () => {
   ipcMain.handle(MEDIA_CHANNELS.readAsset, (_event, id: string) => library.readAsset(id));
   ipcMain.handle(MEDIA_CHANNELS.readThumbnail, (_event, id: string, processor: string) => library.readThumbnail(id, processor));
   ipcMain.handle(MEDIA_CHANNELS.writeThumbnail, (_event, id: string, processor: string, thumbnail) => library.writeThumbnail(id, processor, thumbnail));
+  ipcMain.handle(PLUGIN_CHANNELS.install, async () => {
+    const result = await dialog.showOpenDialog({
+      filters: [{ extensions: ['zip'], name: 'Gallery Format Plugin' }],
+      properties: ['openFile'],
+    });
+    const [zipPath] = result.filePaths;
+    if (!zipPath)
+      throw new Error('format plugin installation cancelled');
+    return plugins.install(zipPath);
+  });
+  ipcMain.handle(PLUGIN_CHANNELS.list, () => plugins.list());
+  ipcMain.handle(PLUGIN_CHANNELS.setEnabled, (_event, id: string, enabled: boolean) => plugins.setEnabled(id, enabled));
+  ipcMain.handle(PLUGIN_CHANNELS.uninstall, (_event, id: string) => plugins.uninstall(id));
 
   createWindow();
   app.on('activate', () => {

@@ -1,5 +1,6 @@
 interface Window {
   galleryMedia: import('@yunzhen/gallery-formats').GalleryMediaApi;
+  galleryPlugin: import('@yunzhen/gallery-formats').GalleryPluginApi;
 }
 
 declare module 'virtual:cordis-gallery-boot' {
