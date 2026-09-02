@@ -3,7 +3,7 @@ import type { Plugin, PluginContext } from 'vite';
 import { resolve } from 'node:path';
 import { loadWebBootGraph } from '@yunzhen/cordis-host-plugin-catalog';
 
-const virtualModuleId = 'virtual:cordis-web-boot';
+const virtualModuleId = 'virtual:cordis-example-agent-boot';
 const resolvedVirtualModuleId = `\0${virtualModuleId}`;
 
 export function renderWebBootVirtualModule(graph: WebBootGraph) {
@@ -21,7 +21,7 @@ export function cordisWebBoot(configPath = resolve(import.meta.dirname, 'cordis.
   const loadGraph = () => graph ??= loadWebBootGraph(configPath);
 
   return {
-    name: 'cordis-web-boot',
+    name: 'cordis-example-agent-boot',
     buildStart() {
       loadGraph();
     },

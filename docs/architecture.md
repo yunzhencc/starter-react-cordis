@@ -7,7 +7,7 @@
 ## 静态启动链
 
 ```text
-apps/web/cordis.yml
+examples/agent/cordis.yml
   └─ host/plugin-catalog 读取包元数据
       └─ WebBootGraph
           └─ Vite 虚拟 registry（开发）/ cordis.boot.json + chunks（构建）
@@ -15,7 +15,7 @@ apps/web/cordis.yml
                   └─ Cordis Context → ctx.uiRenderer.mount(container)
 ```
 
-`apps/web/cordis.yml` 是该应用唯一的启用来源。catalog 在 Node 构建阶段读取它和每个包的 `yunzhen.client` 元数据，禁用条目在依赖验证前移除。Vite 将图转为 ESM `import()` registry，生产构建同时输出相同内容的 `cordis.boot.json`。浏览器只导入图中条目；缺失的 Dashboard 不会加载其 chunk 或注册路由。
+`examples/agent/cordis.yml` 是该示例应用唯一的启用来源。catalog 在 Node 构建阶段读取它和每个包的 `yunzhen.client` 元数据，禁用条目在依赖验证前移除。Vite 将图转为 ESM `import()` registry，生产构建同时输出相同内容的 `cordis.boot.json`。浏览器只导入图中条目；缺失的 Dashboard 不会加载其 chunk 或注册路由。
 
 ## 包职责
 
@@ -27,7 +27,7 @@ apps/web/cordis.yml
 | `@yunzhen/cordis-ui-router` | `ctx.routes` 的 RouteRegistry、React Router 适配和 Route 的 Slot owner。 |
 | `@yunzhen/cordis-ui-layout` | `ctx.layout` 面板动作和无路径 `app-layout` 三栏 Route。 |
 | `@yunzhen/cordis-ui-i18n` | `ctx.i18n`、浏览器语言识别、用户选择持久化与 i18next React Provider。 |
-| `feature/dashboard`、`feature/settings-general`、`feature/settings-appearance`、`feature/settings-language` | 通过 Cordis `inject` + `apply` 注册 Route、Slot 或设置贡献，并拥有各自文案资源。 |
+| `examples/agent/plugins/dashboard`、`settings-general`、`settings-appearance`、`settings-language` | Agent 示例的业务插件；通过 Cordis `inject` + `apply` 注册 Route、Slot 或设置贡献，并拥有各自文案资源。 |
 | `ui/settings-layout` | `/settings` 路由壳、设置侧栏、底部 Settings 入口与 `ctx.settings.register()`。 |
 | `ui/theme` | ThemeRuntime、token 与 DOM 同步；具体设置页面由独立扩展提供。 |
 
@@ -61,4 +61,4 @@ Dashboard 和 Settings 都是 `app-layout` 的子 Route；命中 Settings 时其
 
 ## 部署边界
 
-开发期 Vite 进程可读取 `apps/web/cordis.yml` 生成虚拟 registry；生产环境仅托管 `apps/web/dist` 的静态文件和 ESM chunks。生产不运行 Node catalog 扫描，不支持 HMR、远程插件、运行时安装或动态运行器。
+开发期 Vite 进程可读取 `examples/agent/cordis.yml` 生成虚拟 registry；生产环境仅托管 `examples/agent/dist` 的静态文件和 ESM chunks。生产不运行 Node catalog 扫描，不支持 HMR、远程插件、运行时安装或动态运行器。

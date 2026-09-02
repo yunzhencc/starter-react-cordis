@@ -1,5 +1,5 @@
 import { bootWebApp } from '@yunzhen/cordis-client-modules';
-import { graph, registry } from 'virtual:cordis-web-boot';
+import { graph, registry } from 'virtual:cordis-example-agent-boot';
 
 void bootWebApp({
   container: document.getElementById('root')!,

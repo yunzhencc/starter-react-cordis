@@ -2,7 +2,7 @@
 
 import type { Context as CordisContext } from '@deepseek-ai/cordis';
 import { Context } from '@deepseek-ai/cordis';
-import { apply as applyGeneral, inject as generalInject } from '@yunzhen/cordis-feature-settings-general';
+import { apply as applyGeneral, inject as generalInject } from '@yunzhen/cordis-example-agent-settings-general';
 import { apply as applyI18n } from '@yunzhen/cordis-ui-i18n';
 import { apply as applyRenderer, inject as rendererInject, Slot } from '@yunzhen/cordis-ui-renderer';
 import { apply as applyRouter } from '@yunzhen/cordis-ui-router';

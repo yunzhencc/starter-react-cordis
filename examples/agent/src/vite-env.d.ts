@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
-declare module 'virtual:cordis-web-boot' {
+declare module 'virtual:cordis-example-agent-boot' {
   import type { PluginRegistry, WebBootGraph } from '@yunzhen/cordis-client-modules';
 
   export const graph: WebBootGraph;

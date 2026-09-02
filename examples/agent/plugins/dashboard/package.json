@@ -1,5 +1,5 @@
 {
-  "name": "@yunzhen/cordis-feature-dashboard",
+  "name": "@yunzhen/cordis-example-agent-dashboard",
   "type": "module",
   "private": true,
   "exports": {

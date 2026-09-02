@@ -9,12 +9,12 @@
 - id: theme
   name: '@yunzhen/cordis-ui-theme'
 - id: dashboard
-  name: '@yunzhen/cordis-feature-dashboard'
+  name: '@yunzhen/cordis-example-agent-dashboard'
 - id: settings-layout
   name: '@yunzhen/cordis-ui-settings-layout'
 - id: settings-general
-  name: '@yunzhen/cordis-feature-settings-general'
+  name: '@yunzhen/cordis-example-agent-settings-general'
 - id: settings-appearance
-  name: '@yunzhen/cordis-feature-settings-appearance'
+  name: '@yunzhen/cordis-example-agent-settings-appearance'
 - id: settings-language
-  name: '@yunzhen/cordis-feature-settings-language'
+  name: '@yunzhen/cordis-example-agent-settings-language'

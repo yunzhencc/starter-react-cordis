@@ -1,5 +1,5 @@
 {
-  "name": "@yunzhen/cordis-feature-settings-language",
+  "name": "@yunzhen/cordis-example-agent-settings-language",
   "type": "module",
   "private": true,
   "exports": {
@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@deepseek-ai/cordis": "^4.0.2",
-    "@yunzhen/cordis-feature-settings-general": "workspace:*",
+    "@yunzhen/cordis-example-agent-settings-general": "workspace:*",
     "@yunzhen/cordis-ui-i18n": "workspace:*",
     "@yunzhen/cordis-ui-renderer": "workspace:*",
     "react": "^19.2.8",
@@ -22,7 +22,7 @@
   "yunzhen": {
     "client": {
       "platform": "web",
-      "inject": ["@yunzhen/cordis-ui-i18n", "@yunzhen/cordis-feature-settings-general"],
+      "inject": ["@yunzhen/cordis-ui-i18n", "@yunzhen/cordis-example-agent-settings-general"],
       "immediately": false
     }
   }

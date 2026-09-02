@@ -1,5 +1,5 @@
 {
-  "name": "@yunzhen/cordis-feature-settings-general",
+  "name": "@yunzhen/cordis-example-agent-settings-general",
   "type": "module",
   "private": true,
   "exports": {
