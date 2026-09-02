@@ -4,25 +4,11 @@ import { Context } from '@deepseek-ai/cordis';
 import { apply as applyRenderer } from '@yunzhen/cordis-ui-renderer';
 import { apply as applyRouter } from '@yunzhen/cordis-ui-router';
 import { act } from 'react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { apply } from './index';
 import { LayoutController } from './layout-controller';
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
-
-class TestResizeObserver {
-  disconnect() {}
-  observe() {}
-  unobserve() {}
-}
-
-beforeEach(() => {
-  vi.stubGlobal('ResizeObserver', TestResizeObserver);
-});
-
-afterEach(() => {
-  vi.unstubAllGlobals();
-});
 
 const Workbench = () => <section>Workbench</section>;
 const EmptyPage = () => null;
@@ -95,9 +81,10 @@ describe('app layout', () => {
     });
 
     expect(container.querySelector('[data-workbench-column]')).toBeNull();
-    ctx.slots.register({ name: 'workbench' }, Workbench);
-    ctx.layout.openWorkbench();
-    await act(async () => {});
+    await act(async () => {
+      ctx.slots.register({ name: 'workbench' }, Workbench);
+      ctx.layout.openWorkbench();
+    });
     expect(container.querySelector('[data-workbench-column]')).not.toBeNull();
     await act(async () => ctx.layout.closeWorkbench());
     expect(container.querySelector('[data-workbench-column]')).not.toBeNull();

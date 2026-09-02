@@ -50,12 +50,13 @@ describe('dashboard module', () => {
       unmount = ctx.uiRenderer.mount(container);
     });
 
-    expect(container.querySelector('[data-workbench-column]')).toBeNull();
+    expect(ctx.layout.snapshot().workbenchOpen).toBe(false);
 
     await act(async () => {
       (container.querySelector('button') as HTMLButtonElement).click();
     });
 
+    expect(ctx.layout.snapshot().workbenchOpen).toBe(true);
     expect(container.querySelector('[data-workbench-column]')?.textContent).toContain('Dashboard workbench');
 
     await act(async () => unmount());
